@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot;
 
 import tech.ypsilon.bbbot.database.MongoController;
+import tech.ypsilon.bbbot.discord.CommandManager;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import tech.ypsilon.bbbot.discord.DiscordController;
@@ -33,7 +34,7 @@ public class Init {
 
     static void postInit() throws Exception {
         LOGGER.info("Starting post-init state");
-
+        new CommandManager();
         LOGGER.info("Passed post-init state");
     }
 
