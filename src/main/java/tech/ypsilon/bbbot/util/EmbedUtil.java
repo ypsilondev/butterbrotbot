@@ -26,7 +26,7 @@ public class EmbedUtil {
     }
 
     public static EmbedBuilder createListEmbed(boolean hasMatches) {
-        if (hasMatches) {
+        if (!hasMatches) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle("Keine Ergebnisse");
             embedBuilder.setColor(Color.decode("#FF7770"));
