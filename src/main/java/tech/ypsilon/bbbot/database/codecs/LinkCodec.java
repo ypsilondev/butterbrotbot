@@ -119,6 +119,7 @@ public class LinkCodec implements Codec<LinkCodec> {
         writer.writeStartArray("keywords");
         for (String keyword : data.keywords)
             writer.writeString(keyword);
+        writer.writeEndArray();
         writer.writeInt64("userId", data.userId);
         writer.writeString("link", data.link);
 

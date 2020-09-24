@@ -44,8 +44,8 @@ public class CommandManager {
         }
 
         for(Command command : instance.commands){
-            if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[0]))){
-                String[] args = message.replaceFirst(message.split(" ")[0], "").split(" ");
+            if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
+                String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
                 command.onExecute(event, args);
             }
         }
