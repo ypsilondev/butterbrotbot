@@ -25,6 +25,7 @@ public class CommandManager {
         return instance.commands;
     }
 
+    @SuppressWarnings("unchecked")
     public static void checkForExecute(GuildMessageReceivedEvent event){
         String message = event.getMessage().getContentDisplay();
         if(((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(message::startsWith)){

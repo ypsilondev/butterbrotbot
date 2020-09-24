@@ -34,18 +34,15 @@ public class MongoController {
         CodecRegistry extraCodecs = CodecRegistries.fromCodecs(
                 LinkCodec.EMPTY_HOLDER
         );
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), extraCodecs);
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry()
+                , extraCodecs);
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
                 .applyToClusterSettings(builder -> builder.hosts(Collections.singletonList(
                         new ServerAddress(
-                                (
-                                        (String) SettingsController.getValue("mongo.host")
-                                ),
-                                (
-                                        (int) SettingsController.getValue("mongo.port")
-                                )
+                                ((String) SettingsController.getValue("mongo.host")),
+                                ((int) SettingsController.getValue("mongo.port"))
                         )
                 )))
                 .codecRegistry(codecRegistry)
