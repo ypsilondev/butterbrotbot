@@ -65,7 +65,7 @@ public class MongoController {
         return DATABASE;
     }
 
-    <T> MongoCollection<T> getCollection(String name, Class<T> aClass) {
+    public <T> MongoCollection<T> getCollection(String name, Class<T> aClass) {
         return DATABASE.getCollection(name, aClass);
     }
 
