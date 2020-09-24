@@ -9,6 +9,7 @@ import org.bson.BsonType;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
+import org.bson.codecs.DocumentCodec;
 import org.bson.codecs.EncoderContext;
 import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
@@ -92,9 +93,11 @@ public class LinkCodec implements Codec<LinkCodec> {
         String name = reader.readString("name");
 
         reader.readName("keywords");
+        reader.readStartArray();
         List<String> keywords = new ArrayList<>();
         while(reader.readBsonType() != BsonType.END_OF_DOCUMENT)
             keywords.add(reader.readString());
+        reader.readEndArray();
 
         Long userId = reader.readInt64("userId");
         String link = reader.readString("link");
