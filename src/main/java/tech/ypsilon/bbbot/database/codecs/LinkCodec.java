@@ -39,7 +39,7 @@ public class LinkCodec implements Codec<LinkCodec> {
     }
 
     public static boolean isPresent(String name, String link) {
-        return getCollection().countDocuments(Filters.or(Filters.eq("name", name), Filters.eq("link", link))) > 0;
+        return getCollection().countDocuments(Filters.or(Filters.regex("name", name, "i"), Filters.regex("link", link, "i"))) > 0;
     }
 
     public static FindIterable<LinkCodec> getLinksForName(String regEx) {
