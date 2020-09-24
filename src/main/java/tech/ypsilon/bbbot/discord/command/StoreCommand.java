@@ -36,12 +36,13 @@ public class StoreCommand extends Command {
             b.setDescription("Falsche Syntax: Mindestens Link und Name übergeben");
             e.getChannel().sendMessage(b.build()).queue();
             return;
-        } else if (!URI.isWellFormedAddress(args[1])) {
+        }
+        /*else if (!URI.isWellFormedAddress(args[1])) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("URL nicht gültig");
             e.getChannel().sendMessage(b.build()).queue();
             return;
-        }
+        }*/
 
         if (LinkCodec.isPresent(args[0], args[1])) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
@@ -71,6 +72,7 @@ public class StoreCommand extends Command {
         }
         stringBuilder.append(" verknüpft");
         b.setDescription(stringBuilder.toString());
+        e.getChannel().sendMessage(b.build()).queue();
     }
 
     @Override
