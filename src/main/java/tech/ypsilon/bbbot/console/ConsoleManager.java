@@ -27,14 +27,17 @@ public class ConsoleManager implements Runnable{
         while (scanner.hasNextLine()){
             String s = scanner.nextLine();
 
+            boolean found = false;
             for(ConsoleCommand command : commands){
                 if(Arrays.stream(command.getAlias()).anyMatch(s1 -> s1.equalsIgnoreCase(s))){
                     command.onExecute(s.replaceFirst(s.split(" ")[0], "").split(" "));
-                    continue;
+                    found = true;
                 }
             }
 
-            LOGGER.info("Command not found");
+            if(!found) {
+                LOGGER.info("Command not found");
+            }
         }
     }
 
