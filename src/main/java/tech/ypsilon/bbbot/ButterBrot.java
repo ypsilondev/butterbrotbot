@@ -11,7 +11,7 @@ public class ButterBrot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("tech.ypsilon.bbbot");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         System.out.println("__________        __    __              __________                __   \n" +
                 "\\______   \\__ ___/  |__/  |_  __________\\______   \\_______  _____/  |_ \n" +
                 " |    |  _/  |  \\   __\\   __\\/ __ \\_  __ \\    |  _/\\_  __ \\/  _ \\   __\\\n" +
