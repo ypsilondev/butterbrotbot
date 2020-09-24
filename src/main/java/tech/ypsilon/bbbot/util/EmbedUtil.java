@@ -25,4 +25,22 @@ public class EmbedUtil {
         return embedBuilder;
     }
 
+    public static EmbedBuilder createListEmbed(boolean hasMatches) {
+        if (hasMatches) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle("Keine Ergebnisse");
+            embedBuilder.setColor(Color.decode("#FF7770"));
+            embedBuilder.setFooter("Elite-Nachricht",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo_KIT.svg/2000px-Logo_KIT.svg.png");
+            return embedBuilder;
+        } else {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle("Ergebnisliste");
+            embedBuilder.setColor(Color.decode("#97DBA2"));
+            embedBuilder.setFooter("Elite-Nachricht",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo_KIT.svg/2000px-Logo_KIT.svg.png");
+            return embedBuilder;
+        }
+    }
+
 }

@@ -5,9 +5,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StoreCommand extends Command {
     @Override
@@ -43,8 +46,19 @@ public class StoreCommand extends Command {
             return;
         }
 
-        // todo: Name schon vorhanden?
-        // todo: Link schon vorhanden?
+        if (LinkCodec.isPresent(args[0], args[1])) {
+            EmbedBuilder b = EmbedUtil.createErrorEmbed();
+            b.setDescription("Name oder Link schon vorhanden");
+            e.getChannel().sendMessage(b.build()).queue();
+            return;
+        }
+
+        List<String> keywords = new ArrayList<>();
+        for (int i = 2; i < args.length; i++) {
+            keywords.add(args[i]);
+        }
+
+        LinkCodec.createLink(args[0], e.getAuthor(), args[1], keywords);
 
         EmbedBuilder b = EmbedUtil.createSuccessEmbed();
         StringBuilder stringBuilder = new StringBuilder();
