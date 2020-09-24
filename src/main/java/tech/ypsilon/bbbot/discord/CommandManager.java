@@ -2,6 +2,8 @@ package tech.ypsilon.bbbot.discord;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.command.Command;
+import tech.ypsilon.bbbot.discord.command.ListCommand;
+import tech.ypsilon.bbbot.discord.command.StoreCommand;
 import tech.ypsilon.bbbot.discord.listener.CommandListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
@@ -17,6 +19,9 @@ public class CommandManager {
 
     public CommandManager(){
         instance = this;
+
+        commands.add(new ListCommand());
+        commands.add(new StoreCommand());
 
         DiscordController.getJDA().addEventListener(new CommandListener());
     }
