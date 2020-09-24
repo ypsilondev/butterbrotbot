@@ -4,12 +4,14 @@ import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import net.dv8tion.jda.api.JDAInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.ypsilon.bbbot.discord.DiscordController;
 
 import static tech.ypsilon.bbbot.Init.*;
 
 public class ButterBrot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("tech.ypsilon.bbbot");
+    public static DiscordController discordController;
 
     public static void main(String[] args) {
         System.out.println("__________        __    __              __________                __   \n" +
