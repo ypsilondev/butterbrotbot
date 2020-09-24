@@ -13,8 +13,11 @@ import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LinkCodec implements Codec<LinkCodec> {
+
+    public static final LinkCodec EMPTY_HOLDER = new LinkCodec(null, null, null, null);
 
     private final ObjectId _id;
     private final List<String> keywords;
@@ -79,5 +82,18 @@ public class LinkCodec implements Codec<LinkCodec> {
     @Override
     public Class<LinkCodec> getEncoderClass() {
         return LinkCodec.class;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LinkCodec linkCodec = (LinkCodec) o;
+        return _id.equals(linkCodec._id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id);
     }
 }
