@@ -11,7 +11,7 @@ public class WriteAfterMeCommand extends Command {
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
         if(e.getMember().getRoles().stream().anyMatch(role -> role.getIdLong() == 757718320526000138L)) {
-            e.getChannel().sendMessage(e.getMessage().getContentRaw().substring(4)).complete();
+            e.getChannel().sendMessage(e.getMessage().getContentRaw().substring(8)).complete();
             e.getMessage().delete().complete();
         }
     }
