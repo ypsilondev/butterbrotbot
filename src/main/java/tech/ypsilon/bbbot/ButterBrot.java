@@ -1,9 +1,11 @@
 package tech.ypsilon.bbbot;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.ypsilon.bbbot.discord.DiscordController;
 
 import java.io.File;
 

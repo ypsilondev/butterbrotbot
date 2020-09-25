@@ -1,8 +1,13 @@
 package tech.ypsilon.bbbot;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import tech.ypsilon.bbbot.console.ConsoleManager;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.CommandManager;
+import tech.ypsilon.bbbot.discord.listener.RoleListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import tech.ypsilon.bbbot.discord.DiscordController;
