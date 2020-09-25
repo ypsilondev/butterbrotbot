@@ -19,7 +19,7 @@ public class DiscordController {
     public DiscordController() throws LoginException {
         instance = this;
         Collection<GatewayIntent> gatewayIntents = Arrays.asList(GatewayIntent.GUILD_VOICE_STATES,
-                GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS);
+                GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES);
 
         jda = JDABuilder.createDefault((String) SettingsController.getValue("discord.token"), gatewayIntents)
                 .disableCache(CacheFlag.EMOTE).disableCache(CacheFlag.ACTIVITY).disableCache(CacheFlag.CLIENT_STATUS)
