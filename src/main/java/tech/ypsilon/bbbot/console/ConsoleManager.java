@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.console;
 
+import tech.ypsilon.bbbot.console.commands.HelpCommand;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class ConsoleManager implements Runnable{
     public ConsoleManager(){
         instance = this;
         commands.add(new StopCommand());
+        commands.add(new HelpCommand());
         new Thread(this).start();
     }
 
@@ -32,6 +34,7 @@ public class ConsoleManager implements Runnable{
                 if(Arrays.stream(command.getAlias()).anyMatch(s1 -> s1.equalsIgnoreCase(s))){
                     command.onExecute(s.replaceFirst(s.split(" ")[0], "").split(" "));
                     found = true;
+                    break;
                 }
             }
 
