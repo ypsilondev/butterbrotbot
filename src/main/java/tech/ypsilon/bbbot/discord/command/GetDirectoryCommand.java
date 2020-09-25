@@ -18,7 +18,7 @@ public class GetDirectoryCommand extends Command implements PrivateChat {
         if (args.length == 0) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Übergebe den Sammlungsnamen");
-            e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
+            e.getChannel().sendMessage(b.build()).queue();
             return;
         }
 
@@ -39,7 +39,7 @@ public class GetDirectoryCommand extends Command implements PrivateChat {
         if (isEmpty) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Keine Sammlung für diesen Namen gefunden");
-            e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
+            e.getChannel().sendMessage(b.build()).queue();
         }
     }
 
@@ -57,20 +57,24 @@ public class GetDirectoryCommand extends Command implements PrivateChat {
             return;
         }
 
-        DirectoryCodec directory = DirectoryCodec.getDirectory(e.getAuthor(), args[0]);
-        if (directory == null) {
+        boolean isEmpty = true;
+        for (DirectoryCodec directory : DirectoryCodec.getDirectories(e.getAuthor(), true)) {
+            if (directory.getName().equalsIgnoreCase(args[0])) {
+                isEmpty = false;
+                EmbedBuilder b = EmbedUtil.createDirectoryEmbed();
+                b.setDescription("Sichtbarkeit public?: " + directory.isShared() + "\nListe aller Verknüpfungen:");
+                for (LinkCodec linkCodec : directory.getLinks()) {
+                    b.addField(linkCodec.getName(), linkCodec.getLink(), false);
+                }
+                b.setAuthor(e.getAuthor().getName());
+                e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
+            }
+        }
+
+        if (isEmpty) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Keine Sammlung für diesen Namen gefunden");
             e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
-            return;
         }
-
-        EmbedBuilder b = EmbedUtil.createDirectoryEmbed();
-        b.setDescription("Sichtbarkeit public?: " + directory.isShared() + "\nListe aller Verknüpfungen:");
-        for (LinkCodec linkCodec : directory.getLinks()) {
-            b.addField(linkCodec.getName(), linkCodec.getLink(), false);
-        }
-        b.setAuthor(e.getAuthor().getName());
-        e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
     }
 }
