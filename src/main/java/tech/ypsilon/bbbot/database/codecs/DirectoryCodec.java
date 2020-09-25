@@ -14,6 +14,7 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
+import tech.ypsilon.bbbot.discord.DiscordController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,38 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
 
     public void setShared(boolean shared) {
         getCollection().updateOne(Filters.eq("_id", _id), Updates.set("shared", shared));
+    }
+
+    public ObjectId getId() {
+        return _id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public User getUser() {
+        return DiscordController.getJDA().getUserById(userId);
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public List<ObjectId> getLinksRaw() {
+        return links;
+    }
+
+    public List<LinkCodec> getLinks() {
+        List<LinkCodec> links = new ArrayList<>();
+        for (ObjectId link : this.links)
+            links.add(LinkCodec.getLinkWithId(link));
+
+        return links;
     }
 
     private DirectoryCodec(ObjectId _id, String name, Long userId, boolean shared, List<ObjectId> links) {
