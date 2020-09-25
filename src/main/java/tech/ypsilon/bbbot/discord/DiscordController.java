@@ -3,6 +3,7 @@ package tech.ypsilon.bbbot.discord;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import javax.security.auth.login.LoginException;
@@ -20,7 +21,9 @@ public class DiscordController {
         Collection<GatewayIntent> gatewayIntents = Arrays.asList(GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS);
 
-        jda = JDABuilder.createDefault((String) SettingsController.getValue("discord.token"), gatewayIntents).build();
+        jda = JDABuilder.createDefault((String) SettingsController.getValue("discord.token"), gatewayIntents)
+                .disableCache(CacheFlag.EMOTE).disableCache(CacheFlag.ACTIVITY).disableCache(CacheFlag.CLIENT_STATUS)
+                .build();
     }
 
     public static JDA getJDA() {
