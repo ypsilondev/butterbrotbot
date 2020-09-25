@@ -40,7 +40,6 @@ public class GetDirectoryCommand extends Command implements PrivateChat {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Keine Sammlung für diesen Namen gefunden");
             e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
-            return;
         }
     }
 

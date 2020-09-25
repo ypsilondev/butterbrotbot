@@ -47,7 +47,7 @@ public class AddDirectoryCommand extends Command implements PrivateChat {
 
         List<LinkCodec> compatibleNames = new ArrayList<>();
         List<String> incompatibleNames = new ArrayList<>();
-        for (int i = 1; i < args.length; i++) {
+        for (int i = 2; i < args.length; i++) {
             boolean found = false;
             for (LinkCodec linkCodec : LinkCodec.getLinksForName("^" + args[i] + "$")) {
                 compatibleNames.add(linkCodec);
