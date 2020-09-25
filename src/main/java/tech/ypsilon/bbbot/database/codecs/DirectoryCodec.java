@@ -76,8 +76,13 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
         getCollection().updateOne(Filters.eq("_id", _id), Updates.pull("links", link.getId()));
     }
 
-    public void setShared(boolean shared) {
+    public boolean setShared(boolean shared) {
+        if(shared) {
+            if(getCollection().countDocuments(Filters.and(Filters.eq("shared", true), Filters.eq("name", name))) > 0)
+                return false;
+        }
         getCollection().updateOne(Filters.eq("_id", _id), Updates.set("shared", shared));
+        return true;
     }
 
     public ObjectId getId() {
@@ -104,12 +109,12 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
         return links;
     }
 
-    public List<LinkCodec> getLinks() {
-        List<LinkCodec> links = new ArrayList<>();
-        for (ObjectId link : this.links)
-            links.add(LinkCodec.getLinkWithId(link));
-
-        return links;
+    public FindIterable<LinkCodec> getLinks() {
+        //List<LinkCodec> links = new ArrayList<>();
+        //for (ObjectId link : this.links)
+        //    links.add(LinkCodec.getLinkWithId(link));
+        //return links;
+        return LinkCodec.getLinksWithIdsBulk(links);
     }
 
     private DirectoryCodec(ObjectId _id, String name, Long userId, boolean shared, List<ObjectId> links) {

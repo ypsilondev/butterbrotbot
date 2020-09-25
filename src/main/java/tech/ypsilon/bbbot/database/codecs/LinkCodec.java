@@ -11,6 +11,7 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.DocumentCodec;
 import org.bson.codecs.EncoderContext;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
 
@@ -56,6 +57,14 @@ public class LinkCodec implements Codec<LinkCodec> {
 
     public static LinkCodec getLinkWithId(ObjectId _id) {
         return getCollection().find(Filters.eq("_id", _id)).first();
+    }
+
+    public static FindIterable<LinkCodec> getLinksWithIdsBulk(List<ObjectId> ids) {
+        List<Bson> bson = new ArrayList<>();
+        for (ObjectId id : ids) {
+            bson.add(Filters.eq("_id", id));
+        }
+        return getCollection().find(Filters.or(bson));
     }
 
     private LinkCodec(ObjectId _id, String name, List<String> keywords, Long userId, String link) {
