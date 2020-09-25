@@ -1,14 +1,21 @@
 package tech.ypsilon.bbbot.discord.listener;
 
+import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
+
+import java.util.Objects;
 
 public class RoleListener extends ListenerAdapter {
 
+    /*
     public enum Roles {
         INFORMATICS("\uD83D\uDCBB", 758695532369018910L),
         Wirtschaftsinformatik("\uD83D\uDCB8", 758696116476182528L);
@@ -33,7 +40,6 @@ public class RoleListener extends ListenerAdapter {
         }
     }
 
-    /*
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         if(true)
@@ -53,7 +59,7 @@ public class RoleListener extends ListenerAdapter {
         for (RoleListener.Roles value : RoleListener.Roles.values()) {
             msg.addReaction(value.getUnicode()).queue();
         }
-    }*/
+    }
 
     private Roles getRole(String unicode) {
         for (Roles value : Roles.values()) {
@@ -86,6 +92,35 @@ public class RoleListener extends ListenerAdapter {
                     member = event.getGuild().retrieveMemberById(event.getUserIdLong()).complete();
                 }
                 event.getGuild().removeRoleFromMember(member, role.getRole()).complete();
+            }
+        }
+    }
+    */
+
+    @Override
+    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        if(event.getMessageIdLong() == 759043590432882798L) {
+            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
+            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getName())) > 0){
+                Document doc = collection.find(new Document("emote", event.getReactionEmote().getName())).first();
+
+                assert doc != null;
+                event.getGuild().addRoleToMember(event.getMember(),
+                        Objects.requireNonNull(event.getGuild().getRoleById(doc.getLong("roleId")))).queue();
+            }
+        }
+    }
+
+    @Override
+    public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
+        if(event.getMessageIdLong() == 759043590432882798L  && event.getMember() != null) {
+            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
+            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getName())) > 0){
+                Document doc = collection.find(new Document("emote", event.getReactionEmote().getName())).first();
+
+                assert doc != null;
+                event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()),
+                        Objects.requireNonNull(event.getGuild().getRoleById(doc.getLong("roleId")))).queue();
             }
         }
     }
