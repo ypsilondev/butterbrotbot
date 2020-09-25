@@ -1,8 +1,12 @@
 package tech.ypsilon.bbbot.discord;
 
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.command.Command;
 import tech.ypsilon.bbbot.discord.command.ListCommand;
+import tech.ypsilon.bbbot.discord.command.PrivateChat;
 import tech.ypsilon.bbbot.discord.command.StoreCommand;
 import tech.ypsilon.bbbot.discord.listener.CommandListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -30,18 +34,9 @@ public class CommandManager {
         return instance.commands;
     }
 
-    @SuppressWarnings("unchecked")
     public static void checkForExecute(GuildMessageReceivedEvent event){
-        String message = event.getMessage().getContentDisplay();
-        if(((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(message::startsWith)){
-           return;
-        }
-
-        String[] arguments = message.split(" ");
-
-        if(arguments.length == 0){
-            return;
-        }
+        String[] arguments = checkPrefix(event.getMessage());
+        if(arguments == null) return;
 
         for(Command command : instance.commands){
             if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
@@ -49,6 +44,35 @@ public class CommandManager {
                 command.onExecute(event, args);
             }
         }
+    }
+
+    public static void checkForExecute(PrivateMessageReceivedEvent event){
+        String[] arguments = checkPrefix(event.getMessage());
+        if(arguments == null) return;
+
+        for(Command command : instance.commands){
+            if(command instanceof PrivateChat) {
+                if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
+                    String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
+                    ((PrivateChat)command).onPrivateExecute(event, args);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String[] checkPrefix(Message message) {
+        String msg = message.getContentDisplay();
+        if(((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(msg::startsWith)){
+            return null;
+        }
+
+        String[] arguments = msg.split(" ");
+
+        if(arguments.length == 0){
+            return null;
+        }
+        return arguments;
     }
 
 }
