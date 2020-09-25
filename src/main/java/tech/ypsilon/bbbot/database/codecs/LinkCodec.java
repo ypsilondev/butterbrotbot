@@ -43,7 +43,7 @@ public class LinkCodec implements Codec<LinkCodec> {
     }
 
     public static FindIterable<LinkCodec> getLinksForName(String regEx) {
-        return getCollection().find(Filters.regex("name", regEx));
+        return getCollection().find(Filters.regex("name", regEx, "i"));
     }
 
     public static FindIterable<LinkCodec> getLinksFromUser(User user) {

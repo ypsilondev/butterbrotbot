@@ -25,12 +25,9 @@ public class ListCommand extends Command {
             if (!hasMatches) {
                 b.setDescription("Es gibt noch keine Links");
             } else {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Alle Verknüpfungen:\n");
                 for (LinkCodec linkCodec : LinkCodec.getAllLinks()) {
-                    stringBuilder.append(" - ").append(linkCodec.getName()).append(": ").append(linkCodec.getLink());
+                    b.addField(linkCodec.getName(), linkCodec.getLink(), false);
                 }
-                b.setDescription(stringBuilder.toString());
             }
             e.getChannel().sendMessage(b.build()).queue();
             return;
@@ -42,20 +39,23 @@ public class ListCommand extends Command {
             for (LinkCodec linkCodec : LinkCodec.getLinksFromKeyword(keyword)) {
                 hasMatches = true;
             }
+            for (LinkCodec linkCodec : LinkCodec.getLinksForName(keyword)) {
+                hasMatches = true;
+            }
         }
 
         EmbedBuilder b = EmbedUtil.createListEmbed(hasMatches);
         if (!hasMatches) {
             b.setDescription("Es wurden anhand deines Filters keine Ergebnisse gefunden");
         } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Folgende Ergebnisse wurden gefunden:\n");
             for (String keyword : args) {
                 for (LinkCodec linkCodec : LinkCodec.getLinksFromKeyword(keyword)) {
-                    stringBuilder.append(" - ").append(linkCodec.getName()).append(": ").append(linkCodec.getLink());
+                    b.addField(linkCodec.getName(), linkCodec.getLink(), false);
+                }
+                for (LinkCodec linkCodec : LinkCodec.getLinksForName(keyword)) {
+                    b.addField(linkCodec.getName(), linkCodec.getLink(), false);
                 }
             }
-            b.setDescription(stringBuilder.toString());
         }
         e.getChannel().sendMessage(b.build()).queue();
     }
