@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.bson.Document;
@@ -33,6 +34,12 @@ public class StudiengangCommand extends Command {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
+        if(Objects.requireNonNull(e.getMember()).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L)) {
+            e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Kein Recht",
+                    "Du hast kein Recht diesen Befehl auszuführen", false).build()).queue();
+            return;
+        }
+
         switch (checkArgs(0, args, new String[]{"add", "remove", "list", "reload"}, e)){
             case "add":
                 if(args.length < 4){
@@ -41,9 +48,9 @@ public class StudiengangCommand extends Command {
                     return;
                 }
 
-                if(e.getMessage().getMentionedRoles().size() == 0){
+                if(e.getMessage().getMentionedRoles().size() == 0 || e.getMessage().getEmotes().size() == 0){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
-                            "Es muss eine Rolle erwähnt werden", false).build()).queue();
+                            "Es muss eine Rolle und Emote erwähnt werden", false).build()).queue();
 
                 }
 
@@ -53,7 +60,7 @@ public class StudiengangCommand extends Command {
                     return;
                 }
 
-                if(collection.countDocuments(new Document("emote", args[2])) > 0){
+                if(collection.countDocuments(new Document("emote", e.getMessage().getEmotes().get(0).getIdLong())) > 0){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Fehler beim Erstellen",
                             "Der Emote wird schon benutzt", false).build()).queue();
                     return;
@@ -67,7 +74,7 @@ public class StudiengangCommand extends Command {
 
                 collection.insertOne(new Document("_id", new ObjectId())
                         .append("roleId", e.getMessage().getMentionedRoles().get(0).getIdLong())
-                        .append("emote", args[2])
+                        .append("emote", e.getMessage().getEmotes().get(0).getId())
                         .append("name", args[3]));
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
@@ -107,12 +114,12 @@ public class StudiengangCommand extends Command {
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed().addField("Studiengänge", list.toString(), false).build()).queue();
             case "update":
-                List<String> emotes = new ArrayList<>();
+                List<Long> emotes = new ArrayList<>();
 
                 StringBuilder msg = new StringBuilder();
                 for(Document doc : collection.find()){
-                    emotes.add(doc.getString("emote"));
-                    msg.append(doc.getString("emote")).append(" - ").append(doc.getString("name")).append("\n");
+                    emotes.add(doc.getLong("emote"));
+                    msg.append(doc.getLong("emote")).append(" - ").append(doc.getString("name")).append("\n");
                 }
 
                 Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"))
@@ -120,10 +127,10 @@ public class StudiengangCommand extends Command {
                             message.editMessage(messageStart + msg.toString() + messageEnd).queue();
 
                             List<MessageReaction> reactions = new ArrayList<>();
-                            for(String emote : emotes){
+                            for(Long emote : emotes){
                                 for(MessageReaction reaction : message.getReactions()){
-                                    if(!reaction.getReactionEmote().getName().equals(emote)){
-                                        message.addReaction(emote).queue();
+                                    if(reaction.getReactionEmote().getIdLong() != emote){
+                                        message.addReaction(Objects.requireNonNull(e.getJDA().getEmoteById(emote))).queue();
                                         reactions.add(reaction);
                                     }
                                 }
