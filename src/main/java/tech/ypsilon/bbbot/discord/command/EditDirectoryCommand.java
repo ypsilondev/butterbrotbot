@@ -21,6 +21,6 @@ public class EditDirectoryCommand extends Command implements PrivateChat {
 
     @Override
     public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
-        
+
     }
 }

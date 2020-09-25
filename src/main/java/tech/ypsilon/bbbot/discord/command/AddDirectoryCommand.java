@@ -1,7 +1,13 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import tech.ypsilon.bbbot.database.codecs.LinkCodec;
+import tech.ypsilon.bbbot.util.EmbedUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddDirectoryCommand extends Command implements PrivateChat {
     @Override
@@ -21,6 +27,47 @@ public class AddDirectoryCommand extends Command implements PrivateChat {
 
     @Override
     public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
+        // bb mkdir [name] {names...}
+        if(args.length == 0) {
+            EmbedBuilder b = EmbedUtil.createErrorEmbed();
+            b.setDescription("Übergebe den Namen des zu erstellenden Ordners");
+            e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
+            return;
+        }
 
+        // todo: [name] schon vorhanden?
+
+        List<LinkCodec> compatibleNames = new ArrayList<>();
+        List<String> incompatibleNames = new ArrayList<>();
+        for (int i = 1; i < args.length; i++) {
+            boolean found = false;
+            for (LinkCodec linkCodec : LinkCodec.getLinksForName("^" + args[i] + "$")) {
+                compatibleNames.add(linkCodec);
+                found = true;
+            }
+            if (!found) incompatibleNames.add(args[i]);
+        }
+
+        EmbedBuilder b = EmbedUtil.createSuccessEmbed();
+        if (args.length > 1) {
+            b.setDescription("Deine Sammlung wurde erfolgreich erstellt. Insgesamt wurden " + compatibleNames.size() +
+                    " gefunden und hinzugefügt. Nicht gefunden: " + incompatibleNames.size() + ". Hinzugefügt: ");
+            for (LinkCodec compatibleName : compatibleNames) {
+                b.addField(compatibleName.getName(), compatibleName.getLink(), false);
+            }
+            e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();
+
+            if (incompatibleNames.size() != 0) {
+                EmbedBuilder b2 = EmbedUtil.createErrorEmbed();
+                b2.setDescription("Folgende Namen konnten nicht gefunden werden." +
+                        "Du kannst sie nachträglich per editDirectory Command hinzufügen:");
+                for (String incompatibleName : incompatibleNames) {
+                    b.addField(incompatibleName, "", false);
+                }
+                e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b2.build())).queue();
+            }
+        } else {
+            b.setDescription("Deine Sammlung wurde erfolgreich erstellt. Füge Verknüpfungen mit dem editDirectory Command hinzu");
+        }
     }
 }

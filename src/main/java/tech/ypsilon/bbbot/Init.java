@@ -36,12 +36,19 @@ public class Init {
     }
 
     static void addShutdownHook() throws Exception {
-        Runtime.getRuntime().addShutdownHook(new Thread(Init::stopBot));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> stopBot(false)));
     }
 
-    public static void stopBot(){
-       DiscordController.getJDA().shutdownNow();
+    static boolean shutdown = false;
+    public static void stopBot(boolean systemExit){
+        if(shutdown)
+            return;
+
+        DiscordController.getJDA().shutdown();
+        shutdown = true;
+
         LOGGER.info("Good Bye! :c");
+        if(systemExit) System.exit(0);
     }
 
 }
