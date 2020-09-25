@@ -1,8 +1,6 @@
 package tech.ypsilon.bbbot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import tech.ypsilon.bbbot.BotInfo;
-
 import java.awt.*;
 
 public class EmbedUtil {

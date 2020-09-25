@@ -4,10 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
-import tech.ypsilon.bbbot.discord.command.Command;
-import tech.ypsilon.bbbot.discord.command.ListCommand;
-import tech.ypsilon.bbbot.discord.command.PrivateChat;
-import tech.ypsilon.bbbot.discord.command.StoreCommand;
+import tech.ypsilon.bbbot.discord.command.*;
 import tech.ypsilon.bbbot.discord.listener.CommandListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
@@ -26,6 +23,9 @@ public class CommandManager {
 
         commands.add(new ListCommand());
         commands.add(new StoreCommand());
+        commands.add(new GetDirectoryCommand());
+        commands.add(new AddDirectoryCommand());
+        commands.add(new EditDirectoryCommand());
 
         DiscordController.getJDA().addEventListener(new CommandListener());
     }
