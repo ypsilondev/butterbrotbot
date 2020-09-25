@@ -100,9 +100,9 @@ public class RoleListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
         if(event.getMessageIdLong() == 759043590432882798L) {
-            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
+            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
             if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
-                Document doc = collection.find(new Document("emote", event.getReactionEmote().getIdLong())).first();
+                Document doc = collection.find(new Document("emote", event.getReactionEmote().getEmoji())).first();
 
                 assert doc != null;
                 event.getGuild().addRoleToMember(event.getMember(),
@@ -113,13 +113,17 @@ public class RoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
-        if(event.getMessageIdLong() == 759043590432882798L  && event.getMember() != null) {
-            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
+        Member member = event.getMember();
+        if(member == null) {
+            member = event.getGuild().retrieveMemberById(event.getUserIdLong()).complete();
+        }
+        if(event.getMessageIdLong() == 759043590432882798L  && member != null) {
+            MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
             if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
-                Document doc = collection.find(new Document("emote", event.getReactionEmote().getIdLong())).first();
+                Document doc = collection.find(new Document("emote", event.getReactionEmote().getEmoji())).first();
 
                 assert doc != null;
-                event.getGuild().removeRoleFromMember(Objects.requireNonNull(event.getMember()),
+                event.getGuild().removeRoleFromMember(Objects.requireNonNull(member),
                         Objects.requireNonNull(event.getGuild().getRoleById(doc.getLong("roleId")))).queue();
             }
         }

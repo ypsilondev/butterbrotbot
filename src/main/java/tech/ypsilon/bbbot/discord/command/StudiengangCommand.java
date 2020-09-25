@@ -40,7 +40,7 @@ public class StudiengangCommand extends Command {
             return;
         }
 
-        switch (checkArgs(0, args, new String[]{"add", "remove", "list", "reload"}, e)){
+        switch (checkArgs(0, args, new String[]{"add", "remove", "list", "reload", "update"}, e)){
             case "add":
                 if(args.length < 4){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
