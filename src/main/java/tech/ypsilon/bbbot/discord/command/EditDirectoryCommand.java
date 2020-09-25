@@ -34,42 +34,82 @@ public class EditDirectoryCommand extends Command implements PrivateChat {
             return;
         }
 
-        List<LinkCodec> compatibleNames = new ArrayList<>();
-        List<String> incompatibleNames = new ArrayList<>();
-        for (int i = 2; i < args.length; i++) {
-            boolean found = false;
-            for (LinkCodec linkCodec : LinkCodec.getLinksForName("^" + args[i] + "$")) {
-                compatibleNames.add(linkCodec);
-                found = true;
+        if (args[1].equalsIgnoreCase("add")) {
+            List<LinkCodec> compatibleNames = new ArrayList<>();
+            List<String> incompatibleNames = new ArrayList<>();
+            for (int i = 2; i < args.length; i++) {
+                boolean found = false;
+                for (LinkCodec linkCodec : LinkCodec.getLinksForName("^" + args[i] + "$")) {
+                    compatibleNames.add(linkCodec);
+                    found = true;
+                }
+                if (!found) incompatibleNames.add(args[i]);
             }
-            if (!found) incompatibleNames.add(args[i]);
-        }
 
-        if (compatibleNames.size() > 0) {
-            EmbedBuilder b = EmbedUtil.createSuccessEmbed();
-            b.setDescription("Folgende Verknüpfungen wurden hinzugefügt:");
-            for (LinkCodec compatibleName : compatibleNames) {
-                directory.addLink(compatibleName);
-                b.addField(compatibleName.getName(), compatibleName.getLink(), false);
+            if (compatibleNames.size() > 0) {
+                EmbedBuilder b = EmbedUtil.createSuccessEmbed();
+                b.setDescription("Folgende Verknüpfungen wurden hinzugefügt:");
+                for (LinkCodec compatibleName : compatibleNames) {
+                    directory.addLink(compatibleName);
+                    b.addField(compatibleName.getName(), compatibleName.getLink(), false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+            } else {
+                EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und hinzugefügt werden:");
+                for (String incompatibleName : incompatibleNames) {
+                    b.addField(incompatibleName, "", false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+                return;
             }
-            e.getChannel().sendMessage(b.build()).queue();
+
+            if (incompatibleNames.size() > 0) {
+                EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und hinzugefügt werden:");
+                for (String incompatibleName : incompatibleNames) {
+                    b.addField(incompatibleName, "", false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+            }
         } else {
-            EmbedBuilder b = EmbedUtil.createErrorEmbed();
-            b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und hinzugefügt werden:");
-            for (String incompatibleName : incompatibleNames) {
-                b.addField(incompatibleName, "", false);
+            List<LinkCodec> compatibleNames = new ArrayList<>();
+            List<String> incompatibleNames = new ArrayList<>();
+            for (int i = 2; i < args.length; i++) {
+                boolean found = false;
+                for (LinkCodec linkCodec : LinkCodec.getLinksForName("^" + args[i] + "$")) {
+                    compatibleNames.add(linkCodec);
+                    found = true;
+                }
+                if (!found) incompatibleNames.add(args[i]);
             }
-            e.getChannel().sendMessage(b.build()).queue();
-            return;
-        }
 
-        if (incompatibleNames.size() > 0) {
-            EmbedBuilder b = EmbedUtil.createErrorEmbed();
-            b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und hinzugefügt werden:");
-            for (String incompatibleName : incompatibleNames) {
-                b.addField(incompatibleName, "", false);
+            if (compatibleNames.size() > 0) {
+                EmbedBuilder b = EmbedUtil.createSuccessEmbed();
+                b.setDescription("Folgende Verknüpfungen wurden entfernt:");
+                for (LinkCodec compatibleName : compatibleNames) {
+                    directory.removeLink(compatibleName);
+                    b.addField(compatibleName.getName(), compatibleName.getLink(), false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+            } else {
+                EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und entfernt werden:");
+                for (String incompatibleName : incompatibleNames) {
+                    b.addField(incompatibleName, "", false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+                return;
             }
-            e.getChannel().sendMessage(b.build()).queue();
+
+            if (incompatibleNames.size() > 0) {
+                EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und entfernt werden:");
+                for (String incompatibleName : incompatibleNames) {
+                    b.addField(incompatibleName, "", false);
+                }
+                e.getChannel().sendMessage(b.build()).queue();
+            }
         }
     }
 
