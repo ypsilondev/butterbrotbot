@@ -11,6 +11,7 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
+import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
@@ -32,7 +33,8 @@ public class MongoController {
         );
 
         CodecRegistry extraCodecs = CodecRegistries.fromCodecs(
-                LinkCodec.EMPTY_HOLDER
+                LinkCodec.EMPTY_CODEC,
+                DirectoryCodec.EMPTY_CODEC
         );
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry()
                 , extraCodecs);

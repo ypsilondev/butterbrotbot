@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class LinkCodec implements Codec<LinkCodec> {
 
-    public static final LinkCodec EMPTY_HOLDER = new LinkCodec(null, null, null, null, null);
+    public static final LinkCodec EMPTY_CODEC = new LinkCodec(null, null, null, null, null);
 
     private final ObjectId _id;
     private final String name;
