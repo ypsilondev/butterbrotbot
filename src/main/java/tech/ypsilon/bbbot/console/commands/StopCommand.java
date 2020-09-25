@@ -20,7 +20,7 @@ public class StopCommand extends ConsoleCommand {
     @Override
     public void onExecute(String[] args) {
         LOGGER.info("Stopping bot...");
-        Init.stopBot();
+        Init.stopBot(true);
     }
 
 }
