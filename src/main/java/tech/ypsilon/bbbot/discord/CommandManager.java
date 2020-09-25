@@ -27,6 +27,7 @@ public class CommandManager {
         commands.add(new GetDirectoryCommand());
         commands.add(new AddDirectoryCommand());
         commands.add(new EditDirectoryCommand());
+        commands.add(new StudiengangCommand());
 
         DiscordController.getJDA().addEventListener(new CommandListener());
         DiscordController.getJDA().addEventListener(new RoleListener());
