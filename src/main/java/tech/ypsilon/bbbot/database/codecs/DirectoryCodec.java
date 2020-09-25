@@ -155,6 +155,7 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
         writer.writeStartArray("links");
         for (ObjectId link : data.links)
             writer.writeObjectId(link);
+        writer.writeEndArray();
 
         writer.writeEndDocument();
     }
