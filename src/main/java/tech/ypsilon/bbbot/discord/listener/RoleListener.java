@@ -101,7 +101,7 @@ public class RoleListener extends ListenerAdapter {
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
         if(event.getMessageIdLong() == 759043590432882798L) {
             MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
-            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getIdLong())) > 0){
+            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
                 Document doc = collection.find(new Document("emote", event.getReactionEmote().getIdLong())).first();
 
                 assert doc != null;
@@ -115,7 +115,7 @@ public class RoleListener extends ListenerAdapter {
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
         if(event.getMessageIdLong() == 759043590432882798L  && event.getMember() != null) {
             MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengänge");
-            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getIdLong())) > 0){
+            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
                 Document doc = collection.find(new Document("emote", event.getReactionEmote().getIdLong())).first();
 
                 assert doc != null;

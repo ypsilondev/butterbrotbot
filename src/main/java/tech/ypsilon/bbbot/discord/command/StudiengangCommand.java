@@ -44,14 +44,14 @@ public class StudiengangCommand extends Command {
             case "add":
                 if(args.length < 4){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
-                            "Eingabe: @role :emote Name", false).build()).queue();
+                            "Eingabe: :emote @role Name", false).build()).queue();
                     return;
                 }
 
-                if(e.getMessage().getMentionedRoles().size() == 0 || e.getMessage().getEmotes().size() == 0){
+                if(e.getMessage().getMentionedRoles().size() == 0){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
-                            "Es muss eine Rolle und Emote erwähnt werden", false).build()).queue();
-
+                            "Es muss eine Rolle erwähnt werden", false).build()).queue();
+                    return;
                 }
 
                 if(collection.countDocuments(new Document("roleId", e.getMessage().getMentionedRoles().get(0).getIdLong())) > 0){
@@ -60,7 +60,7 @@ public class StudiengangCommand extends Command {
                     return;
                 }
 
-                if(collection.countDocuments(new Document("emote", e.getMessage().getEmotes().get(0).getIdLong())) > 0){
+                if(collection.countDocuments(new Document("emote", e.getMessage().getContentRaw().split(" ")[3])) > 0){
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Fehler beim Erstellen",
                             "Der Emote wird schon benutzt", false).build()).queue();
                     return;
@@ -74,7 +74,7 @@ public class StudiengangCommand extends Command {
 
                 collection.insertOne(new Document("_id", new ObjectId())
                         .append("roleId", e.getMessage().getMentionedRoles().get(0).getIdLong())
-                        .append("emote", e.getMessage().getEmotes().get(0).getId())
+                        .append("emote", e.getMessage().getContentRaw().split(" ")[3])
                         .append("name", args[3]));
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
@@ -114,12 +114,12 @@ public class StudiengangCommand extends Command {
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed().addField("Studiengänge", list.toString(), false).build()).queue();
             case "update":
-                List<Long> emotes = new ArrayList<>();
+                List<String> emotes = new ArrayList<>();
 
                 StringBuilder msg = new StringBuilder();
                 for(Document doc : collection.find()){
-                    emotes.add(doc.getLong("emote"));
-                    msg.append(doc.getLong("emote")).append(" - ").append(doc.getString("name")).append("\n");
+                    emotes.add(doc.getString("emote"));
+                    msg.append(doc.getString("emote")).append(" - ").append(doc.getString("name")).append("\n");
                 }
 
                 Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"))
@@ -127,17 +127,17 @@ public class StudiengangCommand extends Command {
                             message.editMessage(messageStart + msg.toString() + messageEnd).queue();
 
                             List<MessageReaction> reactions = new ArrayList<>();
-                            for(Long emote : emotes){
+                            for(String emote : emotes){
                                 for(MessageReaction reaction : message.getReactions()){
-                                    if(reaction.getReactionEmote().getIdLong() != emote){
-                                        message.addReaction(Objects.requireNonNull(e.getJDA().getEmoteById(emote))).queue();
+                                    if(reaction.getReactionEmote().getEmoji().equals(emote)){
+                                        message.addReaction(emote).queue();
                                         reactions.add(reaction);
                                     }
                                 }
                             }
 
                             for(MessageReaction reaction : reactions){
-                                message.removeReaction(reaction.getReactionEmote().getEmote()).queue();
+                                message.removeReaction(reaction.getReactionEmote().getEmoji()).queue();
                             }
                 });
 
