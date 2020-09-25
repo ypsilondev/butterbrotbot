@@ -126,18 +126,12 @@ public class StudiengangCommand extends Command {
                         .retrieveMessageById("759043590432882798").queue(message -> {
                             message.editMessage(messageStart + msg.toString() + messageEnd).queue();
 
-                            List<MessageReaction> reactions = new ArrayList<>();
                             for(String emote : emotes){
                                 for(MessageReaction reaction : message.getReactions()){
-                                    if(reaction.getReactionEmote().getEmoji().equals(emote)){
+                                    if(!reaction.getReactionEmote().getEmoji().equals(emote)){
                                         message.addReaction(emote).queue();
-                                        reactions.add(reaction);
                                     }
                                 }
-                            }
-
-                            for(MessageReaction reaction : reactions){
-                                message.removeReaction(reaction.getReactionEmote().getEmoji()).queue();
                             }
                 });
 
