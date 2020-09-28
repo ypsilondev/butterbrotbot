@@ -34,7 +34,8 @@ public class StudiengangCommand extends Command {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
-        if(Objects.requireNonNull(e.getMember()).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L)) {
+        if(Objects.requireNonNull(e.getMember()).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L
+                || role.getIdLong() == 757718320526000138L)) {
             e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Kein Recht",
                     "Du hast kein Recht diesen Befehl auszuführen", false).build()).queue();
             return;
