@@ -19,6 +19,7 @@ public class AudioManager {
     private final AudioPlayerManager PLAYER_MANAGER;
 
     public AudioManager() {
+        instance = this;
         PLAYER_MANAGER = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(PLAYER_MANAGER);
     }
