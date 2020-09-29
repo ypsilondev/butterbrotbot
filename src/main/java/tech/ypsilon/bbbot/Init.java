@@ -11,6 +11,7 @@ import tech.ypsilon.bbbot.discord.listener.RoleListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.voice.AudioManager;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
@@ -32,6 +33,7 @@ public class Init {
     static void postInit() throws Exception {
         LOGGER.info("Starting post-init state");
         new CommandManager();
+        new AudioManager();
         LOGGER.info("Passed post-init state");
     }
 
