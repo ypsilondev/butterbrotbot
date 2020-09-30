@@ -1,0 +1,20 @@
+**Discord bot for the KIT Erstis WS 20/21 guild**
+
+[![Discord](https://img.shields.io/discord/756547960229199902.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ZADFRNu)
+
+**Developers**
+
+* yJulian (Julian#1816)
+* yNiklas (Niklas#0007)
+* Gregyyy (Gregyyy#4052)
+
+**Used Libraries**
+
+* [Lavaplayer](https://github.com/sedmelluq/lavaplayer)
+* [JDA](https://github.com/DV8FromTheWorld/JDA)
+* [MongoDB sync](https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync)
+* [SLF4J](https://mvnrepository.com/artifact/org.slf4j)
+* [JUnit](https://junit.org/junit5/)
+* [YAML](https://yaml.org/)
+
+    *And all inherited libraries*
