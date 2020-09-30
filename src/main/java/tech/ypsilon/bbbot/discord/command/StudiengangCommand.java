@@ -2,7 +2,9 @@ package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -123,16 +125,22 @@ public class StudiengangCommand extends Command {
                     msg.append(doc.getString("emote")).append(" - ").append(doc.getString("name")).append("\n");
                 }
 
-                Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"))
+                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"));
+                textChannel
                         .retrieveMessageById("759043590432882798").queue(message -> {
                             message.editMessage(messageStart + msg.toString() + messageEnd).queue();
 
                             for(String emote : emotes){
-                                for(MessageReaction reaction : message.getReactions()){
-                                    if(!reaction.getReactionEmote().getEmoji().equals(emote)){
-                                        message.addReaction(emote).queue();
-                                    }
+                                ReactionTemp reactionTemp = new ReactionTemp(textChannel, textChannel.retrievePinnedMessages().complete());
+
+                                if(!reactionTemp.contains(emote)) {
+                                    reactionTemp.addEmote(emote);
                                 }
+                                //for(MessageReaction reaction : message.getReactions()){
+                                //    if(!reaction.getReactionEmote().getEmoji().equals(emote)){
+                                //        message.addReaction(emote).queue();
+                                //    }
+                                //}
                             }
                 });
 
@@ -141,4 +149,50 @@ public class StudiengangCommand extends Command {
                                 false).build()).queue();
         }
     }
+
+    private class ReactionTemp {
+
+        private TextChannel channel;
+        private List<Message> messages;
+        private List<MessageReaction> reactions = new ArrayList<>();
+
+        public ReactionTemp(TextChannel channel, List<Message> msg) {
+            this.messages = msg;
+            this.channel = channel;
+            msg.forEach(m -> reactions.addAll(m.getReactions()));
+        }
+
+        public List<MessageReaction> getReactions() {
+            return reactions;
+        }
+
+        public List<Message> getMessages() {
+            return messages;
+        }
+
+        public void addEmote(String emoji) {
+            boolean finished = false;
+            for (Message reactionTempMessage : messages) {
+                if(reactionTempMessage.getReactions().size() < 19) {
+                    reactionTempMessage.addReaction(emoji).queue();
+                    finished = true;
+                    break;
+                }
+            }
+            if(!finished) {
+                Message complete = channel.sendMessage("-").complete();
+                complete.addReaction(emoji).queue();
+            }
+        }
+
+        public boolean contains(String emote) {
+            for (MessageReaction reaction : reactions) {
+                if(reaction.getReactionEmote().getEmoji().equals(emote))
+                    return true;
+            }
+            return false;
+        }
+
+    }
+
 }
