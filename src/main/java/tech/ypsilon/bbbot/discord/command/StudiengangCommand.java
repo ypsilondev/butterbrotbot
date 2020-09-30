@@ -131,11 +131,14 @@ public class StudiengangCommand extends Command {
                             message.editMessage(messageStart + msg.toString() + messageEnd).queue();
 
                             for(String emote : emotes){
-                                ReactionTemp reactionTemp = new ReactionTemp(textChannel, textChannel.retrievePinnedMessages().complete());
+                                textChannel.retrievePinnedMessages().queue(messages -> {
+                                    ReactionTemp reactionTemp = new ReactionTemp(textChannel, messages);
 
-                                if(!reactionTemp.contains(emote)) {
-                                    reactionTemp.addEmote(emote);
-                                }
+                                    if(!reactionTemp.contains(emote)) {
+                                        reactionTemp.addEmote(emote);
+                                    }
+                                });
+
                                 //for(MessageReaction reaction : message.getReactions()){
                                 //    if(!reaction.getReactionEmote().getEmoji().equals(emote)){
                                 //        message.addReaction(emote).queue();
