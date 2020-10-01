@@ -1,11 +1,11 @@
 package tech.ypsilon.bbbot.discord;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.command.*;
 import tech.ypsilon.bbbot.discord.listener.CommandListener;
+import tech.ypsilon.bbbot.discord.listener.DefaultListener;
 import tech.ypsilon.bbbot.discord.listener.RoleListener;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
@@ -32,8 +32,7 @@ public class CommandManager {
         commands.add(new VoicePlayCommand());
         commands.add(new VoiceLeaveCommand());
 
-        DiscordController.getJDA().addEventListener(new CommandListener());
-        DiscordController.getJDA().addEventListener(new RoleListener());
+        DiscordController.getJDA().addEventListener(new DefaultListener(), new CommandListener(), new RoleListener());
     }
 
     public static List<Command> getCommands() {
