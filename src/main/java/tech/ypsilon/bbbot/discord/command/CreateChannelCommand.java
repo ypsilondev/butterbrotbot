@@ -2,16 +2,20 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class CreateChannelCommand extends Command{
 
     private final HashMap<String, Integer> games = new HashMap<>();
+    public static List<VoiceChannel> channels = new ArrayList<>();
 
     public CreateChannelCommand() {
         games.put("Among us", 10);
@@ -64,14 +68,17 @@ public class CreateChannelCommand extends Command{
         if(Pattern.compile("-?\\d+(\\.\\d+)?").matcher(args[0]).matches()){
             int i = Integer.parseInt(args[0]);
             if(i == -1){
-                guild.createVoiceChannel(e.getMember().getEffectiveName() + "s Channel", category).queue();
+                guild.createVoiceChannel(e.getMember().getEffectiveName() + "s Channel", category)
+                        .queue(voiceChannel -> channels.add(voiceChannel));
             }else if(i < -1 || i == 0){
                 e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Begrenzungszahl falsch",
                         "Die Begrenzungszahl ist falsch. Sie darf entweder -1 oder größer als 0 sein.", true)
                         .build()).queue();
             }else{
-                guild.createVoiceChannel(e.getMember().getEffectiveName() + "s Channel", category)
-                        .queue(voiceChannel -> voiceChannel.getManager().setUserLimit(i).queue());
+                guild.createVoiceChannel(e.getMember().getEffectiveName() + "s Channel", category).queue(voiceChannel -> {
+                    channels.add(voiceChannel);
+                    voiceChannel.getManager().setUserLimit(i).queue();
+                });
             }
         }else{
             StringBuilder input = new StringBuilder();
@@ -82,8 +89,10 @@ public class CreateChannelCommand extends Command{
 
             for(String game : games.keySet()){
                 if(game.equalsIgnoreCase(input.toString())){
-                    guild.createVoiceChannel(e.getMember().getEffectiveName() + "s " + game, category)
-                            .queue(voiceChannel -> voiceChannel.getManager().setUserLimit(games.get(game)).queue());
+                    guild.createVoiceChannel(e.getMember().getEffectiveName() + "s " + game, category).queue(voiceChannel -> {
+                        channels.add(voiceChannel);
+                        voiceChannel.getManager().setUserLimit(games.get(game)).queue();
+                    });
                     return;
                 }
             }
