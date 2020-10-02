@@ -19,6 +19,14 @@ public class CreateChannelCommand extends Command{
         games.put("Overwatch", 6);
         games.put("League of Legends", 5);
         games.put("Coop", 2);
+        games.put("Rainbow Six", 5);
+        games.put("R6", 5);
+        games.put("Rainbow Six Siege", 5);
+        games.put("CS:GO", 5);
+        games.put("CSGO", 5);
+        games.put("Rocket League", 3);
+        games.put("Dead by Daylight", 5);
+        games.put("Apex Legends", 3);
     }
 
     @Override
