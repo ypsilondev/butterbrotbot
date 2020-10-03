@@ -16,6 +16,10 @@ import tech.ypsilon.bbbot.database.MongoController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Codec for the StudyGroups
+ * Holds all the information that is later on stored in the database
+ */
 public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     public static final StudyGroupCodec EMPTY_CODEC = new StudyGroupCodec(null, null, null);
@@ -47,11 +51,28 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         return studyGroupCodec;
     }
 
+    /**
+     * Adds a user to a given group
+     * @param group The group the user should be added to
+     * @param user The user that should be added
+     * @return false if the user is already in a group
+     * @deprecated Use {@link StudyGroupCodec#addToGroup(User)} inside an object instead
+     */
+    @Deprecated
     public static boolean addToGroup(StudyGroupCodec group, User user) {
-        StudyGroupCodec userGroup = retrieveStudyGroup(user);
-        if(userGroup != null)
-            return false;
-        return getCollection().updateOne(Filters.eq("_id", group._id),
+        return group.addToGroup(user);
+    }
+
+    /**
+     * Add a user to a given group
+     * @param user the user that should be added
+     * @return false if the user is in a group. true if not
+     */
+    public boolean addToGroup(User user) {
+        if(retrieveStudyGroup(user) != null)    //Check if user is already in a group
+            return false;                       //And return false if he is.
+        this.users.add(user.getIdLong());
+        return getCollection().updateOne(Filters.eq("_id", _id),
                 Updates.addToSet("users", user.getIdLong())).wasAcknowledged();
     }
 
@@ -76,6 +97,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     @Override
     public StudyGroupCodec decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
+
         ObjectId _id = reader.readObjectId("_id");
         String name = reader.readString("name");
         reader.readName("users");
@@ -84,6 +106,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         while(reader.readBsonType() != BsonType.END_OF_DOCUMENT)
             users.add(reader.readInt64());
         reader.readEndArray();
+
         reader.readEndDocument();
         return new StudyGroupCodec(_id, name, users);
     }
