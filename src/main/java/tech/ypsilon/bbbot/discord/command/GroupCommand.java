@@ -20,7 +20,9 @@ public class GroupCommand extends Command {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
-        if (args.length < 2) {
+        if (args.length == 0 ||
+                (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("add")) &&
+                        args.length < 2) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Falsche Syntax");
             e.getChannel().sendMessage(b.build()).queue();
@@ -62,7 +64,7 @@ public class GroupCommand extends Command {
         List<User> erroredUser = new ArrayList<>();
         StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(e.getAuthor());
         for (User contributor : contributors) {
-            if (!StudyGroupCodec.addToGroup(group, contributor)) {
+            if (!group.addToGroup(contributor)) {
                 hasErrored = true;
                 erroredUser.add(contributor);
             }
