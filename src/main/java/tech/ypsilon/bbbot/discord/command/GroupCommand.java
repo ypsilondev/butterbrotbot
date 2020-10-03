@@ -35,7 +35,9 @@ public class GroupCommand extends Command {
     }
 
     private void createGroup(GuildMessageReceivedEvent e, String name) {
-        StudyGroupCodec group = StudyGroupCodec.createGroup(name, e.getMessage().getMentionedUsers());
+        List<User> members = new ArrayList<>();
+        members.add(e.getAuthor());
+        StudyGroupCodec group = StudyGroupCodec.createGroup(name, members);
         if (group == null) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Dieser Lerngruppenname ist bereits vergeben");
