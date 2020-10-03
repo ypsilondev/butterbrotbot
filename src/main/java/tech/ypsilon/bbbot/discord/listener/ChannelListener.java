@@ -1,8 +1,12 @@
 package tech.ypsilon.bbbot.discord.listener;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
@@ -11,33 +15,48 @@ public class ChannelListener extends ListenerAdapter {
     private final static long CAT_ID = 762052348259467275L;
 
     @Override
+    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent e) {
+        updateChannels(e.getChannelLeft(), e.getMember());
+        updateUser(e.getChannelJoined(), e.getChannelLeft(), e.getGuild(), e.getMember());
+    }
+
+    @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent e) {
-        if (e.getChannelJoined().getIdLong() == 762050439859929149L) {
-            StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(e.getMember().getUser());
-            if (group == null) {
-                e.getGuild().kickVoiceMember(e.getMember()).queue();
-                return;
-            }
-
-            for (VoiceChannel voiceChannel : e.getGuild().getCategoryById(CAT_ID).getVoiceChannels()) {
-                if (voiceChannel.getName().equals(group.getName())) {
-                    e.getGuild().moveVoiceMember(e.getMember(), voiceChannel);
-                    return;
-                }
-            }
-
-            e.getGuild().getCategoryById(CAT_ID).createVoiceChannel(group.getName())
-                    .queue(voiceChannel -> {
-                e.getGuild().moveVoiceMember(e.getMember(), voiceChannel).queue();
-            });
-        }
+        updateUser(e.getChannelJoined(), e.getChannelLeft(), e.getGuild(), e.getMember());
     }
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(event.getMember().getUser());
-        if (event.getChannelLeft().getName().equals(group.getName()) && event.getChannelLeft().getMembers().size() == 0) {
-            event.getChannelLeft().delete().queue();
+        updateChannels(event.getChannelLeft(), event.getMember());
+    }
+
+    private void updateUser(VoiceChannel channelJoined, VoiceChannel channelLeft, Guild guild, Member member) {
+        if (channelJoined.getIdLong() == 762050439859929149L) {
+            StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
+            if (group == null) {
+                guild.kickVoiceMember(member).queue();
+                return;
+            }
+
+            for (VoiceChannel voiceChannel : guild.getCategoryById(CAT_ID).getVoiceChannels()) {
+                if (voiceChannel.getName().equals(group.getName())) {
+                    guild.moveVoiceMember(member, voiceChannel);
+                    return;
+                }
+            }
+
+            guild.getCategoryById(CAT_ID).createVoiceChannel(group.getName())
+                    .queue(voiceChannel -> {
+                        guild.moveVoiceMember(member, voiceChannel).queue();
+                    });
         }
     }
+
+    private void updateChannels(VoiceChannel channelLeft, Member member) {
+        StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
+        if (channelLeft.getName().equals(group.getName()) && channelLeft.getMembers().size() == 0) {
+            channelLeft.delete().queue();
+        }
+    }
+
 }
