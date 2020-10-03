@@ -1,5 +1,7 @@
 package tech.ypsilon.bbbot.discord.listener;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -40,7 +42,7 @@ public class ChannelListener extends ListenerAdapter {
 
             for (VoiceChannel voiceChannel : guild.getCategoryById(CAT_ID).getVoiceChannels()) {
                 if (voiceChannel.getName().equals(group.getName())) {
-                    guild.moveVoiceMember(member, voiceChannel);
+                    guild.moveVoiceMember(member, voiceChannel).queue();
                     return;
                 }
             }
@@ -53,6 +55,9 @@ public class ChannelListener extends ListenerAdapter {
     }
 
     private void updateChannels(VoiceChannel channelLeft, Member member) {
+        Category parent = channelLeft.getParent();
+        if(parent == null) return;
+        if(parent.getIdLong() != CAT_ID) return;
         StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
         if (channelLeft.getName().equals(group.getName()) && channelLeft.getMembers().size() == 0) {
             channelLeft.delete().queue();
