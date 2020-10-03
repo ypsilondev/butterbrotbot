@@ -28,15 +28,33 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     private final String name;
     private final List<Long> users;
 
+    /**
+     * Retrieve a group with a given name
+     * @param name the name from the group
+     * @return the group or null if the name is not found
+     */
     public static StudyGroupCodec retrieveStudyGroup(String name) {
         return getCollection().find(Filters.eq("name", name)).first();
     }
 
+    /**
+     * Retrieve the group from a user
+     * @param user the user from JDA
+     * @return the group or null if the user is in no group
+     */
     public static StudyGroupCodec retrieveStudyGroup(User user) {
         long userId = user.getIdLong();
         return getCollection().find(Filters.in("users", userId)).first();
     }
 
+    /**
+     * Create a new group with a given name
+     * @param name the name from the group
+     * @param members the initial members that should be in the group
+     * @return the group
+     * @throws ArrayIndexOutOfBoundsException if the member array is empty
+     * @throws UserInGroupException if one of the members is already in a group
+     */
     public static StudyGroupCodec createGroup(String name, List<User> members) {
         StudyGroupCodec studyGroupCodec = retrieveStudyGroup(name);
         if(studyGroupCodec != null) {
@@ -44,6 +62,9 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         }
         if(members.size() == 0)
             throw new ArrayIndexOutOfBoundsException();
+        if (members.stream().anyMatch(user -> retrieveStudyGroup(user) != null)) {
+            throw new UserInGroupException();
+        }
         List<Long> users = new ArrayList<>();
         members.forEach(user -> users.add(user.getIdLong()));
         studyGroupCodec = new StudyGroupCodec(new ObjectId(), name, users);
@@ -76,20 +97,38 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
                 Updates.addToSet("users", user.getIdLong())).wasAcknowledged();
     }
 
+    /**
+     * Internal method for creating objects
+     * @param _id the ID
+     * @param name the name
+     * @param users the users
+     */
     private StudyGroupCodec(ObjectId _id, String name, List<Long> users) {
         this._id = _id;
         this.name = name;
         this.users = users;
     }
 
+    /**
+     * Get the ID from the dataset
+     * @return the ObjectID
+     */
     public ObjectId getID() {
         return _id;
     }
 
+    /**
+     * Get the name from the dataset
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the Discord ids from the members
+     * @return the List<Long> with the ids
+     */
     public List<Long> getUserIDs() {
         return users;
     }
@@ -133,4 +172,9 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     public Class<StudyGroupCodec> getEncoderClass() {
         return StudyGroupCodec.class;
     }
+
+    public static class UserInGroupException extends RuntimeException{
+
+    }
+
 }

@@ -101,7 +101,7 @@ public class MongoController {
     /**
      * Return a collection inside the database for the project with type Document(BSON)
      * @param name the name from the collection
-     * @return
+     * @return a collection with the name and type Document(BSON)
      */
     public MongoCollection<Document> getCollection(String name) {
         return DATABASE.getCollection(name, Document.class);
