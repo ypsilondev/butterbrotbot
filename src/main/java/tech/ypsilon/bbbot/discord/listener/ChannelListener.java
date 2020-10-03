@@ -50,6 +50,7 @@ public class ChannelListener extends ListenerAdapter {
             guild.getCategoryById(CAT_ID).createVoiceChannel(group.getName())
                     .queue(voiceChannel -> {
                         guild.moveVoiceMember(member, voiceChannel).queue();
+                        voiceChannel.getManager().setUserLimit(1).queue();
                     });
         }
     }
