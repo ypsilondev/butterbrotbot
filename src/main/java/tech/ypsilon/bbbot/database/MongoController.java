@@ -25,6 +25,11 @@ public class MongoController {
     private final MongoClient CLIENT;
     private final MongoDatabase DATABASE;
 
+    /**
+     * Initializes the MongoController.
+     * Fetches all the necessary settings from the {@link SettingsController}
+     * and registers the Codecs inside the codecs package
+     */
     public MongoController() {
         instance = this;
         MongoCredential credential = MongoCredential.createCredential(
@@ -57,30 +62,63 @@ public class MongoController {
         this.DATABASE = CLIENT.getDatabase(BotInfo.NAME);
     }
 
+    /**
+     * @return the current instance from the MongoController
+     */
     public static MongoController getInstance() {
         return instance;
     }
 
+    /**
+     * Get the MongoClient database connection
+     * @return the Client
+     */
     public MongoClient getClient() {
         return CLIENT;
     }
 
+    /**
+     * Returns the database that is used to store all the collections that are necessary for
+     * the bot to function.
+     * Name of the Database is ButterBrot {@link BotInfo#NAME}
+     * @return the project database
+     */
     public MongoDatabase getDatabase() {
         return DATABASE;
     }
 
+    /**
+     * Return a collection inside the database for the project
+     * @param name the name from the collection
+     * @param aClass the class type
+     * @param <T> the Datatype
+     * @return a collection with the datatype T
+     */
     public <T> MongoCollection<T> getCollection(String name, Class<T> aClass) {
         return DATABASE.getCollection(name, aClass);
     }
 
+    /**
+     * Return a collection inside the database for the project with type Document(BSON)
+     * @param name the name from the collection
+     * @return
+     */
     public MongoCollection<Document> getCollection(String name) {
         return DATABASE.getCollection(name, Document.class);
     }
 
+    /**
+     * Get the Host
+     * @return the hostname as a String
+     */
     public String getHost() {
         return (String) SettingsController.getValue("mongo.host");
     }
 
+    /**
+     * Get the Port
+     * @return the port as a Integer
+     */
     public int getPort() {
         return (int) SettingsController.getValue("mongo.port");
     }
