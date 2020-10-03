@@ -31,6 +31,7 @@ public class CommandManager {
         commands.add(new WriteAfterMeCommand());
         commands.add(new VoicePlayCommand());
         commands.add(new VoiceLeaveCommand());
+        commands.add(new GroupCommand());
 
         DiscordController.getJDA().addEventListener(new CommandListener());
         DiscordController.getJDA().addEventListener(new RoleListener());
