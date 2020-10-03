@@ -13,6 +13,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
 import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
+import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.util.Collections;
@@ -34,7 +35,8 @@ public class MongoController {
 
         CodecRegistry extraCodecs = CodecRegistries.fromCodecs(
                 LinkCodec.EMPTY_CODEC,
-                DirectoryCodec.EMPTY_CODEC
+                DirectoryCodec.EMPTY_CODEC,
+                StudyGroupCodec.EMPTY_CODEC
         );
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry()
                 , extraCodecs);
