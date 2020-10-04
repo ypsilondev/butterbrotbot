@@ -34,6 +34,10 @@ public class CreateChannelCommand extends Command{
         games.put("The Division 2", 4);
         games.put("For Honor", 4);
         games.put("Ghost Recon", 4);
+        games.put("Uso", 8);
+        games.put("Stronghold", 4);
+        games.put("Destiny 2", 4);
+        games.put("Valorant", 5);
     }
 
     @Override
