@@ -4,7 +4,6 @@ import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -14,6 +13,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class StudiengangCommand extends Command {
 
@@ -115,7 +115,7 @@ public class StudiengangCommand extends Command {
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed().addField("Studiengänge", list.toString(), false).build()).queue();
             case "update":
-                List<String> emotes = new ArrayList<>();
+                ArrayList<String> emotes = new ArrayList<>();
 
                 StringBuilder msg = new StringBuilder();
                 for (Document doc : collection.find()) {
@@ -124,25 +124,10 @@ public class StudiengangCommand extends Command {
                 }
 
                 TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"));
-                textChannel.retrieveMessageById("759043590432882798").queue(message -> {
+                textChannel.retrieveMessageById("759043590432882798").queue(message ->
+                        message.editMessage(messageStart + msg.toString() + messageEnd).queue());
 
-                    message.editMessage(messageStart + msg.toString() + messageEnd).queue();
-                    textChannel.retrievePinnedMessages().queue(messages -> {
-                        ReactionTemp reactionTemp = new ReactionTemp(textChannel, messages);
-
-                        try {
-                            reactionTemp.updateDatastore(emotes);
-                            System.out.println("1");
-                            for (String emote : emotes) {
-                                if (!reactionTemp.contains(emote)) {
-                                    reactionTemp.addEmote(emote);
-                                }
-                            }
-                        } catch (InterruptedException interruptedException) {
-                            interruptedException.printStackTrace();
-                        }
-                    });
-                });
+                textChannel.retrievePinnedMessages().queue(messages -> addReactionsToMessage(emotes, messages, textChannel));
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
                         .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
@@ -150,86 +135,40 @@ public class StudiengangCommand extends Command {
         }
     }
 
-    private class ReactionTemp {
+    @SuppressWarnings("unchecked")
+    private void addReactionsToMessage(ArrayList<String> emotes, List<Message> messages, TextChannel textChannel){
+        for(String emote : ((ArrayList<String>)emotes.clone())){
+            if(messages.stream().noneMatch(message -> message.getReactions().stream()
+                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
+                for (Message message : messages) {
+                    if (retrieveMessageReaction(message).size() < 20) {
+                        message.addReaction(emote).queue();
+                        emotes.remove(emote);
+                        break;
+                    }
+                }
+            }else{
+                emotes.remove(emote);
+            }
+        }
 
-        private TextChannel channel;
-        private List<Message> messages;
-        private List<MessageReaction> reactions = new ArrayList<>();
-        private Set<String> emojis = new HashSet<>();
-        private HashMap<Message, List<String>> messageListHashMap = new HashMap<>();
-
-        public ReactionTemp(TextChannel channel, List<Message> msg) {
-            this.messages = msg;
-            this.channel = channel;
-            msg.forEach(m -> {
-                reactions.addAll(m.getReactions());
-                m.getReactions().forEach(mr -> this.emojis.add(mr.getReactionEmote().getEmoji()));
+        if(emotes.size() > 0){
+            textChannel.sendMessage("-").queue(message -> {
+                message.pin().queue();
+                messages.add(message);
+                addReactionsToMessage(emotes, messages, textChannel);
             });
         }
+    }
 
-        void updateDatastore(List<String> emotes) throws InterruptedException {
-            /*CountDownLatch latch = new CountDownLatch(messages.size()*emotes.size());
-            System.out.println(messages + " - " + emotes);
-            for (Message message : messages) {
-                for (String emote : emotes) {
-                    message.retrieveReactionUsers(emote).queue(users -> {
-                        System.out.println(message + " - " + emote + " - " + users.size());
-                        if(!users.isEmpty()) {
-                            emojis.add(emote);
-                            List<String> orDefault = messageListHashMap.getOrDefault(message, new ArrayList<>());
-                            orDefault.add(emote);
-                            messageListHashMap.put(message, orDefault);
-                        }
-                        latch.countDown();
-                    });
-                }
-            }
-            latch.await();*/
-        }
-
-        public List<MessageReaction> getReactions() {
-            return reactions;
-        }
-
-        public List<Message> getMessages() {
-            return messages;
-        }
-
-        public void addEmote(String emoji) {
-            if (contains(emoji))
-                return;
-
-            boolean finished = false;
-            for (Message reactionTempMessage : messages) {
-                //if(messageListHashMap.getOrDefault(reactionTempMessage, new ArrayList<>()).size() < 19) {
-                //    reactionTempMessage.addReaction(emoji).queue();
-                //    finished = true;
-                //    break;
-                //}
-                if (reactionTempMessage.getReactions().size() < 19) {
-                    reactionTempMessage.addReaction(emoji).queue();
-                    finished = true;
-                    break;
-                }
-            }
-            if (!finished) {
-                Message complete = channel.sendMessage("-").complete();
-                complete.addReaction(emoji).queue();
-            }
-        }
-
-        public boolean contains(String emote) {
-            for (Message message : messages) {
-                List<User> complete = message.retrieveReactionUsers(emote).complete();
-                if (!complete.isEmpty()) {
-                    emojis.add(emote);
-                    return true;
-                }
-            }
-
-            return emojis.contains(emote);
-        }
-
+    private List<MessageReaction> retrieveMessageReaction(Message message) {
+        AtomicReference<List<MessageReaction>> list = new AtomicReference<>();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> list.set(msg.getReactions()));
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException ignored) { }
+        return list.get();
     }
 
 }
