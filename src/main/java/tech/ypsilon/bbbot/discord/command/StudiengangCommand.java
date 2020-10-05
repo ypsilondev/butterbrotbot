@@ -13,6 +13,7 @@ import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -158,11 +159,15 @@ public class StudiengangCommand extends Command {
         private TextChannel channel;
         private List<Message> messages;
         private List<MessageReaction> reactions = new ArrayList<>();
+        private List<String> emojiMessage = new ArrayList<>();
 
         public ReactionTemp(TextChannel channel, List<Message> msg) {
             this.messages = msg;
             this.channel = channel;
-            msg.forEach(m -> reactions.addAll(m.getReactions()));
+            msg.forEach(m -> {
+                reactions.addAll(m.getReactions());
+                m.getReactions().forEach(mr -> this.emojiMessage.add(mr.getReactionEmote().getEmoji()));
+            });
         }
 
         public List<MessageReaction> getReactions() {
@@ -174,6 +179,9 @@ public class StudiengangCommand extends Command {
         }
 
         public void addEmote(String emoji) {
+            if(emojiMessage.contains(emoji))
+                return;
+
             boolean finished = false;
             for (Message reactionTempMessage : messages) {
                 if(reactionTempMessage.getReactions().size() < 19) {
