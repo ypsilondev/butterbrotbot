@@ -107,3 +107,4 @@ buildNumber.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,maven
 
 settings.yml
+/bin/
