@@ -31,7 +31,6 @@ public class BirthdayMongoDBWrapper {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		while(cursor.hasNext()) {
 			usr = (Document) cursor.next();
-			System.out.println(usr.get("name") + " -> " + usr.get("bday"));
 			ret.put((String)usr.get("name"), (String)usr.get("bday"));
 		}
 		return ret;

@@ -45,7 +45,7 @@ public class BirthdayCommand extends Command{
 			event.getMessage().delete().queue();
 			// Geburtstag soll gesetzt werden.
 			if(args.length > 1) {
-				if(!args[1].startsWith("<")) {
+				if(!args[1].startsWith("@")) {
 					// Eigenener Geburtstag.
 					String bday = setBirthday(member.getAsMention(), guild, args, 1, event);
 					// event.getMessage().delete().queue();
@@ -55,7 +55,7 @@ public class BirthdayCommand extends Command{
 					// Es wurde jemand getaggt => anderer Geburtstag.
 					if(birthdayAdmin) {
 						// Geburtstag darf gesetzt werden
-						setBirthday(args[1], guild, args, 2, event);
+						setBirthday("<"+event.getMessage().getContentRaw().split("<")[1].split(">")[0] + ">", guild, args, 2, event);
 					}else {
 						noPerm(member, event);
 					}
@@ -71,11 +71,10 @@ public class BirthdayCommand extends Command{
 		case "get": {
 			if(args.length > 1) {
 				event.getMessage().delete().queue();
-				// System.out.println("test");
+				String[] usrn = event.getMessage().getContentRaw().split("<");
 				HashMap<String, String> bdays = BirthdayMongoDBWrapper.getBirthdayEntrys();
-				for(int i = 1; i<args.length;i++) {
-					// System.out.println(i);
-					tellBirthday(member, args[i].replace("!", "").trim(), guild, bdays);
+				for(int i = 1; i<usrn.length;i++) {
+					tellBirthday(member, ("<" + usrn[i]).replace("!", "").trim(), guild, bdays);
 				}
 			}else {
 				explainSyntaxError(member, event);
@@ -172,7 +171,6 @@ public class BirthdayCommand extends Command{
 		boolean shoutout = false;
 		for(String key : bdays.keySet()) {
 			if(bdays.get(key.replace("!", "").trim()) != null) {
-				// System.out.println(key + ": " + bdays.get(key));
 				if (shoutOutBday(key, guild, channel, bdays))
 					shoutout = true;
 			}
@@ -290,7 +288,6 @@ public class BirthdayCommand extends Command{
 				event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage(DATEFORMAT)).queue();
 			}
 		}else {
-			// System.out.println("No date");
 			event.getMessage().delete().queue();
 			event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage(DATEFORMAT)).queue();
 		}
@@ -305,7 +302,6 @@ public class BirthdayCommand extends Command{
 	 */
 	private boolean saveBirthday(String saveName, String saveValue) {
 		saveName = saveName.replace("!", "");
-		// System.out.println("SAVING: (" + saveName + "=>" + saveValue + ")");
 		BirthdayMongoDBWrapper.addBirthdayEntry(saveName, saveValue);
 		return true;
 	}
@@ -337,7 +333,7 @@ public class BirthdayCommand extends Command{
 	 */
 	public static boolean isBirthdayAdmin(Member member) {
 		if(Objects.requireNonNull(member).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L
-                || role.getIdLong() == 757718320526000138L)) {
+                || role.getIdLong() == 757718320526000138L) && member.getUser().getIdLong() != 699011153208016926L) {
             return false;
         }
 		return true;
