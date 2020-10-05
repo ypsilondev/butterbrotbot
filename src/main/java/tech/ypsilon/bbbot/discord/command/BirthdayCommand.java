@@ -69,8 +69,8 @@ public class BirthdayCommand extends Command{
 			break;
 		}
 		case "get": {
-			event.getMessage().delete().queue();
 			if(args.length > 1) {
+				event.getMessage().delete().queue();
 				// System.out.println("test");
 				HashMap<String, String> bdays = BirthdayMongoDBWrapper.getBirthdayEntrys();
 				for(int i = 1; i<args.length;i++) {
@@ -92,8 +92,8 @@ public class BirthdayCommand extends Command{
 			break;
 		}
 		case "notifyhere": {
-			event.getMessage().delete().queue();
 			if(birthdayAdmin) {
+				event.getMessage().delete().queue();
 				BirthdayMongoDBWrapper.setDefaultChannel(guild.getId(), textChanel.getId());						
 			} else {
 				noPerm(member, event);
