@@ -33,7 +33,6 @@ public class BirthdayCommand extends Command{
 
 	@Override
 	public void onExecute(GuildMessageReceivedEvent event, String[] args) {
-		System.out.println("EXECUTE!");
 		Guild guild = event.getGuild();
 		TextChannel textChanel = event.getChannel();
 		Member member = event.getMember();
