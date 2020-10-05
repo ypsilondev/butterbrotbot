@@ -34,6 +34,7 @@ public class CommandManager {
         commands.add(new VoiceLeaveCommand());
         commands.add(new CreateChannelCommand());
         commands.add(new GroupCommand());
+        commands.add(new BirthdayCommand());
         DiscordController.getJDA().addEventListener(new DefaultListener(), new CommandListener(), new RoleListener(), new ChannelListener());
     }
 
