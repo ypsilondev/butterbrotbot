@@ -125,13 +125,26 @@ public class BirthdayCommand extends Command{
 	 */
 	@SuppressWarnings("unused")
 	public static void startNotifierService(int hours) {
+		System.out.println("[Birthday]: Registering the notification-service");
+		notifyAllGuilds();
+		
+		// Calculate time-offset to 08:00 AM, next day.
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+		String dateString = formatter.format(date);
+		int hour = Integer.parseInt(dateString.split(":")[0]);
+		int min  = Integer.parseInt(dateString.split(":")[1]);
+		long delay = (23-hour) * 60 * 60 + (60 - min) * 60 + 8 * 60 * 60;
+		
+		
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				notifyAllGuilds();
 			}
-		}, 0, hours, TimeUnit.HOURS);
+		}, delay, hours * 60 * 60, TimeUnit.SECONDS);
+		System.out.println("[Birthday]: registered the notification-service");
 	}
 	
 	

@@ -39,6 +39,8 @@ public class Init {
 
     static void startupComplete() throws Exception {
         new ConsoleManager();
+        // Register the Birthday Notifier.
+        BirthdayCommand.startNotifierService(24);
         LOGGER.info("Startup complete");
     }
 
