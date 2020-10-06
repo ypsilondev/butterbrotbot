@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.BirthdayMongoDBWrapper;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
@@ -99,7 +100,14 @@ public class BirthdayCommand extends Command{
 			}
 			break;
 		}
-		
+		case "time": {
+			event.getMessage().delete().queue();
+			Date date = new Date(System.currentTimeMillis());
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd.MM.YYYY");
+			String dateString = formatter.format(date);
+			event.getMember().getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Java sees following time: " + dateString)).queue();
+			break;
+		}
 		default:
 			explainSyntaxError(member, event);
 			break;
@@ -123,8 +131,9 @@ public class BirthdayCommand extends Command{
 	 */
 	@SuppressWarnings("unused")
 	public static void startNotifierService(int hours) {
-		System.out.println("[Birthday]: Registering the notification-service");
-		notifyAllGuilds();
+		ButterBrot.LOGGER.info("[Birthday]: Registering the notification-service");
+		
+		int notifyTime = 8;
 		
 		// Calculate time-offset to 08:00 AM, next day.
 		Date date = new Date(System.currentTimeMillis());
@@ -132,17 +141,39 @@ public class BirthdayCommand extends Command{
 		String dateString = formatter.format(date);
 		int hour = Integer.parseInt(dateString.split(":")[0]);
 		int min  = Integer.parseInt(dateString.split(":")[1]);
-		long delay = (23-hour) * 60 * 60 + (60 - min) * 60 + 8 * 60 * 60;
+		long delay = notifyTime * 60;
+		if(hour < notifyTime) {
+			delay = ((notifyTime-1) - hour) * 60 + (60 - min);
+		}else {
+			delay += (23-hour) * 60 + (60 - min);
+		}
 		
+		// System.out.println(delay);
+		// delay = 1;
 		
-		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
 		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				notifyAllGuilds();
+				try {
+					notifyAllGuilds();					
+				}catch (Exception e) {
+					System.err.println("Error while notifying the birthdays :(");
+				}
 			}
-		}, delay, hours * 60 * 60, TimeUnit.SECONDS);
-		System.out.println("[Birthday]: registered the notification-service");
+		}, delay, hours * 60, TimeUnit.MINUTES);
+		
+		new Thread(() ->  {
+			try {
+				Thread.sleep(2000);
+				notifyAllGuilds();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
+		
+		ButterBrot.LOGGER.info("[Birthday]: registered the notification-service");
+		
 	}
 	
 	
@@ -150,6 +181,8 @@ public class BirthdayCommand extends Command{
 	 * Notifies all registered guilds about today's birthdays.
 	 */
 	public static void notifyAllGuilds() {
+		// System.out.println("Notify all!");
+		//notifyGuild(DiscordController.getJDA().getGuildById("740305776341549276"));
 		BirthdayMongoDBWrapper.getRegisteredGuildIds().forEach(guildId -> notifyGuild(DiscordController.getJDA().getGuildById(guildId)));
 	}
 	
@@ -158,7 +191,10 @@ public class BirthdayCommand extends Command{
 	 * @param guild
 	 */
 	public static void notifyGuild(Guild guild) {
-		notifyGuild(guild, guild.getTextChannelById(BirthdayMongoDBWrapper.getDefaultChannel(guild.getId())));
+		notifyGuild(guild, 
+				guild.getTextChannelById(
+						BirthdayMongoDBWrapper.getDefaultChannel(
+								guild.getId())));
 	}
 	
 	/**
