@@ -244,7 +244,7 @@ public class BirthdayCommand extends Command{
 	 */
 	public static boolean shoutOutBday(String name, Guild guild, MessageChannel channel, HashMap<String, String> bdays) {
 		if(hasBirthdayToday(bdays.get(name.replace("!", "")).trim())) {
-			channel.sendMessage(name.split("_")[1] + " hat heute Geburtstag!\nHerzlichen Glückwunsch!")
+			channel.sendMessage(name.split("_")[1] + " hat heute Geburtstag!\nHerzlichen GlÃ¼ckwunsch!")
 			.queue(message -> {
 				message.addReaction("U+1F381").queue();
 				message.addReaction("U+1F382").queue();
