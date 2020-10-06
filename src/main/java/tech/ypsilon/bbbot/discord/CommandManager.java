@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
+
+import static tech.ypsilon.bbbot.util.StringUtil.parseString;
+
 public class CommandManager {
 
     private static CommandManager instance;
@@ -23,19 +27,35 @@ public class CommandManager {
     public CommandManager(){
         instance = this;
 
-        commands.add(new ListCommand());
-        commands.add(new StoreCommand());
-        commands.add(new GetDirectoryCommand());
-        commands.add(new AddDirectoryCommand());
-        commands.add(new EditDirectoryCommand());
-        commands.add(new StudiengangCommand());
-        commands.add(new WriteAfterMeCommand());
-        commands.add(new VoicePlayCommand());
-        commands.add(new VoiceLeaveCommand());
-        commands.add(new CreateChannelCommand());
-        commands.add(new GroupCommand());
-        commands.add(new BirthdayCommand());
-        DiscordController.getJDA().addEventListener(new DefaultListener(), new CommandListener(), new RoleListener(), new ChannelListener());
+        registerFunction(new ListCommand());
+        registerFunction(new StoreCommand());
+        registerFunction(new GetDirectoryCommand());
+        registerFunction(new AddDirectoryCommand());
+        registerFunction(new EditDirectoryCommand());
+        registerFunction(new StudiengangCommand());
+        registerFunction(new WriteAfterMeCommand());
+        registerFunction(new VoicePlayCommand());
+        registerFunction(new VoiceLeaveCommand());
+        registerFunction(new CreateChannelCommand());
+        registerFunction(new GroupCommand());
+        registerFunction(new BirthdayCommand());
+
+        registerEventListener(new DefaultListener());
+        registerEventListener(new CommandListener());
+        registerEventListener(new RoleListener());
+        registerEventListener(new ChannelListener());
+    }
+
+    private void registerFunction(DiscordFunction... functions) {
+        for (DiscordFunction function : functions) {
+            if(function instanceof Command) {
+                commands.add((Command) function);
+            }
+        }
+    }
+
+    private void registerEventListener(Object... eventListeners) {
+        getJDA().addEventListener(eventListeners);
     }
 
     public static List<Command> getCommands() {
@@ -75,7 +95,7 @@ public class CommandManager {
             return null;
         }
 
-        String[] arguments = msg.split(" ");
+        String[] arguments = parseString(msg).toArray(new String[0]);
 
         if(arguments.length == 0){
             return null;
