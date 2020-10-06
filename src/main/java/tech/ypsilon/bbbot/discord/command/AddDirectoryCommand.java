@@ -23,7 +23,9 @@ public class AddDirectoryCommand extends Command implements PrivateChat {
 
     @Override
     public String getDescription() {
-        return "Erstelle personalisierte Ordner mit einer eigenen Sammlung an Links/Verknüpfungen";
+        return "Erstelle personalisierte Ordner mit einer eigenen Sammlung an Links/Verknüpfungen: " +
+                "'kit mkdir [OrdnerName] [public/private] (NameVerknüpfung1) (NameVerknüpfung2) ...' " +
+                "Verknüpfungsnamen sind optional und können auch im Nachhinhein hinzugefügt werden.";
     }
 
     @Override

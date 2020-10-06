@@ -29,7 +29,7 @@ public class StudiengangCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Füge einen neuen Studiengang hinzu";
+        return "Fügt einen neuen Studiengang hinzu (admin only)";
     }
 
     @Override

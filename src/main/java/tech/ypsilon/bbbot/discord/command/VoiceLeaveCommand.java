@@ -20,6 +20,6 @@ public class VoiceLeaveCommand extends Command {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Bot leaved den Channel";
     }
 }
