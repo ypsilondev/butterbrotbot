@@ -39,6 +39,7 @@ public class CommandManager {
         registerFunction(new CreateChannelCommand());
         registerFunction(new GroupCommand());
         registerFunction(new BirthdayCommand());
+        registerFunction(new HelpCommand());
 
         registerEventListener(new DefaultListener());
         registerEventListener(new CommandListener());
