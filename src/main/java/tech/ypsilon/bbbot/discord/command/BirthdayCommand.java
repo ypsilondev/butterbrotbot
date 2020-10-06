@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.database.BirthdayMongoDBWrapper;
+import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
 public class BirthdayCommand extends Command{

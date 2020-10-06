@@ -10,6 +10,10 @@ import java.util.Scanner;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
+/**
+ * Handler for internal commands.
+ * Console commands
+ */
 public class ConsoleManager implements Runnable{
 
     private static ConsoleManager instance;

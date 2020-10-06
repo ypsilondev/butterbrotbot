@@ -22,7 +22,7 @@ public class DiscordController {
                 GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES);
 
         jda = JDABuilder.createDefault((String) SettingsController.getValue("discord.token"), gatewayIntents)
-                .disableCache(CacheFlag.EMOTE).disableCache(CacheFlag.ACTIVITY).disableCache(CacheFlag.CLIENT_STATUS)
+                .disableCache(CacheFlag.EMOTE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
                 .build();
     }
 

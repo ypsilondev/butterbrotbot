@@ -1,4 +1,4 @@
-package tech.ypsilon.bbbot.database;
+package tech.ypsilon.bbbot.database.wrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import tech.ypsilon.bbbot.database.MongoController;
 
 
 public class BirthdayMongoDBWrapper {
