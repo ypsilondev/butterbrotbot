@@ -13,7 +13,7 @@ import java.util.List;
 public class EditDirectoryCommand extends Command implements PrivateChat {
     @Override
     public String[] getAlias() {
-        return new String[]{"editDir", "ed", "editDirectory"};
+        return new String[]{"editDir", "ed", "editDirectory", "editdir"};
     }
 
     @Override
@@ -54,14 +54,6 @@ public class EditDirectoryCommand extends Command implements PrivateChat {
                     b.addField(compatibleName.getName(), compatibleName.getLink(), false);
                 }
                 e.getChannel().sendMessage(b.build()).queue();
-            } else {
-                EmbedBuilder b = EmbedUtil.createErrorEmbed();
-                b.setDescription("Folgende Verknüpfungen konnten nicht gefunden und hinzugefügt werden:");
-                for (String incompatibleName : incompatibleNames) {
-                    b.addField(incompatibleName, "", false);
-                }
-                e.getChannel().sendMessage(b.build()).queue();
-                return;
             }
 
             if (incompatibleNames.size() > 0) {
@@ -115,7 +107,10 @@ public class EditDirectoryCommand extends Command implements PrivateChat {
 
     @Override
     public String getDescription() {
-        return "Editiere, erweitere einen deiner Ordner";
+        return "Editiere einen deiner Ordner mit 'kit editDir [NameDesOrdners] [add/remove] [Name der Verknüpfung1]" +
+                " (NameDerVerknüpfung2) (NameDerVerknüpfung3) ... Mindestens ein Name einer Verknüpfung muss angegeben " +
+                "werden, weitere sind optional. Für 'kit editDir [NameDesOrdners] add ... werden Verknüpfungen " +
+                "hinzugefügt, für '... remove ...' entfernt";
     }
 
     @Override

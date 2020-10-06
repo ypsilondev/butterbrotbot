@@ -45,7 +45,7 @@ public class GetDirectoryCommand extends Command implements PrivateChat {
 
     @Override
     public String getDescription() {
-        return "Zeige einen Ordner an";
+        return "Zeige einen Ordner/eine Sammlung mit 'kit cd [Name]' an";
     }
 
     @Override

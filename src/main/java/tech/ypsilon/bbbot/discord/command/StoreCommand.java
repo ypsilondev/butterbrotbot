@@ -76,6 +76,7 @@ public class StoreCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Links oder Dateien zu Namen und Keywords speichern";
+        return "Speichert mit 'kit store [Name_Ohne_Leerzeichen] [Link] (Keyword1) (Keayword2) ...' Links zu Namen und " +
+                "(optionalen) Keywords ab. Keywords sollten klein geschrieben werden.";
     }
 }
