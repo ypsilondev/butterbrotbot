@@ -94,7 +94,8 @@ public class BirthdayCommand extends Command{
 		case "notifyhere": {
 			if(birthdayAdmin) {
 				event.getMessage().delete().queue();
-				BirthdayMongoDBWrapper.setDefaultChannel(guild.getId(), textChanel.getId());						
+				BirthdayMongoDBWrapper.setDefaultChannel(guild.getId(), textChanel.getId());	
+				event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("Du hast erfolgreich den BDAY-Broadcast-Kanal festgelegt: " + textChanel.getAsMention())).queue();
 			} else {
 				noPerm(member, event);
 			}
