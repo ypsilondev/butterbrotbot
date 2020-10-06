@@ -121,7 +121,7 @@ public class BirthdayCommand extends Command{
 
 	@Override
 	public String getDescription() {
-		return "Der Geburtstagsbefehl: 'kit bday set <Geburtsdatum>";
+		return "Der Geburtstagsbefehl: 'kit bday set <Geburtsdatum>'";
 	}
 
 	
