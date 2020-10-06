@@ -18,8 +18,9 @@ public class HelpCommand extends Command {
                 "geschrieben, aufrufbar");
         for (Command command : CommandManager.getCommands()) {
             StringBuilder builder = new StringBuilder();
-            for (String alias : command.getAlias()) {
-                builder.append(alias);
+            for (int i = 0; i < command.getAlias().length; i++) {
+                builder.append(command.getAlias()[i]);
+                if (i != command.getAlias().length-1) builder.append(" | ");
             }
             b.addField(builder.toString(), command.getDescription(), false);
         }
