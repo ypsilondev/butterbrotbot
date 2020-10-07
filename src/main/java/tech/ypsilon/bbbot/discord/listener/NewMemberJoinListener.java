@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.discord.listener;
 
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +16,10 @@ public class NewMemberJoinListener extends ListenerAdapter {
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         if (event.getGuild().getIdLong() != 756547960229199902L) return;
 
-        notifyMember(event);
+        notifyMember(event, 0);
     }
 
-    private void notifyMember(GuildMemberJoinEvent event) {
+    private void notifyMember(GuildMemberJoinEvent event, int depth) {
         service.schedule(() -> {
             if (event.getMember().getRoles().size() == 0) {
                 event.getMember().getUser().openPrivateChannel().flatMap(privateChannel ->
@@ -27,7 +28,11 @@ public class NewMemberJoinListener extends ListenerAdapter {
                                 "indem du auf das entsprechende Icon unter der dort angezeigten Nachricht klickst" +
                                 ": <#759033520680599553>.\n Hilfe benötigt? Schreibe uns mit Klick hier: " +
                                 "<@!358213000550809600> oder <@!141171046777749504>")).queue();
-                notifyMember(event);
+
+                if (!event.getMember().getOnlineStatus().equals(OnlineStatus.OFFLINE)) {
+                    if(depth < 4)
+                        notifyMember(event, depth+1);
+                }
             }
         }, 10, TimeUnit.MINUTES);
     }
