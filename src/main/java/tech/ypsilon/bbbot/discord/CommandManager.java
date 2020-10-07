@@ -4,10 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.command.*;
-import tech.ypsilon.bbbot.discord.listener.ChannelListener;
-import tech.ypsilon.bbbot.discord.listener.CommandListener;
-import tech.ypsilon.bbbot.discord.listener.DefaultListener;
-import tech.ypsilon.bbbot.discord.listener.RoleListener;
+import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.util.ArrayList;
@@ -39,11 +36,13 @@ public class CommandManager {
         registerFunction(new GroupCommand());
         registerFunction(new BirthdayCommand());
         registerFunction(new HelpCommand());
+        registerFunction(new NotifySelectRoleCommand());
 
         registerEventListener(new DefaultListener());
         registerEventListener(new CommandListener());
         registerEventListener(new RoleListener());
         registerEventListener(new ChannelListener());
+        registerEventListener(new NewMemberJoinListener());
     }
 
     private void registerFunction(DiscordFunction... functions) {
