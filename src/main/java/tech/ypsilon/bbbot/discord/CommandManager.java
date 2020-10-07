@@ -44,6 +44,7 @@ public class CommandManager {
         registerEventListener(new RoleListener());
         registerEventListener(new ChannelListener());
         registerEventListener(new NewMemberJoinListener());
+        registerEventListener(new CensorWatcherListener());
     }
 
     private void registerFunction(DiscordFunction... functions) {
