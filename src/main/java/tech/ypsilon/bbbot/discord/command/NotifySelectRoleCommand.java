@@ -2,6 +2,11 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+/**
+ * Dont activate the Command
+ * Will cause the bot to be quarantined
+ */
+@Deprecated
 public class NotifySelectRoleCommand extends Command {
     @Override
     public String[] getAlias() {
