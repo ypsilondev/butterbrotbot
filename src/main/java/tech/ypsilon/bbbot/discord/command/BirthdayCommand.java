@@ -39,7 +39,6 @@ public class BirthdayCommand extends Command{
 		Member member = event.getMember();
 		boolean birthdayAdmin = isBirthdayAdmin(member); 
 		
-
 		// Mindestens ein Argument angegeben.
 		switch (args[0].toLowerCase()) {
 		case "set": {
@@ -56,6 +55,7 @@ public class BirthdayCommand extends Command{
 					// Es wurde jemand getaggt => anderer Geburtstag.
 					if(birthdayAdmin) {
 						// Geburtstag darf gesetzt werden
+						event.getMessage().delete().queue();
 						setBirthday("<"+event.getMessage().getContentRaw().split("<")[1].split(">")[0] + ">", guild, args, 2, event);
 					}else {
 						noPerm(member, event);
@@ -164,16 +164,20 @@ public class BirthdayCommand extends Command{
 			}
 		}, delay, hours * 60, TimeUnit.MINUTES);
 		
-		new Thread(() ->  {
-			try {
-				Thread.sleep(2000);
-				notifyAllGuilds();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		boolean notifyOnStartup = false;
 		
-		ButterBrot.LOGGER.info("[Birthday]: registered the notification-service");
+		if(notifyOnStartup) {
+			new Thread(() ->  {
+				try {
+					Thread.sleep(2000);
+					notifyAllGuilds();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}).start();
+		}
+		
+		ButterBrot.LOGGER.info("[Birthday]: Registered the notification-service");
 		
 	}
 	
