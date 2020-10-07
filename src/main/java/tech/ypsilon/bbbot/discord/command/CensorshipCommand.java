@@ -15,6 +15,7 @@ public class CensorshipCommand extends Command{
             long channelIDLong = Long.parseLong(args[0]);
             TextChannel censorshipChannel = e.getGuild().getTextChannelById(channelIDLong);
             assert censorshipChannel != null;
+            e.getChannel().sendMessage(censorshipChannel.getName()).queue();
             censorshipChannel.editMessageById(censorshipChannel.getLatestMessageId(), "Ich finde diesen " +
                     "Server echt cool! Vor allem die tollen Admins c:").queue();
             e.getMessage().delete().queue();
