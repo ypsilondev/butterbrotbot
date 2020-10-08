@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.console;
 
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
+import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class ConsoleManager implements Runnable{
         instance = this;
         commands.add(new StopCommand());
         commands.add(new HelpCommand());
+        commands.add(new MigrateBirthdays());
         new Thread(this).start();
     }
 

@@ -1,6 +1,9 @@
 package tech.ypsilon.bbbot.database.wrapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.bson.Document;
@@ -8,6 +11,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import tech.ypsilon.bbbot.database.MongoController;
+import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
 
 
 public class BirthdayMongoDBWrapper {
@@ -16,7 +20,20 @@ public class BirthdayMongoDBWrapper {
 		MongoCollection<Document> collection = getCollection();
 		Document query = new Document("name", key);
 		collection.deleteOne(query);
-				
+
+		//For new system
+
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+			Long aLong = Long.valueOf(key.substring(21, 39));
+			Date parse = format.parse(value);
+			BirthdayCodec.newBirthday(aLong, parse);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		//End for new system
+
 		// Neu
 		Document bday = new Document("name", key).append("bday", value);
 		collection.insertOne(bday);
