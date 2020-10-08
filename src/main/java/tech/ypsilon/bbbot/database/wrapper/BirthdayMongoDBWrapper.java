@@ -11,6 +11,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import tech.ypsilon.bbbot.database.MongoController;
+import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
 
 
@@ -60,31 +61,18 @@ public class BirthdayMongoDBWrapper {
 	}
 	
 	public static void setDefaultChannel(String guildID, String channelID) {
-		MongoCollection<Document> collection = MongoController.getInstance().getCollection("defaultChannels");
-		Document query = new Document("guild", guildID);
-		collection.deleteOne(query);
-		// Add Channel
-		Document channel = new Document("guild", guildID).append("channel", channelID);
-		collection.insertOne(channel);
+		MongoSettings.setValue(MongoSettings.TYPE.BirthdayChannel, Long.valueOf(channelID), Long.valueOf(guildID));
 	}
 	
 	public static String getDefaultChannel(String guildID) {
-		MongoCollection<Document> collection = MongoController.getInstance().getCollection("defaultChannels");
-		Document query = new Document("guild", guildID);
-		MongoCursor<Document> cursor = collection.find(query).cursor();
-		if(cursor.hasNext()) {
-			return (String)(cursor.next()).get("channel").toString();
-		}
-		return null;
+		return ((Long)MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, Long.valueOf(guildID))).toString();
 	}
 	
 	public static ArrayList<String> getRegisteredGuildIds() {
-		MongoCollection<Document> collection = MongoController.getInstance().getCollection("defaultChannels");
 		//DBObject query = new BasicDBObject("guild", guildID);
-		MongoCursor<Document> cursor = collection.find().cursor();
-		ArrayList<String> guildIDs = new ArrayList<String>();
-		while(cursor.hasNext()) {
-			guildIDs.add((String)((Document) cursor.next()).get("guild"));
+		ArrayList<String> guildIDs = new ArrayList<>();
+		for (Document document : MongoSettings.getValueForAllGuild(MongoSettings.TYPE.BirthdayChannel)) {
+			guildIDs.add(document.getLong("guild").toString());
 		}
 		return guildIDs;
 	}
