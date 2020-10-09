@@ -38,6 +38,7 @@ public class CommandManager {
         registerFunction(new HelpCommand());
         //registerFunction(new NotifySelectRoleCommand());
         registerFunction(new CensorshipCommand());
+        registerFunction(new DudenCommand());
 
         registerEventListener(new DefaultListener());
         registerEventListener(new CommandListener());
