@@ -31,6 +31,6 @@ public class NotifySelectRoleCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Erinnert User daran, ihre Rolle zu wählen";
+        return "Erinnert User daran, ihre Rolle zu wählen (admin only)";
     }
 }
