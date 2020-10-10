@@ -2,11 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/756547960229199902.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ZADFRNu)
 
-**Developers**
-
-* yJulian (Julian#1816)
-* yNiklas (Niklas#0007)
-* Gregyyy (Gregyyy#4052)
+Contribute by creating a pull request.
 
 **Used Libraries**
 
