@@ -50,6 +50,7 @@ public class CommandManager {
         registerEventListener(new ChannelListener());
         registerEventListener(new NewMemberJoinListener());
         registerEventListener(new CensorWatcherListener());
+        registerEventListener(new RankSystemListener());
     }
 
     /**
