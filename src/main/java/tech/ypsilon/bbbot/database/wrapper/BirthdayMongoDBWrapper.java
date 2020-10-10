@@ -42,7 +42,21 @@ public class BirthdayMongoDBWrapper {
 	
 	
 	// FIXME
-	public static HashMap<String, String> getBirthdayEntrys() {
+	public static HashMap<Long, Date> getBirthdayEntrys() {
+		MongoCollection<Document> collection = MongoController.getInstance().getCollection("Birthdays");
+		// DBObject query = new BasicDBObject("*", "*");
+		MongoCursor<Document> cursor = collection.find().cursor();
+		Document usr;
+		HashMap<Long, Date> ret = new HashMap<Long, Date>();
+		while(cursor.hasNext()) {
+			usr = (Document) cursor.next();
+			ret.put((long)usr.get("userId"), (Date)usr.get("birthday"));
+		}
+		return ret;
+	}
+	
+	// FIXME
+	public static HashMap<String, String> oldGetBirthdayEntrys() {
 		MongoCollection<Document> collection = getCollection();
 		// DBObject query = new BasicDBObject("*", "*");
 		MongoCursor<Document> cursor = collection.find().cursor();
