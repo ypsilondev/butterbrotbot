@@ -11,6 +11,10 @@ import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -129,9 +133,22 @@ public class StudiengangCommand extends Command {
 
                 textChannel.retrievePinnedMessages().queue(messages -> addReactionsToMessage(emotes, messages, textChannel));
 
-                e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
-                        .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
-                                false).build()).queue();
+
+    @SuppressWarnings("unchecked")
+    private void addReactionsToMessage(ArrayList<String> emotes, List<Message> messages, TextChannel textChannel) {
+        for (String emote : ((ArrayList<String>) emotes.clone())) {
+            if (messages.stream().noneMatch(message -> message.getReactions().stream()
+                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
+                for (Message message : messages) {
+                    if (retrieveMessageReaction(message).size() < 20) {
+                        message.addReaction(emote).queue();
+                        emotes.remove(emote);
+                        break;
+                    }
+                }
+            } else {
+                emotes.remove(emote);
+            }
         }
     }
 
@@ -149,8 +166,52 @@ public class StudiengangCommand extends Command {
                 }
             }else{
                 emotes.remove(emote);
+    private class ReactionTemp {
+
+        private TextChannel channel;
+        private List<Message> messages;
+        private List<MessageReaction> reactions = new ArrayList<>();
+
+        private HashMap<String, Message> emojiMessage = new HashMap<>();
+
+        public ReactionTemp(TextChannel channel, List<Message> msg) {
+            this.messages = msg;
+            this.channel = channel;
+            msg.forEach(m -> {
+                reactions.addAll(m.getReactions());
+                for (MessageReaction reaction : m.getReactions()) {
+                    String emoji = reaction.getReactionEmote().getEmoji();
+                    emojiMessage.put(emoji, m);
+                }
+            });
+        }
+
+        public List<MessageReaction> getReactions() {
+            return reactions;
+        }
+
+        public List<Message> getMessages() {
+            return messages;
+        }
+
+        public void addEmote(String emoji) {
+            boolean finished = false;
+            if (emojiMessage.containsKey(emoji))
+                return;
+
+            for (Message reactionTempMessage : messages) {
+                if (reactionTempMessage.getReactions().size() < 19) {
+                    reactionTempMessage.addReaction(emoji).queue();
+                    finished = true;
+                    break;
+                }
+            }
+            if (!finished) {
+                Message complete = channel.sendMessage("-").complete();
+                complete.addReaction(emoji).queue();
             }
         }
+    }
 
         if(emotes.size() > 0){
             textChannel.sendMessage("-").queue(message -> {
@@ -168,6 +229,7 @@ public class StudiengangCommand extends Command {
         try {
             countDownLatch.await();
         } catch (InterruptedException ignored) { }
+
         return list.get();
     }
 

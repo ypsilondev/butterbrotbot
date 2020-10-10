@@ -246,10 +246,10 @@ public class BirthdayCommand extends Command {
 	 * @param bdays
 	 * @return
 	 */
-	public static boolean shoutOutBday(long userId, Date bday, Guild guild, MessageChannel channel) {
-		if(hasBirthdayToday(bday)) {
-			String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
-			channel.sendMessage(userName + " hat heute Geburtstag!\nHerzlichen Glückwunsch!")
+
+	public static boolean shoutOutBday(String name, Guild guild, MessageChannel channel, HashMap<String, String> bdays) {
+		if(hasBirthdayToday(bdays.get(name.replace("!", "")).trim())) {
+			channel.sendMessage(name.split("_")[1] + " hat heute Geburtstag!\nHerzlichen GlÃ¼ckwunsch!")
 			.queue(message -> {
 				message.addReaction("U+1F381").queue();
 				message.addReaction("U+1F382").queue();
