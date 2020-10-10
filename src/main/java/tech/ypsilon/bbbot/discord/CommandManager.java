@@ -43,7 +43,7 @@ public class CommandManager {
         //registerFunction(new NotifySelectRoleCommand());
         registerFunction(new CensorshipCommand());
         registerFunction(new DudenCommand());
-        registerEventListener(new RankSystemCommand());
+        registerFunction(new RankSystemCommand());
 
         registerEventListener(new DefaultListener());
         registerEventListener(new CommandListener());
