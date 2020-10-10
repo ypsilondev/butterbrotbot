@@ -23,15 +23,15 @@ import tech.ypsilon.bbbot.discord.DiscordController;
 public class BirthdayCommand extends Command {
 
 	public static final boolean NOTIFY_ON_STARTUP = false;
-	
+
 	public static final String COMMAND_PREFIX = "bday";
-	
+
 	public static final String SYNTAX = COMMAND_PREFIX + " set <Geburtsdatum> | remove | notifyhere";
 	public static final String NOPERM = "Du hast nicht die ausrechenden Berechtigungen, um diesen Befehl '{}' zu benutzen!";
 	public static final String DATEFORMAT = "Du musst das Datum im Format DD.MM. oder DD.MM.YYYY angeben.";
-	
+
 	private static boolean shoutout = false;
-	
+
 	@Override
 	public String[] getAlias() {
 		return new String[] {"bday", "birthday"};
@@ -42,109 +42,109 @@ public class BirthdayCommand extends Command {
 		Guild guild = event.getGuild();
 		TextChannel textChanel = event.getChannel();
 		Member member = event.getMember();
-		boolean birthdayAdmin = isBirthdayAdmin(member); 
-		
+		boolean birthdayAdmin = isBirthdayAdmin(member);
+
 		try {
-			event.getMessage().delete().queue();			
+			event.getMessage().delete().queue();
 		} catch (Exception e) {}
 
 		// Mindestens ein Argument angegeben.
 		switch (args[0].toLowerCase()) {
-		case "set": {
-			// Geburtstag soll gesetzt werden.
-			if(args.length > 1) {
-				if(!args[1].startsWith("@")) {
-					// Eigenener Geburtstag.
-					String bday = setBirthday(member.getAsMention(), guild, args, 1, event);
-					if(bday != null)
-						textChanel.sendMessage("Der Benutzer " + member.getAsMention() + " hat am "+bday+ " Geburtstag.").queue();
-				}else {
-					// Es wurde jemand getaggt => anderer Geburtstag.
-					if(birthdayAdmin) {
-						// Geburtstag darf gesetzt werden
-						setBirthday("<"+event.getMessage().getContentRaw().split("<")[1].split(">")[0] + ">", guild, args, 2, event);
+			case "set": {
+				// Geburtstag soll gesetzt werden.
+				if(args.length > 1) {
+					if(!args[1].startsWith("@")) {
+						// Eigenener Geburtstag.
+						String bday = setBirthday(member.getAsMention(), guild, args, 1, event);
+						if(bday != null)
+							textChanel.sendMessage("Der Benutzer " + member.getAsMention() + " hat am "+bday+ " Geburtstag.").queue();
 					}else {
-						noPerm(member, event);
+						// Es wurde jemand getaggt => anderer Geburtstag.
+						if(birthdayAdmin) {
+							// Geburtstag darf gesetzt werden
+							setBirthday("<"+event.getMessage().getContentRaw().split("<")[1].split(">")[0] + ">", guild, args, 2, event);
+						}else {
+							noPerm(member, event);
+						}
 					}
 				}
+				break;
 			}
-			break;
-		}
-		case "remove":{
-			setBirthday(member.getAsMention(), guild, new String[]{"0.0.0"}, 0, event);
-			break;
-		}
-		case "get": {
-			if(args.length > 1) {
-				String[] usrn = event.getMessage().getContentRaw().split("<");
-				HashMap<Long, Date> bdays = BirthdayMongoDBWrapper.getBirthdayEntrys();
-				SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
-				Arrays.stream(usrn).forEach(name -> {
-					name = name.replace(" ", "");
-					if(name.startsWith("@")) {
-						// By username
-						try {
-							long userId = Long.parseLong(name.replace("!", "").replace(">", "").replace(" ", "").replace("@", ""));
-							// System.out.println(userId);
-							String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
-							if(bdays.get(userId) != null) {
-								String dateString = formatter.format(bdays.get(userId));
-								String text = "Der Benutzer " + userName + " hat am " + dateString + " Geburtstag.";
-								member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage(text)).queue();
-							}else {
-								member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Der Benutzer " + userName + " hat keinen Geburtstag angegeben.")).queue();								
+			case "remove":{
+				setBirthday(member.getAsMention(), guild, new String[]{"0.0.0"}, 0, event);
+				break;
+			}
+			case "get": {
+				if(args.length > 1) {
+					String[] usrn = event.getMessage().getContentRaw().split("<");
+					HashMap<Long, Date> bdays = BirthdayMongoDBWrapper.getBirthdayEntrys();
+					SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
+					Arrays.stream(usrn).forEach(name -> {
+						name = name.replace(" ", "");
+						if(name.startsWith("@")) {
+							// By username
+							try {
+								long userId = Long.parseLong(name.replace("!", "").replace(">", "").replace(" ", "").replace("@", ""));
+								// System.out.println(userId);
+								String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
+								if(bdays.get(userId) != null) {
+									String dateString = formatter.format(bdays.get(userId));
+									String text = "Der Benutzer " + userName + " hat am " + dateString + " Geburtstag.";
+									member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage(text)).queue();
+								}else {
+									member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Der Benutzer " + userName + " hat keinen Geburtstag angegeben.")).queue();
+								}
+							}catch (NumberFormatException e) {
+								System.err.println("Numberformat-Exception while parsing User-ID: " + name.replace("!", "").replace(">", "").replace(" ", ""));
 							}
-						}catch (NumberFormatException e) {
-							System.err.println("Numberformat-Exception while parsing User-ID: " + name.replace("!", "").replace(">", "").replace(" ", ""));
-						}					
-					} else {
-						// By date?
-						// FIXME To be implemented...
-					}
-				});
-			} else {
+						} else {
+							// By date?
+							// FIXME To be implemented...
+						}
+					});
+				} else {
+					explainSyntaxError(member, event);
+				}
+				break;
+			}
+			case "notify": {
+				if(birthdayAdmin) {
+					notifyGuild(guild, textChanel);
+				} else {
+					noPerm(member, event);
+				}
+				break;
+			}
+			case "notifyhere": {
+				if(birthdayAdmin) {
+					BirthdayMongoDBWrapper.setDefaultChannel(guild.getId(), textChanel.getId());
+					event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("Du hast erfolgreich den BDAY-Broadcast-Kanal festgelegt: " + textChanel.getAsMention())).queue();
+				} else {
+					noPerm(member, event);
+				}
+				break;
+			}
+			case "time": {
+				Date date = new Date(System.currentTimeMillis());
+				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd.MM.YYYY");
+				String dateString = formatter.format(date);
+				event.getMember().getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Java sees following time: " + dateString)).queue();
+				break;
+			}
+			default:
 				explainSyntaxError(member, event);
-			}
-			break;
+				break;
 		}
-		case "notify": {
-			if(birthdayAdmin) {
-				notifyGuild(guild, textChanel);						
-			} else {
-				noPerm(member, event);
-			}
-			break;
-		}
-		case "notifyhere": {
-			if(birthdayAdmin) {
-				BirthdayMongoDBWrapper.setDefaultChannel(guild.getId(), textChanel.getId());	
-				event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("Du hast erfolgreich den BDAY-Broadcast-Kanal festgelegt: " + textChanel.getAsMention())).queue();
-			} else {
-				noPerm(member, event);
-			}
-			break;
-		}
-		case "time": {
-			Date date = new Date(System.currentTimeMillis());
-			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd.MM.YYYY");
-			String dateString = formatter.format(date);
-			event.getMember().getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Java sees following time: " + dateString)).queue();
-			break;
-		}
-		default:
-			explainSyntaxError(member, event);
-			break;
-		}
-	} 
-	
+	}
+
 
 	@Override
 	public String getDescription() {
 		return "Der Geburtstagsbefehl: 'kit bday set <Geburtsdatum>'";
 	}
 
-	
-	
+
+
 	/**
 	 * Starts the NotifierService (automatical broadcast of birthdays)
 	 * @param hours amount of hours between auto-notifications
@@ -152,9 +152,9 @@ public class BirthdayCommand extends Command {
 	@SuppressWarnings("unused")
 	public static void startNotifierService(int hours) {
 		ButterBrot.LOGGER.info("[Birthday]: Registering the notification-service");
-		
+
 		int notifyTime = 8;
-		
+
 		// Calculate time-offset to 08:00 AM, next day.
 		Date date = new Date(System.currentTimeMillis());
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -167,22 +167,22 @@ public class BirthdayCommand extends Command {
 		}else {
 			delay += (23-hour) * 60 + (60 - min);
 		}
-		
+
 		// System.out.println(delay);
 		// delay = 1;
-		
+
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
 		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					notifyAllGuilds();					
+					notifyAllGuilds();
 				}catch (Exception e) {
 					System.err.println("Error while notifying the birthdays :(");
 				}
 			}
 		}, delay, hours * 60, TimeUnit.MINUTES);
-		
+
 		if(NOTIFY_ON_STARTUP) {
 			new Thread(() ->  {
 				try {
@@ -193,30 +193,30 @@ public class BirthdayCommand extends Command {
 				}
 			}).start();
 		}
-		
+
 		ButterBrot.LOGGER.info("[Birthday]: Registered the notification-service");
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Notifies all registered guilds about today's birthdays.
 	 */
 	public static void notifyAllGuilds() {
 		BirthdayMongoDBWrapper.getRegisteredGuildIds().forEach(guildId -> notifyGuild(DiscordController.getJDA().getGuildById(guildId)));
 	}
-	
+
 	/**
 	 * Notifies the given guild in the specified "Default channel" (set by notifyhere)
 	 * @param guild
 	 */
 	public static void notifyGuild(Guild guild) {
-		notifyGuild(guild, 
+		notifyGuild(guild,
 				guild.getTextChannelById(
 						BirthdayMongoDBWrapper.getDefaultChannel(
 								guild.getId())));
 	}
-	
+
 	/**
 	 * Notifies the given guild in the specified channel
 	 * @param guild
@@ -225,7 +225,7 @@ public class BirthdayCommand extends Command {
 	public static void notifyGuild(Guild guild, MessageChannel channel) {
 		HashMap<Long, Date> bdays = BirthdayMongoDBWrapper.getBirthdayEntrys();
 		shoutout = false;
-		
+
 		bdays.forEach((userId, bDay) -> {
 			if(shoutOutBday(userId, bDay, guild, channel))
 				shoutout = true;
@@ -237,34 +237,34 @@ public class BirthdayCommand extends Command {
 			});
 		}
 	}
-	
+
 	/**
 	 * Sends a message in the specified channel "channel" of the guild "guild" to tell the user "name" has birthday today.
-	 * @param name
+	 * @param userId
+	 * @param bday
 	 * @param guild
 	 * @param channel
-	 * @param bdays
 	 * @return
 	 */
-
-	public static boolean shoutOutBday(String name, Guild guild, MessageChannel channel, HashMap<String, String> bdays) {
-		if(hasBirthdayToday(bdays.get(name.replace("!", "")).trim())) {
-			channel.sendMessage(name.split("_")[1] + " hat heute Geburtstag!\nHerzlichen Glückwunsch!")
-			.queue(message -> {
-				message.addReaction("U+1F381").queue();
-				message.addReaction("U+1F382").queue();
-			});
+	public static boolean shoutOutBday(long userId, Date bday, Guild guild, MessageChannel channel) {
+		if(hasBirthdayToday(bday)) {
+			String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
+			channel.sendMessage(userName + " hat heute Geburtstag!\nHerzlichen Gl�ckwunsch!")
+					.queue(message -> {
+						message.addReaction("U+1F381").queue();
+						message.addReaction("U+1F382").queue();
+					});
 			return true;
 		}else {
-			// channel.sendMessage(name.split("_")[1] + " hat am " + bdays.get(name.replace("!", "")) + " Geburtstag!").queue();								
+			// channel.sendMessage(name.split("_")[1] + " hat am " + bdays.get(name.replace("!", "")) + " Geburtstag!").queue();
 		}
 		return false;
 	}
 
-	
+
 	/**
 	 * Returns whether the specified String "dateString" [dd.mm.] equals the current day of the year.
-	 * @param dateString
+	 * @param bday
 	 * @return
 	 */
 	public static boolean hasBirthdayToday(Date bday) {
@@ -272,7 +272,7 @@ public class BirthdayCommand extends Command {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM");
 		return formatter.format(now).equals(formatter.format(bday));
 	}
-	
+
 	/**
 	 * @return Array of int, index 0: current day of the month; index 1: current month of the year.
 	 */
@@ -284,8 +284,8 @@ public class BirthdayCommand extends Command {
 		int month = Integer.parseInt(formatter.format(date));
 		return new int[] {day,month};
 	}
-	
-	
+
+
 	/**
 	 * This functions handles the parsing of the user input after "set". Figures out the date and calls the Database to save the data.
 	 * @param asMention
@@ -301,7 +301,7 @@ public class BirthdayCommand extends Command {
 		for(int i = start + 1; i < args.length; i++) {
 			saveValue += " " + args[i];
 		}
-		
+
 		saveValue = saveValue.replaceAll(" ", "");
 		String[] dateComponents = saveValue.split("\\.");
 		if(dateComponents.length >= 2) {
@@ -321,11 +321,11 @@ public class BirthdayCommand extends Command {
 					return null;
 				}
 			}catch (NumberFormatException e) {
-				
+
 				event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage(DATEFORMAT)).queue();
 			}
 		}else {
-			
+
 			event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage(DATEFORMAT)).queue();
 		}
 		return null;
@@ -351,7 +351,7 @@ public class BirthdayCommand extends Command {
 	private void noPerm(Member member, GuildMessageReceivedEvent event) {
 		member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage(NOPERM.replace("{}", event.getMessage().getContentDisplay()))).queue();
 	}
-	
+
 	/**
 	 * Send message about the Syntax.
 	 * @param member
@@ -368,9 +368,9 @@ public class BirthdayCommand extends Command {
 	 */
 	public static boolean isBirthdayAdmin(Member member) {
 		if(Objects.requireNonNull(member).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L
-                || role.getIdLong() == 757718320526000138L) && member.getUser().getIdLong() != 699011153208016926L) {
-            return false;
-        }
+				|| role.getIdLong() == 757718320526000138L) && member.getUser().getIdLong() != 699011153208016926L) {
+			return false;
+		}
 		return true;
-	}	
+	}
 }
