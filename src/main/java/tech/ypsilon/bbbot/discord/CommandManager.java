@@ -43,6 +43,7 @@ public class CommandManager {
         //registerFunction(new NotifySelectRoleCommand());
         registerFunction(new CensorshipCommand());
         registerFunction(new DudenCommand());
+        registerEventListener(new RankSystemCommand());
 
         registerEventListener(new DefaultListener());
         registerEventListener(new CommandListener());
@@ -50,6 +51,7 @@ public class CommandManager {
         registerEventListener(new ChannelListener());
         registerEventListener(new NewMemberJoinListener());
         registerEventListener(new CensorWatcherListener());
+        registerEventListener(new RankSystemListener());
     }
 
     /**
