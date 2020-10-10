@@ -29,6 +29,6 @@ public class CensorshipCommand extends Command {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Bitte versuchen Sie es erneut (admin only)";
     }
 }
