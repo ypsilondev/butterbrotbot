@@ -14,9 +14,9 @@ public class RankSystemCommand extends Command {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
-        EmbedBuilder b = EmbedUtil.createSuccessEmbed();
+        EmbedBuilder b = EmbedUtil.createInfoEmbed();
         RankSystemListener.RankInformation rank;
-        if (args.length > 0 && e.getMessage().getMentionedMembers().size() > 0) {
+        if (e.getMessage().getMentionedMembers().size() > 0) {
             Member mentionedUser = e.getMessage().getMentionedMembers().get(0);
             rank = RankSystemListener.getRankInformation(mentionedUser.getUser());
             b.addField("User", mentionedUser.getUser().getName(), true);
