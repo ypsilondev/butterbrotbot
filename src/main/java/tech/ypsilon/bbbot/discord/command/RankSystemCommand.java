@@ -16,13 +16,13 @@ public class RankSystemCommand extends Command {
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
         EmbedBuilder b = EmbedUtil.createSuccessEmbed();
         RankSystemListener.RankInformation rank;
-        if (args.length == 0) {
-            rank = RankSystemListener.getRankInformation(e.getAuthor());
-            b.addField("User", e.getAuthor().getName(), true);
-        } else {
+        if (args.length > 0 && e.getMessage().getMentionedMembers().size() > 0) {
             Member mentionedUser = e.getMessage().getMentionedMembers().get(0);
             rank = RankSystemListener.getRankInformation(mentionedUser.getUser());
             b.addField("User", mentionedUser.getUser().getName(), true);
+        } else {
+            rank = RankSystemListener.getRankInformation(e.getAuthor());
+            b.addField("User", e.getAuthor().getName(), true);
         }
         b.addField("Level", rank.getPoints() + "", true);
         b.addField("Aktuelle Streak", rank.getCurrentStreak() + " Tage", false);
