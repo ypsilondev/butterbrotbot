@@ -18,6 +18,6 @@ public class WriteAfterMeCommand extends Command {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Schreibt die eigene Nachricht erneut (admin only)";
     }
 }

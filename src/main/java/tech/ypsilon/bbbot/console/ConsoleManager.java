@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.console;
 
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
+import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
 
 import java.util.ArrayList;
@@ -10,6 +11,10 @@ import java.util.Scanner;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
+/**
+ * Handler for internal commands.
+ * Console commands
+ */
 public class ConsoleManager implements Runnable{
 
     private static ConsoleManager instance;
@@ -18,11 +23,25 @@ public class ConsoleManager implements Runnable{
 
     public ConsoleManager(){
         instance = this;
-        commands.add(new StopCommand());
-        commands.add(new HelpCommand());
+
+        addCommand(new StopCommand());
+        addCommand(new HelpCommand());
+        addCommand(new MigrateBirthdays());
+
         new Thread(this).start();
     }
 
+    /**
+     * Add a command to the available command bucket
+     * @param cmd an object of the ConsoleCommand
+     */
+    private void addCommand(ConsoleCommand cmd) {
+        commands.add(cmd);
+    }
+
+    /**
+     * Internal scanner for System.in checking for new inputs in the console
+     */
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -44,6 +63,10 @@ public class ConsoleManager implements Runnable{
         }
     }
 
+    /**
+     * Get all current registered commands
+     * @return a List with the ConsoleCommands
+     */
     public static List<ConsoleCommand> getCommands() {
         return instance.commands;
     }

@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class ListCommand extends Command {
     @Override
     public String[] getAlias() {
-        return new String[]{"list", "l", "get"};
+        return new String[]{"listStores", "l", "get"};
     }
 
     @Override
@@ -62,6 +62,6 @@ public class ListCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Liste alle Link-Verknüpfungen oder suche nach bestimmten";
+        return "Liste alle Link-Verknüpfungen ('kit get') oder suche nach bestimmten mit 'kit get [Name/Keyword]'";
     }
 }
