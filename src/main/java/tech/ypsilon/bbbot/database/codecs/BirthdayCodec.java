@@ -4,12 +4,14 @@ import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
+import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class BirthdayCodec implements Codec<BirthdayCodec> {
@@ -25,15 +27,21 @@ public class BirthdayCodec implements Codec<BirthdayCodec> {
         this.userId = userId;
         this.birthday = birthday;
     }
+    
+    public BirthdayCodec fixTimeZone() {
+    	birthday.setTime(birthday.getTime() + Calendar.getInstance().get(Calendar.DST_OFFSET) + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
+    	return this;
+    }
 
     public static BirthdayCodec newBirthday(User user, Date birthday) {
-        BirthdayCodec birthdayCodec = new BirthdayCodec(new ObjectId(), user.getIdLong(), birthday);
+        BirthdayCodec birthdayCodec = new BirthdayCodec(new ObjectId(), user.getIdLong(), birthday).fixTimeZone();
         getCollection().insertOne(birthdayCodec);
         return birthdayCodec;
     }
 
     public static BirthdayCodec newBirthday(Long userId, Date birthday) {
-        BirthdayCodec birthdayCodec = new BirthdayCodec(new ObjectId(), userId, birthday);
+        BirthdayCodec birthdayCodec = new BirthdayCodec(new ObjectId(), userId, birthday).fixTimeZone();
+        getCollection().deleteMany(new Document("userId", userId));
         getCollection().insertOne(birthdayCodec);
         return birthdayCodec;
     }

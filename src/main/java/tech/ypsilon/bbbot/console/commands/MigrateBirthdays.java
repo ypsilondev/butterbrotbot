@@ -22,7 +22,7 @@ public class MigrateBirthdays extends ConsoleCommand {
     @Override
     public void onExecute(String[] args) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        BirthdayMongoDBWrapper.getBirthdayEntrys().forEach((s, s2) -> {
+        BirthdayMongoDBWrapper.oldGetBirthdayEntrys().forEach((s, s2) -> {
             try {
                 Long aLong = Long.valueOf(s.substring(21, 39));
                 Date parse = format.parse(s2);
