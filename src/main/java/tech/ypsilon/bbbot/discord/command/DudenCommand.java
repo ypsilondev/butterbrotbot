@@ -40,7 +40,7 @@ public class DudenCommand extends Command {
         }
         input = new StringBuilder(input.toString().trim());
 
-        if(input.toString().matches("^[A-Za-z -]+$")){
+        if(!input.toString().matches("^[A-Za-z -]+$")){
             e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
                     .addField("Fehlendes Argument", "Dein Wort einhält nicht erlaubte Zeichen", false).build()).queue();
             return;
