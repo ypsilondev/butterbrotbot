@@ -22,7 +22,7 @@ public class HelpCommand extends Command {
                 builder.append(command.getAlias()[i]);
                 if (i != command.getAlias().length-1) builder.append(" | ");
             }
-            b.addField(builder.toString(), command.getDescription(), false);
+            b.addField(builder.toString(), (command.getDescription() == null ? "" : command.getDescription()), false);
         }
         e.getChannel().sendMessage(b.build()).queue();
     }

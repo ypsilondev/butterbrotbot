@@ -23,7 +23,7 @@ public class DudenCommand extends Command {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Wörter im Online-Duden nachschlagen: 'kit duden [Wort]'";
     }
 
     @Override
