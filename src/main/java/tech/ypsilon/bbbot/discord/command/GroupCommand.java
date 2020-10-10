@@ -1,7 +1,7 @@
 package tech.ypsilon.bbbot.discord.command;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
@@ -96,13 +96,22 @@ public class GroupCommand extends Command {
         EmbedBuilder b = EmbedUtil.createSuccessEmbed();
         b.setDescription("Lerngruppe " + group.getName());
         for (Long userID : group.getUserIDs()) {
-            b.addField(Objects.requireNonNull(DiscordController.getJDA().getUserById(userID)).getName(), "", false);
+            JDA jda = DiscordController.getJDA();
+            User userById = jda.getUserById(userID);
+            if (userById == null) userById = jda.retrieveUserById(userID).complete();
+            b.addField(userById.getName(), "", false);
         }
         e.getChannel().sendMessage(b.build()).queue();
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "Erstelle Lerngruppen mit 'kit lerngruppe create [NAME_OHNE_LEERZEICHEN]', " +
+                "füge User hinzu mit 'kit lerngruppe add [@USER]' " +
+                "oder zeige an, welche User deiner Lerngruppe angehören mit 'kit lerngruppe list'." +
+                "Joine in den Channel 'Lerngruppenchannel' und es wird automatisch ein lerngruppeneigener Channel mit " +
+                "eurem Lerngruppennamen erstellt. In diesen können alle Lerngruppenteilnehmer joinen, in dem sie " +
+                "ebenfalls in den 'Lerngruppenchannel' joinen. Der Channel wird nach dem Verlassen aller Mitglieder " +
+                "gelöscht, und bei Bedarf wieder mit vorherigem Schema erstellt.";
     }
 }

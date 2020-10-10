@@ -1,7 +1,6 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -34,7 +33,7 @@ public class StudiengangCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Füge einen neuen Studiengang hinzu";
+        return "Fügt einen neuen Studiengang hinzu (admin only)";
     }
 
     @Override
@@ -129,22 +128,11 @@ public class StudiengangCommand extends Command {
                 }
 
                 TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"));
-                textChannel
-                        .retrieveMessageById("759043590432882798").queue(message -> {
-                    message.editMessage(messageStart + msg.toString() + messageEnd).queue();
+                textChannel.retrieveMessageById("759043590432882798").queue(message ->
+                        message.editMessage(messageStart + msg.toString() + messageEnd).queue());
 
-                    for (String emote : emotes) {
-                        textChannel.retrievePinnedMessages().queue(messages -> {
-                            ReactionTemp reactionTemp = new ReactionTemp(textChannel, messages);
+                textChannel.retrievePinnedMessages().queue(messages -> addReactionsToMessage(emotes, messages, textChannel));
 
-                            e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
-                                    .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
-                                            false).build()).queue();
-                        });
-                    }
-                });
-        }
-    }
 
     @SuppressWarnings("unchecked")
     private void addReactionsToMessage(ArrayList<String> emotes, List<Message> messages, TextChannel textChannel) {
@@ -164,6 +152,20 @@ public class StudiengangCommand extends Command {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private void addReactionsToMessage(ArrayList<String> emotes, List<Message> messages, TextChannel textChannel){
+        for(String emote : ((ArrayList<String>)emotes.clone())){
+            if(messages.stream().noneMatch(message -> message.getReactions().stream()
+                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
+                for (Message message : messages) {
+                    if (retrieveMessageReaction(message).size() < 20) {
+                        message.addReaction(emote).queue();
+                        emotes.remove(emote);
+                        break;
+                    }
+                }
+            }else{
+                emotes.remove(emote);
     private class ReactionTemp {
 
         private TextChannel channel;
@@ -211,14 +213,23 @@ public class StudiengangCommand extends Command {
         }
     }
 
+        if(emotes.size() > 0){
+            textChannel.sendMessage("-").queue(message -> {
+                message.pin().queue();
+                messages.add(message);
+                addReactionsToMessage(emotes, messages, textChannel);
+            });
+        }
+    }
+
     private List<MessageReaction> retrieveMessageReaction(Message message) {
         AtomicReference<List<MessageReaction>> list = new AtomicReference<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
         message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> list.set(msg.getReactions()));
         try {
             countDownLatch.await();
-        } catch (InterruptedException ignored) {
-        }
+        } catch (InterruptedException ignored) { }
+
         return list.get();
     }
 

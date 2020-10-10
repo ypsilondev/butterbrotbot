@@ -25,7 +25,6 @@ public class VoicePlayCommand extends Command {
             return;
         }
 
-        // todo: Check for link
         if (!Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).inVoiceChannel()) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Bot kann nur aus einem Voice-Channel heraus gerufen werden");
@@ -51,6 +50,6 @@ public class VoicePlayCommand extends Command {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Mit 'kit play [Link]' joined der Bot deinem Voice-Channel und spielt die Audio des Links";
     }
 }

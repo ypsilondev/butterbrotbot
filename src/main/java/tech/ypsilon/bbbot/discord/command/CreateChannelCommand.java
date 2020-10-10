@@ -47,7 +47,8 @@ public class CreateChannelCommand extends Command{
 
     @Override
     public String getDescription() {
-        return "Erstelle einen eigenen temporären Sprachkanal mit oder ohne Benutzerbegrenzung";
+        return "Erstelle einen eigenen temporären Sprachkanal mit oder ohne Benutzerbegrenzung: " +
+                "'kit cc [MaxUser/-1/Spielname]'. Spielnamen sind bspw. 'Valorant' oder 'CS:GO'";
     }
 
     @Override

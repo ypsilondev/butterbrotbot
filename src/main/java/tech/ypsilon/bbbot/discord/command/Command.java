@@ -6,7 +6,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.regex.Pattern;
 
-public abstract class Command {
+public abstract class Command implements DiscordFunction {
 
     public abstract String[] getAlias();
     public abstract void onExecute(GuildMessageReceivedEvent e, String[] args);
