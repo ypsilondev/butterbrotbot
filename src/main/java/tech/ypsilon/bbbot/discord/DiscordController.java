@@ -16,6 +16,10 @@ public class DiscordController {
 
     private final JDA jda;
 
+    /**
+     * Registering the JDA with the needed GatewayIntents.
+     * @throws LoginException when the provided token is invalid
+     */
     public DiscordController() throws LoginException {
         instance = this;
         Collection<GatewayIntent> gatewayIntents = Arrays.asList(GatewayIntent.GUILD_VOICE_STATES,
@@ -27,6 +31,10 @@ public class DiscordController {
                 .build();
     }
 
+    /**
+     * Get the Main JDA instance for executing future tasks
+     * @return the JDA instance from the BOT
+     */
     public static JDA getJDA() {
         return instance.jda;
     }
