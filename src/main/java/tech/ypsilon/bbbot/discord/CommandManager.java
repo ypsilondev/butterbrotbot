@@ -36,8 +36,8 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new EditDirectoryCommand());
         registerFunction(new StudiengangCommand());
         registerFunction(new WriteAfterMeCommand());
-        registerFunction(new VoicePlayCommand());
-        registerFunction(new VoiceLeaveCommand());
+        //registerFunction(new VoicePlayCommand());
+        //registerFunction(new VoiceLeaveCommand());
         registerFunction(new CreateChannelCommand());
         registerFunction(new GroupCommand());
         registerFunction(new BirthdayCommand());
@@ -46,6 +46,7 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new CensorshipCommand());
         registerFunction(new DudenCommand());
         registerFunction(new RankSystemCommand());
+        registerFunction(new VoiceCommands());
 
         registerEventListener(this);
         registerEventListener(new DefaultListener());
@@ -58,16 +59,18 @@ public class CommandManager extends ListenerAdapter {
 
     /**
      * Register a new function for Discord
-     * Also the way to register {@link LegacyCommand}
+     * You can add a new command by passing a instance of {@link Command} or {@link CommandBucket}
      * @param functions an instance from the Function
      */
     private void registerFunction(DiscordFunction... functions) {
         for (DiscordFunction function : functions) {
-            if(function instanceof LegacyCommand) {
-                commands.add((LegacyCommand) function);
+            if(function instanceof Command) {
+                commands.add((Command) function);
             }
             if(function instanceof CommandBucket) {
-                ((CommandBucket) function).register().forEach(this::registerFunction);
+                ArrayList<DiscordFunction> discordFunctions = new ArrayList<>();
+                ((CommandBucket) function).register(discordFunctions);
+                discordFunctions.forEach(this::registerFunction);
             }
         }
     }

@@ -37,6 +37,10 @@ public class CommandBuilder {
         return this;
     }
 
+    public void buildAndAdd(List<DiscordFunction> functions) {
+        functions.add(this.build());
+    }
+
     public FullStackedExecutor build() {
         FullStackedExecutor executor = new FullStackedExecutor() {
             @Override
