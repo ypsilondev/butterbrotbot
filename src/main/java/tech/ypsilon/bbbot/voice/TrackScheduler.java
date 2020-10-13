@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class TrackScheduler implements AudioEventListener {
 
     private final AudioPlayer PLAYER;
-    private final BlockingQueue<AudioTrack> TRACKS = new LinkedBlockingDeque<>();
+    private final BlockingQueue<AudioTrack> QUEUE = new LinkedBlockingDeque<>();
 
     public TrackScheduler(final AudioPlayer PLAYER) {
         this.PLAYER = PLAYER;
@@ -26,15 +26,33 @@ public class TrackScheduler implements AudioEventListener {
         if(PLAYER.getPlayingTrack() == null) {
             PLAYER.playTrack(track);
         } else {
-            TRACKS.add(track);
+            QUEUE.add(track);
         }
     }
+
+    public BlockingQueue<AudioTrack> getQueue() {
+        return QUEUE;
+    }
+
+    public void skip(int count) {
+        if(count <= 0)
+            return;
+        AudioTrack track = null;
+        for(int i = 0; i < count; i++) {
+            track = this.QUEUE.poll();
+        }
+        if(track == null)
+            this.PLAYER.stopTrack();
+        else
+            this.PLAYER.playTrack(track);
+    }
+
 
     @Override
     public void onEvent(AudioEvent audioEvent) {
         if(audioEvent instanceof TrackEndEvent) {
             if(((TrackEndEvent) audioEvent).endReason.mayStartNext) {
-                AudioTrack poll = TRACKS.poll();
+                AudioTrack poll = QUEUE.poll();
                 if(poll != null)
                     PLAYER.playTrack(poll);
             }

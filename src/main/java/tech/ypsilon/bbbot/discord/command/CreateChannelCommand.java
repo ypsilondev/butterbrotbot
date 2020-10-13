@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class CreateChannelCommand extends Command{
+public class CreateChannelCommand extends LegacyCommand {
 
     private final HashMap<String, Integer> games = new HashMap<>();
     public static List<VoiceChannel> channels = new ArrayList<>();

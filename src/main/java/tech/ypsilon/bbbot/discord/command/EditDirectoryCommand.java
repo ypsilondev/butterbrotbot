@@ -10,7 +10,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditDirectoryCommand extends Command implements PrivateChat {
+public class EditDirectoryCommand extends LegacyCommand implements PrivateExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"editDir", "ed", "editDirectory", "editdir"};

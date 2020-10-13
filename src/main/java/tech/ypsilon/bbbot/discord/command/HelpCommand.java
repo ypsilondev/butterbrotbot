@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.CommandManager;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-public class HelpCommand extends Command {
+public class HelpCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"help", "list"};
