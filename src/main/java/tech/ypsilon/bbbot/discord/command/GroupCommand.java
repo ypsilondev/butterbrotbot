@@ -32,6 +32,7 @@ public class GroupCommand extends Command {
         switch (args[0]) {
             case "create": createGroup(e, args[1]); break;
             case "add": addPlayerToGroup(e); break;
+            case "leave": leaveGroup(e); break;
             case "list": listGroupMembers(e); break;
         }
     }
@@ -104,6 +105,21 @@ public class GroupCommand extends Command {
         e.getChannel().sendMessage(b.build()).queue();
     }
 
+    private void leaveGroup(GuildMessageReceivedEvent e) {
+        StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(e.getAuthor());
+        if (group == null) {
+            EmbedBuilder b = EmbedUtil.createErrorEmbed();
+            b.setDescription("Du bist in keiner Lerngruppe");
+            e.getChannel().sendMessage(b.build()).queue();
+            return;
+        }
+
+        group.leaveGroup(e.getAuthor());
+        EmbedBuilder b = EmbedUtil.createSuccessEmbed();
+        b.setDescription("Du hast die Lerngruppe " + group.getName() + " verlassen");
+        e.getChannel().sendMessage(b.build()).queue();
+    }
+
     @Override
     public String getDescription() {
         return "Erstelle Lerngruppen mit 'kit lerngruppe create [NAME_OHNE_LEERZEICHEN]', " +
@@ -112,6 +128,7 @@ public class GroupCommand extends Command {
                 "Joine in den Channel 'Lerngruppenchannel' und es wird automatisch ein lerngruppeneigener Channel mit " +
                 "eurem Lerngruppennamen erstellt. In diesen können alle Lerngruppenteilnehmer joinen, in dem sie " +
                 "ebenfalls in den 'Lerngruppenchannel' joinen. Der Channel wird nach dem Verlassen aller Mitglieder " +
-                "gelöscht, und bei Bedarf wieder mit vorherigem Schema erstellt.";
+                "gelöscht, und bei Bedarf wieder mit vorherigem Schema erstellt.\n Verlasse deine Lerngruppe mit " +
+                "'kit lerngruppe leave'";
     }
 }
