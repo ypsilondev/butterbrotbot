@@ -8,7 +8,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoreCommand extends Command {
+public class StoreCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"store", "s"};

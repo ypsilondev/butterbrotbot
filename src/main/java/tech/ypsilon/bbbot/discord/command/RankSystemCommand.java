@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.listener.RankSystemListener;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-public class RankSystemCommand extends Command {
+public class RankSystemCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"rank"};

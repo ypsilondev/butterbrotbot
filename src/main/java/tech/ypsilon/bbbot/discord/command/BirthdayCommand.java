@@ -15,12 +15,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ContextException;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
-public class BirthdayCommand extends Command {
+public class BirthdayCommand extends LegacyCommand {
 
 	public static final boolean NOTIFY_ON_STARTUP = false;
 

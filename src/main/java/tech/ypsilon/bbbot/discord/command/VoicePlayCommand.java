@@ -6,11 +6,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.voice.AudioManager;
 import tech.ypsilon.bbbot.voice.AudioUtil;
-import tech.ypsilon.bbbot.voice.TrackScheduler;
 
 import java.util.Objects;
 
-public class VoicePlayCommand extends Command {
+public class VoicePlayCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"play"};

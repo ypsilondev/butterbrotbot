@@ -10,7 +10,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddDirectoryCommand extends Command implements PrivateChat {
+public class AddDirectoryCommand extends LegacyCommand implements PrivateExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"mkdir", "addDirectory", "createDirectory", "ad"};
