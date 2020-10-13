@@ -71,6 +71,7 @@ public class RankSystemListener extends ListenerAdapter {
             user.put("currentStreak", 0);
             user.put("bestStreak", 1);
             getCollection().insertOne(user);
+            filer = Filters.eq("userId", event.getAuthor().getIdLong());
             newCreate = true;
         }
         Date lastMsgUser = user.getDate("lastMessage");
@@ -86,7 +87,6 @@ public class RankSystemListener extends ListenerAdapter {
         if(lastMsgUser.getTime()+getMillisForDays(2) < System.currentTimeMillis() && !newCreate) {  //Lost Streak; No message for more than 48h
             if(currentStreak > bestStreak) {    //CurrentStreak higher than bestStreak
                 updates.add(Updates.set("bestStreak", (currentStreak)));    //Set bestStreak = currentStreak
-                bestStreak = currentStreak;
             }
             updates.add(Updates.set("currentStreak", 1));
             currentStreak = 1;
