@@ -87,14 +87,21 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     /**
      * Add a user to a given group
      * @param user the user that should be added
-     * @return false if the user is in a group. true if not
      */
     public boolean addToGroup(User user) {
-        if(retrieveStudyGroup(user) != null)    //Check if user is already in a group
-            return false;                       //And return false if he is.
+        if (retrieveStudyGroup(user) != null) {
+            return false;
+        }
         this.users.add(user.getIdLong());
-        return getCollection().updateOne(Filters.eq("_id", _id),
-                Updates.addToSet("users", user.getIdLong())).wasAcknowledged();
+        getCollection().updateOne(Filters.eq("_id", _id),
+                Updates.addToSet("users", user.getIdLong()));
+        return true;
+    }
+
+    public void leaveGroup(User user) {
+        this.users.remove(user.getIdLong());
+        getCollection().updateOne(Filters.eq("_id", _id),
+                Updates.pull("users", user.getIdLong()));
     }
 
     /**
