@@ -96,7 +96,7 @@ public class RankSystemListener extends ListenerAdapter {
         updates.add(Updates.inc("points", calculatePoints(currentStreak)));
         lastMessage.put(event.getAuthor().getIdLong(), System.currentTimeMillis());
 
-        getCollection().updateOne(filer, updates);
+        getCollection().updateOne(filer, Updates.combine(updates));
     }
 
     /**
