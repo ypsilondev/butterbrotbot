@@ -248,7 +248,12 @@ public class BirthdayCommand extends LegacyCommand {
 	public static boolean shoutOutBday(long userId, Date bday, Guild guild, MessageChannel channel) {
 		if(hasBirthdayToday(bday)) {
 			String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
-			channel.sendMessage(userName + " hat heute Geburtstag!\nHerzlichen Gl�ckwunsch!")
+			int age = 0;
+			Date now = new Date(System.currentTimeMillis());
+	        SimpleDateFormat formatter = new SimpleDateFormat("YYYY");
+	        age = Integer.parseInt(formatter.format(now)) - Integer.parseInt(formatter.format(bday));
+	        
+			channel.sendMessage(userName + " hat heute Geburtstag und wurde "+age+" Jahre alt!\nHerzlichen Glückwunsch!")
 					.queue(message -> {
 						message.addReaction("U+1F381").queue();
 						message.addReaction("U+1F382").queue();
