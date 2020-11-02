@@ -231,7 +231,7 @@ public class BirthdayCommand extends Command {
 		});;
 
 		if(!shoutout) {
-			channel.sendMessage("Heute gibt es leider keine Gebutstage :(").queue(message -> {
+			channel.sendMessage("Heute gibt es leider keine Geburtstage :(").queue(message -> {
 				message.addReaction("U+1F62F").queue();
 			});
 		}
