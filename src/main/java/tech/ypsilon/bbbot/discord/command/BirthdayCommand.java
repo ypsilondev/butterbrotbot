@@ -18,10 +18,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
 import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.settings.SettingsController;
 
-public class BirthdayCommand extends LegacyCommand {
+public class BirthdayCommand extends Command implements GuildExecuteHandler{
 
 	public static final boolean NOTIFY_ON_STARTUP = false;
+	
+	public static boolean notifyNoBirthday = true;
+	
 
 	public static final String COMMAND_PREFIX = "bday";
 
@@ -31,10 +35,15 @@ public class BirthdayCommand extends LegacyCommand {
 
 	private static boolean shoutout = false;
 
-	@Override
-	public String[] getAlias() {
-		return new String[] {"bday", "birthday"};
+	public BirthdayCommand() {
+		Object settingsValue = SettingsController.getValue("commands.bday.notifyNoBirthdays");
+		if(settingsValue.getClass().equals(Boolean.class)) {
+			notifyNoBirthday = (boolean) settingsValue;
+		}
 	}
+	
+	
+	
 
 	@Override
 	public void onExecute(GuildMessageReceivedEvent event, String[] args) {
@@ -142,6 +151,10 @@ public class BirthdayCommand extends LegacyCommand {
 		return "Der Geburtstagsbefehl: 'kit bday set <Geburtsdatum>'";
 	}
 
+	@Override
+	public String[] getAlias() {
+		return new String[] {"bday", "birthday"};
+	}
 
 
 	/**
@@ -166,9 +179,6 @@ public class BirthdayCommand extends LegacyCommand {
 		}else {
 			delay += (23-hour) * 60 + (60 - min);
 		}
-
-		// System.out.println(delay);
-		// delay = 1;
 
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
 		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(new Runnable() {
@@ -230,7 +240,7 @@ public class BirthdayCommand extends LegacyCommand {
 				shoutout = true;
 		});;
 
-		if(!shoutout) {
+		if(!shoutout && notifyNoBirthday) {
 			channel.sendMessage("Heute gibt es leider keine Geburtstage :(").queue(message -> {
 				message.addReaction("U+1F62F").queue();
 			});
