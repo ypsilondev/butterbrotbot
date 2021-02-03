@@ -5,9 +5,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-import java.util.Arrays;
-
-public class ListCommand extends Command {
+public class ListCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"listStores", "l", "get"};

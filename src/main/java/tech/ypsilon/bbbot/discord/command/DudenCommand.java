@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DudenCommand extends Command {
+public class DudenCommand extends LegacyCommand {
 
     @Override
     public String[] getAlias() {
@@ -39,6 +39,9 @@ public class DudenCommand extends Command {
             input.append(s).append(" ");
         }
         input = new StringBuilder(input.toString().trim());
+        input = new StringBuilder(input.toString().replaceAll("Ä", "Ae").replaceAll("Ö", "Oe")
+                .replaceAll("Ü", "Ue").replaceAll("ä", "ae").replaceAll("ö", "oe")
+                .replaceAll("ü", "üe").replaceAll("ß", "sz"));
 
         if(!input.toString().matches("^[A-Za-z -]+$")){
             e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
@@ -72,7 +75,8 @@ public class DudenCommand extends Command {
         }catch(HttpStatusException ex){
             if(ex.getStatusCode() == 404){
                 e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
-                        .addField("Wort nicht gefunden", "Das eingegebene Wort wurde nicht gefunden", false)
+                        .addField("Wort nicht gefunden", "Das eingegebene Wort wurde nicht gefunden " +
+                                "(Tipp: Achte auf Groß- und Kleinschreibung)", false)
                         .build()).queue();
             }else{
                 ButterBrot.LOGGER.error("Error while lookup up a word on duden.de", ex);
