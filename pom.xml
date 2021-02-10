@@ -71,6 +71,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -111,8 +115,14 @@
         </dependency>
         <dependency>
             <groupId>me.gregyyy.jduden</groupId>
-            <artifactId>jduden</artifactId>
+            <artifactId>JDuden</artifactId>
             <version>0.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jsoup</groupId>
+                    <artifactId>jsoup</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
