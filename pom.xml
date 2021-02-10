@@ -109,6 +109,11 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.27</version>
         </dependency>
+        <dependency>
+            <groupId>me.gregyyy.jduden</groupId>
+            <artifactId>jduden</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
 </project>
