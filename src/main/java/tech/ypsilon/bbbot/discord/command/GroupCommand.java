@@ -10,9 +10,8 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class GroupCommand extends Command {
+public class GroupCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"group", "lerngruppe"};

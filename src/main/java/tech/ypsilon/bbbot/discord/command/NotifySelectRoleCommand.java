@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
  * Will cause the bot to be quarantined
  */
 @Deprecated
-public class NotifySelectRoleCommand extends Command {
+public class NotifySelectRoleCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"notify"};

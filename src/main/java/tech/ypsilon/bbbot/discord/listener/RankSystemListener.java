@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class RankSystemListener extends ListenerAdapter {
 
     //Local cache for speed
-    private HashMap<Long, Long> lastMessage = new HashMap<>();
+    private final HashMap<Long, Long> lastMessage = new HashMap<>();
 
     /**
      * Get the corresponding Collection
@@ -96,7 +96,7 @@ public class RankSystemListener extends ListenerAdapter {
         updates.add(Updates.inc("points", calculatePoints(currentStreak)));
         lastMessage.put(event.getAuthor().getIdLong(), System.currentTimeMillis());
 
-        getCollection().updateOne(filer, updates);
+        getCollection().updateOne(filer, Updates.combine(updates));
     }
 
     /**
@@ -113,8 +113,8 @@ public class RankSystemListener extends ListenerAdapter {
      */
     public static class RankInformation {
 
-        private ObjectId _id;
-        private Long userId;
+        private final ObjectId _id;
+        private final Long userId;
         private int points = 0;
         private int currentStreak = 0;
         private int bestStreak = 0;
@@ -122,15 +122,18 @@ public class RankSystemListener extends ListenerAdapter {
 
         private RankInformation(Long userId) {
             Document document = getCollection().find(Filters.eq("userId", userId)).first();
+
             this.userId = userId;
             if(document != null) {
-                _id = document.getObjectId("_id");
+                this._id = document.getObjectId("_id");
                 this.points = document.getInteger("points");
                 this.currentStreak = document.getInteger("currentStreak");
                 this.bestStreak = document.getInteger("bestStreak");
                 this.lastMessage = document.getDate("lastMessage");
                 if(this.currentStreak > this.bestStreak)
                     this.bestStreak = this.currentStreak;
+            } else {
+                this._id = new ObjectId();
             }
         }
 

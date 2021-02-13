@@ -3,6 +3,8 @@ package tech.ypsilon.bbbot.discord;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.discord.command.*;
 import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -14,7 +16,7 @@ import java.util.List;
 import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
 import static tech.ypsilon.bbbot.util.StringUtil.parseString;
 
-public class CommandManager {
+public class CommandManager extends ListenerAdapter {
 
     private static CommandManager instance;
 
@@ -34,8 +36,8 @@ public class CommandManager {
         registerFunction(new EditDirectoryCommand());
         registerFunction(new StudiengangCommand());
         registerFunction(new WriteAfterMeCommand());
-        registerFunction(new VoicePlayCommand());
-        registerFunction(new VoiceLeaveCommand());
+        //registerFunction(new VoicePlayCommand());
+        //registerFunction(new VoiceLeaveCommand());
         registerFunction(new CreateChannelCommand());
         registerFunction(new GroupCommand());
         registerFunction(new BirthdayCommand());
@@ -44,9 +46,10 @@ public class CommandManager {
         registerFunction(new CensorshipCommand());
         registerFunction(new DudenCommand());
         registerFunction(new RankSystemCommand());
+        registerFunction(new VoiceCommands());
 
+        registerEventListener(this);
         registerEventListener(new DefaultListener());
-        registerEventListener(new CommandListener());
         registerEventListener(new RoleListener());
         registerEventListener(new ChannelListener());
         registerEventListener(new NewMemberJoinListener());
@@ -56,13 +59,18 @@ public class CommandManager {
 
     /**
      * Register a new function for Discord
-     * Also the way to register {@link Command}
+     * You can add a new command by passing a instance of {@link Command} or {@link CommandBucket}
      * @param functions an instance from the Function
      */
     private void registerFunction(DiscordFunction... functions) {
         for (DiscordFunction function : functions) {
             if(function instanceof Command) {
                 commands.add((Command) function);
+            }
+            if(function instanceof CommandBucket) {
+                ArrayList<DiscordFunction> discordFunctions = new ArrayList<>();
+                ((CommandBucket) function).register(discordFunctions);
+                discordFunctions.forEach(this::registerFunction);
             }
         }
     }
@@ -84,23 +92,35 @@ public class CommandManager {
         return instance.commands;
     }
 
+    @Override
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        CommandManager.checkForExecute(event);
+    }
+
+    @Override
+    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+        CommandManager.checkForExecute(event);
+    }
+
     /**
      * Check if a received message is a command by checking the prefix and if the alias is a registered command.
      * If so the command gets executed by calling the
-     * {@link Command#onExecute(GuildMessageReceivedEvent, String[]) method.
+     * {@link LegacyCommand#onExecute(GuildMessageReceivedEvent, String[]) method.
      *
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NEVER BE CALLED FROM A COMMAND OR OTHER CLASS!
      *
      * @param event from the EventHandler
      */
-    public static void checkForExecute(GuildMessageReceivedEvent event){
+    private static void checkForExecute(GuildMessageReceivedEvent event){
         String[] arguments = checkPrefix(event.getMessage());
         if(arguments == null) return;
 
         for(Command command : instance.commands){
-            if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
-                String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
-                command.onExecute(event, args);
+            if(command instanceof GuildExecuteHandler) {
+                if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
+                    String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
+                    ((GuildExecuteHandler) command).onExecute(event, args);
+                }
             }
         }
     }
@@ -108,21 +128,21 @@ public class CommandManager {
     /**
      * Check if a received private message is a command by checking the prefix and if the alias is a registered command.
      * If so the command gets executed by calling
-     * the {@link PrivateChat#onPrivateExecute(PrivateMessageReceivedEvent, String[])} method.
+     * the {@link PrivateExecuteHandler#onPrivateExecute(PrivateMessageReceivedEvent, String[])} method.
      *
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NEVER BE CALLED FROM A COMMAND OR OTHER CLASS!
      *
      * @param event fromt eh EventHandler
      */
-    public static void checkForExecute(PrivateMessageReceivedEvent event){
+    private static void checkForExecute(PrivateMessageReceivedEvent event){
         String[] arguments = checkPrefix(event.getMessage());
         if(arguments == null) return;
 
         for(Command command : instance.commands){
-            if(command instanceof PrivateChat) {
+            if(command instanceof PrivateExecuteHandler) {
                 if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
                     String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
-                    ((PrivateChat)command).onPrivateExecute(event, args);
+                    ((PrivateExecuteHandler)command).onPrivateExecute(event, args);
                 }
             }
         }
@@ -130,7 +150,7 @@ public class CommandManager {
 
     /**
      * Checks if the prefix from a given command is one of the prefix defined in the settings.yml
-     * If to it parses the message to a array later used in the onExecuted from {@link Command} or {@link PrivateChat}
+     * If to it parses the message to a array later used in the onExecuted from {@link LegacyCommand} or {@link PrivateExecuteHandler}
      * Uses a parsed to detect longer strings by double quotes.
      *
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NOT BE CALLED UNLESS YOU KNOW WHAT YOU ARE DOING!

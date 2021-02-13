@@ -2,7 +2,7 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-public class WriteAfterMeCommand extends Command {
+public class WriteAfterMeCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"wam"};

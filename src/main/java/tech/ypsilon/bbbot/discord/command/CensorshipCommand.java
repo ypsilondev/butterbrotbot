@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.listener.CensorWatcherListener;
 
-public class CensorshipCommand extends Command {
+public class CensorshipCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
         return new String[]{"censor"};

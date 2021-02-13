@@ -15,14 +15,17 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ContextException;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
 import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.settings.SettingsController;
 
-public class BirthdayCommand extends Command {
+public class BirthdayCommand extends Command implements GuildExecuteHandler{
 
 	public static final boolean NOTIFY_ON_STARTUP = false;
+	
+	public static boolean notifyNoBirthday = true;
+	
 
 	public static final String COMMAND_PREFIX = "bday";
 
@@ -32,10 +35,15 @@ public class BirthdayCommand extends Command {
 
 	private static boolean shoutout = false;
 
-	@Override
-	public String[] getAlias() {
-		return new String[] {"bday", "birthday"};
+	public BirthdayCommand() {
+		Object settingsValue = SettingsController.getValue("commands.bday.notifyNoBirthdays");
+		if(settingsValue.getClass().equals(Boolean.class)) {
+			notifyNoBirthday = (boolean) settingsValue;
+		}
 	}
+	
+	
+	
 
 	@Override
 	public void onExecute(GuildMessageReceivedEvent event, String[] args) {
@@ -143,6 +151,10 @@ public class BirthdayCommand extends Command {
 		return "Der Geburtstagsbefehl: 'kit bday set <Geburtsdatum>'";
 	}
 
+	@Override
+	public String[] getAlias() {
+		return new String[] {"bday", "birthday"};
+	}
 
 
 	/**
@@ -167,9 +179,6 @@ public class BirthdayCommand extends Command {
 		}else {
 			delay += (23-hour) * 60 + (60 - min);
 		}
-
-		// System.out.println(delay);
-		// delay = 1;
 
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
 		ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(new Runnable() {
@@ -231,8 +240,8 @@ public class BirthdayCommand extends Command {
 				shoutout = true;
 		});;
 
-		if(!shoutout) {
-			channel.sendMessage("Heute gibt es leider keine Gebutstage :(").queue(message -> {
+		if(!shoutout && notifyNoBirthday) {
+			channel.sendMessage("Heute gibt es leider keine Geburtstage :(").queue(message -> {
 				message.addReaction("U+1F62F").queue();
 			});
 		}
@@ -249,7 +258,12 @@ public class BirthdayCommand extends Command {
 	public static boolean shoutOutBday(long userId, Date bday, Guild guild, MessageChannel channel) {
 		if(hasBirthdayToday(bday)) {
 			String userName = guild.getJDA().retrieveUserById(userId).complete().getAsMention();
-			channel.sendMessage(userName + " hat heute Geburtstag!\nHerzlichen Gl�ckwunsch!")
+			int age = 0;
+			Date now = new Date(System.currentTimeMillis());
+	        SimpleDateFormat formatter = new SimpleDateFormat("YYYY");
+	        age = Integer.parseInt(formatter.format(now)) - Integer.parseInt(formatter.format(bday));
+	        
+			channel.sendMessage(userName + " hat heute Geburtstag und wurde "+age+" Jahre alt!\nHerzlichen Glückwunsch!")
 					.queue(message -> {
 						message.addReaction("U+1F381").queue();
 						message.addReaction("U+1F382").queue();

@@ -15,11 +15,13 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class StudiengangCommand extends Command {
+public class StudiengangCommand extends LegacyCommand {
 
     private final String messageStart = "Herzlich willkommen auf dem Ersti-Server fürs <:KIT:759041596460236822> . " +
             "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n";
     private final String messageEnd = "\n" + "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
+    public static final long messageId = 759043590432882798L;
+    public static final long channelId = 759033520680599553L;
     MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
 
     @Override
@@ -123,11 +125,15 @@ public class StudiengangCommand extends Command {
                     msg.append(doc.getString("emote")).append(" - ").append(doc.getString("name")).append("\n");
                 }
 
-                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById("759033520680599553"));
-                textChannel.retrieveMessageById("759043590432882798").queue(message ->
+                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
+                textChannel.retrieveMessageById(messageId).queue(message ->
                         message.editMessage(messageStart + msg.toString() + messageEnd).queue());
 
-                textChannel.retrievePinnedMessages().queue(messages -> addReactionsToMessage(emotes, messages, textChannel));
+                ArrayList<Message> messageList = new ArrayList<>();
+                textChannel.retrievePinnedMessages().queue(messages -> {
+                    messageList.addAll(messages);
+                    addReactionsToMessage(emotes, messageList, textChannel);
+                });
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
                         .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
@@ -136,15 +142,26 @@ public class StudiengangCommand extends Command {
     }
 
     @SuppressWarnings("unchecked")
-    private void addReactionsToMessage(ArrayList<String> emotes, List<Message> messages, TextChannel textChannel){
+    private void addReactionsToMessage(ArrayList<String> emotes, ArrayList<Message> messages, TextChannel textChannel){
+        HashMap<Message, List<MessageReaction>> reactions = new HashMap<>();
+        HashMap<Message, Integer> reactionSize = new HashMap<>();
+        for(Message message : messages){
+            List<MessageReaction> list = retrieveMessageReaction(message);
+            reactions.put(message, list);
+            reactionSize.put(message, list.size());
+        }
+
         for(String emote : ((ArrayList<String>)emotes.clone())){
-            if(messages.stream().noneMatch(message -> message.getReactions().stream()
-                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
-                for (Message message : messages) {
-                    if (retrieveMessageReaction(message).size() < 20) {
+            if(messages.stream().noneMatch(message -> reactions.get(message).stream()
+                        .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
+                for (Message message : (ArrayList<Message>)messages.clone()) {
+                    if (reactionSize.get(message) < 20) {
                         message.addReaction(emote).queue();
                         emotes.remove(emote);
+                        reactionSize.put(message, reactionSize.get(message) + 1);
                         break;
+                    }else{
+                        messages.remove(message);
                     }
                 }
             }else{
@@ -164,7 +181,10 @@ public class StudiengangCommand extends Command {
     private List<MessageReaction> retrieveMessageReaction(Message message) {
         AtomicReference<List<MessageReaction>> list = new AtomicReference<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> list.set(msg.getReactions()));
+        message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> {
+            list.set(msg.getReactions());
+            countDownLatch.countDown();
+        });
         try {
             countDownLatch.await();
         } catch (InterruptedException ignored) { }
