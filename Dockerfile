@@ -11,6 +11,7 @@ RUN mvn -f /home/app/pom.xml clean package
 #
 FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/bbbot.jar /usr/local/lib/bbbot.jar
+COPY --from=build /home/app/target/lib/*  /usr/local/lib/lib/
 ENTRYPOINT ["java","-jar","/usr/local/lib/bbbot.jar"]
 
 #FROM openjdk:8
