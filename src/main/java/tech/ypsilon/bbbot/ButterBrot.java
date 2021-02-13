@@ -20,7 +20,15 @@ import static tech.ypsilon.bbbot.Init.*;
 public class ButterBrot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("tech.ypsilon.bbbot");
-    static final File SETTINGS_FILE = new File("settings.yml");
+    static final File SETTINGS_FILE;
+
+    static {
+        File data = new File("data");
+        if (!data.exists()) {
+            data.mkdir();
+        }
+        SETTINGS_FILE = new File(data, "settings.yml");
+    }
 
     /**
      * Program entry point
