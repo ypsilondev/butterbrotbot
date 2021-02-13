@@ -62,8 +62,12 @@ public class DudenCommand extends LegacyCommand {
             if(word.getWordSeparation() != null)  embed.addField("Worttrennung", word.getWordSeparation(), true);
 
             StringBuilder meaning = new StringBuilder();
-            for(String m : word.getMeanings()){
-                meaning.append("\n- ").append(m);
+            if(word.getWord().equals("Butterbrot")){
+                meaning.append("\n- ein Stück Software");
+            }else{
+                for(String m : word.getMeanings()){
+                    meaning.append("\n- ").append(m);
+                }
             }
             meaning = new StringBuilder(meaning.toString().replaceFirst("\n", ""));
             if(!meaning.toString().isEmpty()) embed.addField(meaning.toString().contains("\n") ? "Bedeutungen" : "Bedeutung",
