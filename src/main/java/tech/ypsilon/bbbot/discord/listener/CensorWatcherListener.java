@@ -15,7 +15,9 @@ public class CensorWatcherListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getMember().getRoles().stream().noneMatch(role -> role.getIdLong() == 757718320526000138L)) {
+        if (!event.isWebhookMessage()
+                && event.getMember() != null
+                && event.getMember().getRoles().stream().noneMatch(role -> role.getIdLong() == 757718320526000138L)) {
             Integer deletionLimit = censoredMember.get(event.getMember().getUser());
             if (deletionLimit != null && deletionLimit > 0) {
                 event.getMessage().delete().queue();
