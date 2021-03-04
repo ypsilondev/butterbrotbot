@@ -2,10 +2,12 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
-public class GBILocationCommand extends Command implements GuildExecuteHandler {
+public class GBILocationCommand extends Command implements GuildExecuteHandler, PrivateExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"gbi"};
@@ -22,6 +24,7 @@ public class GBILocationCommand extends Command implements GuildExecuteHandler {
         TextChannel textChanel = event.getChannel();
         Member member = event.getMember();
 
+        event.getMessage().delete().queue();
         if (args.length != 1) {
             member.getUser().openPrivateChannel().flatMap(channel -> channel.sendMessage("Invalid params!"))
                     .queue();
@@ -30,7 +33,8 @@ public class GBILocationCommand extends Command implements GuildExecuteHandler {
 
         try {
             int matrNbr = Integer.parseInt(args[0]);
-            textChanel.sendMessage(this.gbiLocation(matrNbr)).queue();
+            member.getUser().openPrivateChannel()
+                    .flatMap(channel -> channel.sendMessage(this.gbiLocation(matrNbr))).queue();
         } catch (NumberFormatException e) {
             member.getUser().openPrivateChannel().flatMap(
                     channel -> channel.sendMessage("Leider konnte deine Matrikelnummer nicht geparsed werden!"))
@@ -125,4 +129,21 @@ public class GBILocationCommand extends Command implements GuildExecuteHandler {
         return "??:??";
     }
 
+    @Override
+    public void onPrivateExecute(PrivateMessageReceivedEvent event, String[] args) {
+        PrivateChannel textChanel = event.getChannel();
+
+        event.getMessage().delete().queue();
+        if (args.length != 1) {
+            textChanel.sendMessage("Invalid params!").queue();
+            return;
+        }
+
+        try {
+            int matrNbr = Integer.parseInt(args[0]);
+            textChanel.sendMessage(this.gbiLocation(matrNbr)).queue();
+        } catch (NumberFormatException e) {
+            textChanel.sendMessage("Leider konnte deine Matrikelnummer nicht geparsed werden!").queue();
+        }
+    }
 }
