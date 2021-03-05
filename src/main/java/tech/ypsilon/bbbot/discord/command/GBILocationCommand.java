@@ -133,7 +133,6 @@ public class GBILocationCommand extends Command implements GuildExecuteHandler, 
     public void onPrivateExecute(PrivateMessageReceivedEvent event, String[] args) {
         PrivateChannel textChanel = event.getChannel();
 
-        event.getMessage().delete().queue();
         if (args.length != 1) {
             textChanel.sendMessage("Invalid params!").queue();
             return;
