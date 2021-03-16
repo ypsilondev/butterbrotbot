@@ -47,6 +47,8 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new DudenCommand());
         registerFunction(new RankSystemCommand());
         registerFunction(new VoiceCommands());
+        // registerFunction(new GBILocationCommand()); // Disabled; test over...
+        registerFunction(new GitHubCommand());
 
         registerEventListener(this);
         registerEventListener(new DefaultListener());
