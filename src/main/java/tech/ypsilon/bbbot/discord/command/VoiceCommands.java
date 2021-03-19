@@ -1,5 +1,8 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeSearchProvider;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -9,18 +12,19 @@ import tech.ypsilon.bbbot.voice.AudioUtil;
 import tech.ypsilon.bbbot.voice.TrackScheduler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 public class VoiceCommands implements CommandBucket {
     @Override
-    public void register(ArrayList<DiscordFunction> functions) {
+    public void register(List<DiscordFunction> functions) {
 
         // Play Command
         new CommandBuilder("play")
                 .setDescription("Mit 'kit play [Link]' joined der Bot deinem Voice-Channel und spielt die Audio des Links")
-                .setExecutor((GuildExecuteHandler) (e, args) -> {
+                .setExecutor((e, args) -> {
                     if (args.length == 0) {
                         EmbedBuilder b = EmbedUtil.createErrorEmbed();
                         b.setDescription("Übergebe einen Link");
@@ -55,7 +59,7 @@ public class VoiceCommands implements CommandBucket {
         // Leave Command
         new CommandBuilder("leave")
                 .setDescription("Let the bot leave the channel")
-                .setExecutor((GuildExecuteHandler) (e, args) -> {
+                .setExecutor((e, args) -> {
                     if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
                         e.getGuild().getAudioManager().closeAudioConnection();
                     }
@@ -65,7 +69,7 @@ public class VoiceCommands implements CommandBucket {
         // Clear Queue
         new CommandBuilder("clearQueue")
                 .setDescription("Clear the playback queue")
-                .setExecutor((GuildExecuteHandler) (e, args) -> {
+                .setExecutor((e, args) -> {
                     TrackScheduler scheduler = AudioManager.getInstance().getScheduler(e.getGuild());
                     scheduler.getQueue().clear();
                 })
@@ -74,9 +78,18 @@ public class VoiceCommands implements CommandBucket {
         // Skip Track
         new CommandBuilder("skip")
                 .setDescription("Skip a Track")
-                .setExecutor((GuildExecuteHandler) (e, args) -> {
+                .setExecutor((e, args) -> {
                     TrackScheduler scheduler = AudioManager.getInstance().getScheduler(e.getGuild());
                     scheduler.skip(1);
+                }).buildAndAdd(functions);
+
+        YoutubeSearchProvider ytsp = new YoutubeSearchProvider();
+        YoutubeAudioSourceManager yasm = new YoutubeAudioSourceManager();
+        new CommandBuilder("search")
+                .setDescription("Searches a YouTube™ Video")
+                .setExecutor((e, args) -> {
+                    String search = String.join(" ", args);
+                    AudioManager.getInstance().addTrack(e.getGuild(), ytsp.loadSearchResult(search.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm)));
                 }).buildAndAdd(functions);
 
     }

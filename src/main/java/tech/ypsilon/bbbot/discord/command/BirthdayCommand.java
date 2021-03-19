@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
@@ -15,13 +14,14 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class BirthdayCommand extends Command implements GuildExecuteHandler {
+public class BirthdayCommand implements GuildExecuteHandler {
 
     public static final boolean NOTIFY_ON_STARTUP = false;
 
@@ -262,9 +262,9 @@ public class BirthdayCommand extends Command implements GuildExecuteHandler {
      */
     public static boolean shoutOutBday(long userId, Date bday, Guild guild, MessageChannel channel) {
         if (hasBirthdayToday(bday)) {
-            User user = guild.getJDA().retrieveUserById(userId).complete();
-            if (guild.isMember(user)) {
-                String userName = user.getAsMention();
+            List<Member> members = guild.retrieveMembersByIds(userId).get();
+            if (!members.isEmpty()) {
+                String userName = members.get(0).getAsMention();
                 int age = 0;
                 Date now = new Date(System.currentTimeMillis());
                 SimpleDateFormat formatter = new SimpleDateFormat("YYYY");

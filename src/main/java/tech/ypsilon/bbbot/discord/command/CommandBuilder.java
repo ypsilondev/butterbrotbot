@@ -4,12 +4,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 public class CommandBuilder {
 
     private Set<String> alias = new HashSet<>();
-    private GuildExecuteHandler guildHandler;
-    private PrivateExecuteHandler privateHandler;
+    private BiConsumer<GuildMessageReceivedEvent, String[]> guildHandler;
+    private BiConsumer<PrivateMessageReceivedEvent, String[]> privateHandler;
     private String description = "";
 
     public CommandBuilder(String... alias) {
@@ -22,12 +24,12 @@ public class CommandBuilder {
         return this;
     }
 
-    public CommandBuilder setExecutor(GuildExecuteHandler geh) {
+    public CommandBuilder setExecutor(BiConsumer<GuildMessageReceivedEvent, String[]> geh) {
         this.guildHandler = geh;
         return this;
     }
 
-    public CommandBuilder setExecutor(PrivateExecuteHandler peh) {
+    public CommandBuilder setPrivateExecutor(BiConsumer<PrivateMessageReceivedEvent, String[]> peh) {
         this.privateHandler = peh;
         return this;
     }
@@ -56,13 +58,13 @@ public class CommandBuilder {
             @Override
             public void onExecute(GuildMessageReceivedEvent e, String[] args) {
                 if(guildHandler != null)
-                    guildHandler.onExecute(e, args);
+                    guildHandler.accept(e, args);
             }
 
             @Override
             public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
                 if(privateHandler != null)
-                    privateHandler.onPrivateExecute(e, args);
+                    privateHandler.accept(e, args);
             }
         };
         return executor;

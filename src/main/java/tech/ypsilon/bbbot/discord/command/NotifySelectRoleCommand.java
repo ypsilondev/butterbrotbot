@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 /**
@@ -7,7 +8,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
  * Will cause the bot to be quarantined
  */
 @Deprecated
-public class NotifySelectRoleCommand extends LegacyCommand {
+public class NotifySelectRoleCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"notify"};

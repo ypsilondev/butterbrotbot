@@ -1,8 +1,8 @@
 package tech.ypsilon.bbbot.discord.command;
 
-public abstract class Command implements DiscordFunction {
+public interface Command extends DiscordFunction {
 
-    public abstract String[] getAlias();
-    public abstract String getDescription();
+    String[] getAlias();
+    String getDescription();
 
 }

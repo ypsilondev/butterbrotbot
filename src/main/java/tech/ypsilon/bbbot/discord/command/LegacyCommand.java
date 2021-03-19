@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @deprecated Use {@link Command} and implement {@link GuildExecuteHandler} and/or {@link PrivateExecuteHandler}
  */
 @Deprecated
-public abstract class LegacyCommand extends Command implements DiscordFunction, GuildExecuteHandler {
+public abstract class LegacyCommand implements DiscordFunction, GuildExecuteHandler {
 
     /**
      * Easy way to check which arguments the user inputted
