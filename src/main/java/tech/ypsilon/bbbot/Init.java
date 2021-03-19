@@ -21,7 +21,7 @@ public class Init {
     static void preInit() throws Exception {
         LOGGER.info("Starting pre-init state");
         new SettingsController(ButterBrot.SETTINGS_FILE);
-        new MongoController();
+        // new MongoController();
         LOGGER.info("Passed pre-init state");
     }
 
