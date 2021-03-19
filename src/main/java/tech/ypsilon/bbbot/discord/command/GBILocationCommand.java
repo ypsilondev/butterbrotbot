@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
-public class GBILocationCommand extends Command implements GuildExecuteHandler, PrivateExecuteHandler {
+public class GBILocationCommand implements GuildExecuteHandler, PrivateExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"gbi"};

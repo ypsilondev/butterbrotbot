@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface CommandBucket extends DiscordFunction {
 
-    void register(ArrayList<DiscordFunction> functions);
+    void register(List<DiscordFunction> functions);
 
 }

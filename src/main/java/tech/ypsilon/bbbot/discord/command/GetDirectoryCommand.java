@@ -7,7 +7,7 @@ import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-public class GetDirectoryCommand extends LegacyCommand implements PrivateExecuteHandler {
+public class GetDirectoryCommand extends FullStackedExecutor {
     @Override
     public String[] getAlias() {
         return new String[]{"cd", "getDir", "dir", "d", "getDirectory"};

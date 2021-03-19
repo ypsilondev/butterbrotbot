@@ -1,11 +1,12 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-public class ListCommand extends LegacyCommand {
+public class ListCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"listStores", "l", "get"};

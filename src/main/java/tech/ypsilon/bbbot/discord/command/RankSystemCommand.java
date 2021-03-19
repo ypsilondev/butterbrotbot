@@ -1,12 +1,13 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.listener.RankSystemListener;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-public class RankSystemCommand extends LegacyCommand {
+public class RankSystemCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"rank"};

@@ -11,7 +11,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupCommand extends LegacyCommand {
+public class GroupCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
         return new String[]{"group", "lerngruppe"};

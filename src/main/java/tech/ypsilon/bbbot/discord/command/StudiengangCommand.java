@@ -142,34 +142,34 @@ public class StudiengangCommand extends LegacyCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private void addReactionsToMessage(ArrayList<String> emotes, ArrayList<Message> messages, TextChannel textChannel){
+    private void addReactionsToMessage(ArrayList<String> emotes, ArrayList<Message> messages, TextChannel textChannel) {
         HashMap<Message, List<MessageReaction>> reactions = new HashMap<>();
         HashMap<Message, Integer> reactionSize = new HashMap<>();
-        for(Message message : messages){
+        for (Message message : messages) {
             List<MessageReaction> list = retrieveMessageReaction(message);
             reactions.put(message, list);
             reactionSize.put(message, list.size());
         }
 
-        for(String emote : ((ArrayList<String>)emotes.clone())){
-            if(messages.stream().noneMatch(message -> reactions.get(message).stream()
-                        .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
-                for (Message message : (ArrayList<Message>)messages.clone()) {
+        for (String emote : ((ArrayList<String>) emotes.clone())) {
+            if (messages.stream().noneMatch(message -> reactions.get(message).stream()
+                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
+                for (Message message : (ArrayList<Message>) messages.clone()) {
                     if (reactionSize.get(message) < 20) {
                         message.addReaction(emote).queue();
                         emotes.remove(emote);
                         reactionSize.put(message, reactionSize.get(message) + 1);
                         break;
-                    }else{
+                    } else {
                         messages.remove(message);
                     }
                 }
-            }else{
+            } else {
                 emotes.remove(emote);
             }
         }
 
-        if(emotes.size() > 0){
+        if (emotes.size() > 0) {
             textChannel.sendMessage("-").queue(message -> {
                 message.pin().queue();
                 messages.add(message);
@@ -187,7 +187,8 @@ public class StudiengangCommand extends LegacyCommand {
         });
         try {
             countDownLatch.await();
-        } catch (InterruptedException ignored) { }
+        } catch (InterruptedException ignored) {
+        }
         return list.get();
     }
 

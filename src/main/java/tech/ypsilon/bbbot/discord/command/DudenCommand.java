@@ -3,14 +3,16 @@ package tech.ypsilon.bbbot.discord.command;
 import me.gregyyy.jduden.JDuden;
 import me.gregyyy.jduden.Word;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.jsoup.HttpStatusException;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.io.IOException;
 
-public class DudenCommand extends LegacyCommand {
+public class DudenCommand extends FullStackedExecutor {
 
     @Override
     public String[] getAlias() {
@@ -24,8 +26,18 @@ public class DudenCommand extends LegacyCommand {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
+        answer(e.getChannel(), args);
+        e.getMessage().delete().queue();
+    }
+
+    @Override
+    public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
+        answer(e.getChannel(), args);
+    }
+
+    private void answer(MessageChannel channel, String[] args){
         if(args.length < 1){
-            e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
+            channel.sendMessage(EmbedUtil.createErrorEmbed()
                     .addField("Fehlendes Argument", "Du musst ein Wort eingeben", false).build()).queue();
             return;
         }
@@ -37,7 +49,7 @@ public class DudenCommand extends LegacyCommand {
         input = new StringBuilder(input.toString().trim());
 
         if(!input.toString().matches("^[A-Za-zÖÄÜöäüßẞ -]+$")){
-            e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
+            channel.sendMessage(EmbedUtil.createErrorEmbed()
                     .addField("Fehlendes Argument", "Dein Wort einhält nicht erlaubte Zeichen", false).build()).queue();
             return;
         }
@@ -75,23 +87,22 @@ public class DudenCommand extends LegacyCommand {
 
             if(word.getOrigin() != null) embed.addField("Herkunft", word.getOrigin(), true);
 
-            e.getChannel().sendMessage(embed.build()).queue();
+            channel.sendMessage(embed.build()).queue();
         }catch(HttpStatusException ex){
             if(ex.getStatusCode() == 404){
-                e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
+                channel.sendMessage(EmbedUtil.createErrorEmbed()
                         .addField("Wort nicht gefunden", "Das eingegebene Wort wurde nicht gefunden " +
                                 "(Tipp: Achte auf Groß- und Kleinschreibung)", false)
                         .build()).queue();
             }else{
                 ButterBrot.LOGGER.error("Error while lookup up a word on duden.de", ex);
-                e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
+                channel.sendMessage(EmbedUtil.createErrorEmbed()
                         .addField("Fehler", "Ein Fehler ist aufgetreten", false).build()).queue();
             }
         }catch(IOException ex){
             ButterBrot.LOGGER.error("Error while lookup up a word on duden.de", ex);
-            e.getChannel().sendMessage(EmbedUtil.createErrorEmbed()
+            channel.sendMessage(EmbedUtil.createErrorEmbed()
                     .addField("Fehler", "Ein Fehler ist aufgetreten", false).build()).queue();
         }
     }
-
 }
