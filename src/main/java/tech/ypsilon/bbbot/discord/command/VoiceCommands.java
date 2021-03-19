@@ -90,6 +90,7 @@ public class VoiceCommands implements CommandBucket {
                 .setExecutor((e, args) -> {
                     String search = String.join(" ", args);
                     AudioManager.getInstance().addTrack(e.getGuild(), ytsp.loadSearchResult(search.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm)));
+                    e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
                 }).buildAndAdd(functions);
 
     }
