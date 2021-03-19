@@ -1,10 +1,12 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeSearchProvider;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.voice.AudioManager;
@@ -88,9 +90,21 @@ public class VoiceCommands implements CommandBucket {
         new CommandBuilder("search")
                 .setDescription("Searches a YouTube™ Video")
                 .setExecutor((e, args) -> {
+                    if (!Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).inVoiceChannel()) {
+                        EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                        b.setDescription("Bot kann nur aus einem Voice-Channel heraus gerufen werden");
+                        e.getChannel().sendMessage(b.build()).queue();
+                        return;
+                    }
                     String search = String.join(" ", args);
-                    AudioManager.getInstance().addTrack(e.getGuild(), ytsp.loadSearchResult(search.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm)));
-                    e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
+                    AudioItem ai = ytsp.loadSearchResult(search.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm));
+                    if (ai instanceof BasicAudioPlaylist) {
+                        BasicAudioPlaylist pl = (BasicAudioPlaylist) ai;
+                        AudioManager.getInstance().addTrack(e.getGuild(), pl.getTracks().get(0));
+                        e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
+                    } else {
+                        e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("YouTube-Suche", "Es konnt leider kein passender Audio-Stream gefunden werden!", true).build()).queue();
+                    }
                 }).buildAndAdd(functions);
 
     }
