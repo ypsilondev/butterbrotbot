@@ -235,7 +235,6 @@ public class BirthdayCommandOld implements GuildExecuteHandler {
             if (shoutOutBday(userId, bDay, guild, channel))
                 shoutout = true;
         });
-        ;
 
         if (!shoutout && notifyNoBirthday) {
             channel.sendMessage("Heute gibt es leider keine Geburtstage :(").queue(message -> {
