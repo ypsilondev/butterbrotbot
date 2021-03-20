@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.discord.services;
 
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.w3c.dom.Text;
 import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.Calendar;
@@ -21,26 +22,20 @@ public abstract class GuildNotifierService {
         return this.channel;
     }
 
-    public abstract void execute(TextChannel channel);
+    protected abstract void onExecute(TextChannel channel);
 
     public abstract NotifyTime getNotifyTime();
 
     public abstract String getServiceName();
 
+    public final void execute(TextChannel channel){
+        new Thread(() -> this.onExecute(channel)).start();
+    }
+
     public void startService() {
         ButterBrot.LOGGER.info(String.format("[%s]: Registering the notification-service", this.getServiceName()));
 
         NotifyTime notifyTime = this.getNotifyTime();
-
-
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int min = Calendar.getInstance().get(Calendar.MINUTE);
-        long delay = notifyTime.getStartHour() * 60L;
-        if (hour < notifyTime.getStartHour()) {
-            delay = ((notifyTime.getStartHour() - 1) - hour) * 60L + (60 - min);
-        } else {
-            delay += (23 - hour) * 60L + (60 - min);
-        }
 
         ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
         ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(() -> {

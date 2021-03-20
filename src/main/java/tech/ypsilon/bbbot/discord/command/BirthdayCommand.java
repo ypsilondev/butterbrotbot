@@ -47,9 +47,11 @@ public class BirthdayCommand implements GuildExecuteHandler {
                     }
                 }
                 break;
+
             case "remove":
                 BirthdayCodec.newBirthday(e.getMember().getIdLong(), new Date(0));
                 break;
+
             case "get":
                 if (args.length > 1) {
                     List<Member> mentioned = e.getMessage().getMentionedMembers();
@@ -77,7 +79,6 @@ public class BirthdayCommand implements GuildExecuteHandler {
             case "notify":
                 if (this.isBirthdayAdmin(e.getMember())) {
                     ServiceManager.instance.findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
-                    // ServiceManager.instance.findNotifierService(TestService.class).execute(e.getChannel());
                 }
                 break;
 
@@ -104,6 +105,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
     private void saveBirthday(long userId, Date bday, User sender) {
         try {
             BirthdayCodec.newBirthday(userId, bday);
+            sender.openPrivateChannel().flatMap(channel -> channel.sendMessage(EmbedUtil.createSuccessEmbed().addField("Geburtstag", "Der Geburtstag wurde erfolgreich gespeichert!", true).build())).queue();
         } catch (NullPointerException e1) {
             sender.openPrivateChannel().flatMap(channel -> channel.sendMessage(EmbedUtil.createErrorEmbed().addField("Datenbank", "Beim Hinzufügen des Geburtstags zur Datenbank ist leider ein Fehler aufgetreten. Bitte versuche es später erneut oder wende dich an einen Administrator.", false).build())).queue();
         }
