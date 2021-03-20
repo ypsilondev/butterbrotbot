@@ -27,7 +27,7 @@ public abstract class GuildNotifierService {
 
     public abstract String getServiceName();
 
-    public final void execute(TextChannel channel){
+    public final void execute(TextChannel channel) {
         new Thread(() -> this.onExecute(channel)).start();
     }
 
@@ -41,7 +41,7 @@ public abstract class GuildNotifierService {
             try {
                 this.execute(this.getChannel());
             } catch (Exception e) {
-                System.err.println("Error while notifying the birthdays :(");
+                ButterBrot.LOGGER.warn(String.format("[%s] error while performing the service-execution", this.getServiceName()));
             }
         }, notifyTime.getSecondDelay(), notifyTime.getSecondInterval(), TimeUnit.SECONDS);
 
@@ -109,7 +109,7 @@ public abstract class GuildNotifierService {
             return delayTo(hour, minute, second);
         }
 
-        private int delayTo(int hour, int minute, int second){
+        private int delayTo(int hour, int minute, int second) {
             int dHour = (this.getStartHour() - hour);
             int dMin = (this.getStartMinute() - minute);
             int dSec = (this.getStartSecond() - second);
