@@ -96,6 +96,8 @@ public class VoiceCommands implements CommandBucket {
                 .setDescription("Let the bot leave the channel")
                 .setExecutor((e, args) -> {
                     if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
+                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().stopTrack();
+                        AudioManager.getInstance().getScheduler(e.getGuild()).getQueue().clear();
                         e.getGuild().getAudioManager().closeAudioConnection();
                     }
                 })
