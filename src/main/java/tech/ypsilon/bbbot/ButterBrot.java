@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static tech.ypsilon.bbbot.Init.*;
 
@@ -18,6 +19,7 @@ import static tech.ypsilon.bbbot.Init.*;
 public class ButterBrot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("tech.ypsilon.bbbot");
+    public static boolean DEBUG_MODE;
     static final File SETTINGS_FILE;
 
     static {
@@ -34,7 +36,7 @@ public class ButterBrot {
      * @param args command line args
      * @throws Exception when something goes wrong during initialization
      */
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         System.out.println("__________        __    __              __________                __   \n" +
                 "\\______   \\__ ___/  |__/  |_  __________\\______   \\_______  _____/  |_ \n" +
                 " |    |  _/  |  \\   __\\   __\\/ __ \\_  __ \\    |  _/\\_  __ \\/  _ \\   __\\\n" +
@@ -44,11 +46,15 @@ public class ButterBrot {
         System.out.println(BotInfo.NAME + " v" + BotInfo.VERSION);
         System.out.println("JDA v" + JDAInfo.VERSION + " | LavaPlayer v" + PlayerLibrary.VERSION);
 
+        DEBUG_MODE = Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase("--debug"));
+
         preInit();
         addShutdownHook();
         init();
         postInit();
+        databaseModulesInit();
         startupComplete();
+
     }
 
 }

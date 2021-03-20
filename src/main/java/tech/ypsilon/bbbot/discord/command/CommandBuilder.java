@@ -42,7 +42,7 @@ public class CommandBuilder {
     }
 
     public FullStackedExecutor build() {
-        FullStackedExecutor executor = new FullStackedExecutor() {
+        return new FullStackedExecutor() {
             @Override
             public String[] getAlias() {
                 return alias.toArray(new String[0]);
@@ -65,7 +65,6 @@ public class CommandBuilder {
                     privateHandler.accept(e, args);
             }
         };
-        return executor;
     }
 
 }

@@ -3,10 +3,10 @@ package tech.ypsilon.bbbot;
 import tech.ypsilon.bbbot.console.ConsoleManager;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.CommandManager;
-import tech.ypsilon.bbbot.discord.ServiceManager;
-import tech.ypsilon.bbbot.settings.SettingsController;
-
 import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.discord.ServiceManager;
+import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
+import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.voice.AudioManager;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
@@ -16,7 +16,6 @@ public class Init {
     static void preInit() throws Exception {
         LOGGER.info("Starting pre-init state");
         new SettingsController(ButterBrot.SETTINGS_FILE);
-        new MongoController();
         LOGGER.info("Passed pre-init state");
     }
 
@@ -31,6 +30,13 @@ public class Init {
         new CommandManager();
         new AudioManager();
         LOGGER.info("Passed post-init state");
+    }
+
+    static void databaseModulesInit() throws Exception{
+        if(!ButterBrot.DEBUG_MODE){
+            new MongoController();
+            CommandManager.getInstance().registerFunction(new StudiengangCommand());
+        }
     }
 
     static void startupComplete() throws Exception {

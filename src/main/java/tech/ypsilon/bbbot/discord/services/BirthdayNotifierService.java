@@ -22,9 +22,8 @@ public class BirthdayNotifierService extends GuildNotifierService {
         super(getChannel(jda));
     }
 
-    private String t;
     @Override
-    public void execute(TextChannel channel) {
+    public void onExecute(TextChannel channel) {
         Map<Long, Date> bdays = this.getBirthdays();
         bdays.keySet().forEach(userId -> {
             notifyBday(channel, userId, bdays.get(userId));

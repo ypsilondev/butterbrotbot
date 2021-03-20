@@ -21,33 +21,27 @@ public abstract class GuildNotifierService {
         return this.channel;
     }
 
-    public abstract void execute(TextChannel channel);
+    protected abstract void onExecute(TextChannel channel);
 
     public abstract NotifyTime getNotifyTime();
 
     public abstract String getServiceName();
+
+    public final void execute(TextChannel channel) {
+        new Thread(() -> this.onExecute(channel)).start();
+    }
 
     public void startService() {
         ButterBrot.LOGGER.info(String.format("[%s]: Registering the notification-service", this.getServiceName()));
 
         NotifyTime notifyTime = this.getNotifyTime();
 
-
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int min = Calendar.getInstance().get(Calendar.MINUTE);
-        long delay = notifyTime.getStartHour() * 60L;
-        if (hour < notifyTime.getStartHour()) {
-            delay = ((notifyTime.getStartHour() - 1) - hour) * 60L + (60 - min);
-        } else {
-            delay += (23 - hour) * 60L + (60 - min);
-        }
-
         ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
         ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(() -> {
             try {
                 this.execute(this.getChannel());
             } catch (Exception e) {
-                System.err.println("Error while notifying the birthdays :(");
+                ButterBrot.LOGGER.warn(String.format("[%s] error while performing the service-execution", this.getServiceName()));
             }
         }, notifyTime.getSecondDelay(), notifyTime.getSecondInterval(), TimeUnit.SECONDS);
 
@@ -115,7 +109,7 @@ public abstract class GuildNotifierService {
             return delayTo(hour, minute, second);
         }
 
-        private int delayTo(int hour, int minute, int second){
+        private int delayTo(int hour, int minute, int second) {
             int dHour = (this.getStartHour() - hour);
             int dMin = (this.getStartMinute() - minute);
             int dSec = (this.getStartSecond() - second);

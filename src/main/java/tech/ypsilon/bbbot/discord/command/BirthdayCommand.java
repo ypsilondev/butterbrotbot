@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -36,20 +37,22 @@ public class BirthdayCommand implements GuildExecuteHandler {
             case "set":
                 if (args[1].matches(DATE_REGEX)) {
                     // Own bday
-                    saveBirthday(e.getMember().getIdLong(), parseDate(args[1], e), e.getMember().getUser());
+                    saveBirthday(e.getMember().getIdLong(), parseDate(args[1], e), e.getMember().getUser(), channel, e.getMember().getAsMention());
                 } else {
                     if (isBirthdayAdmin(e.getMember())) {
                         List<Member> mentioned = e.getMessage().getMentionedMembers();
                         if (mentioned.size() == 1) {
                             // Others bday
-                            saveBirthday(mentioned.get(0).getIdLong(), parseDate(args[2], e), e.getMember().getUser());
+                            saveBirthday(mentioned.get(0).getIdLong(), parseDate(args[2], e), e.getMember().getUser(), channel, mentioned.get(0).getAsMention());
                         }
                     }
                 }
                 break;
+
             case "remove":
                 BirthdayCodec.newBirthday(e.getMember().getIdLong(), new Date(0));
                 break;
+
             case "get":
                 if (args.length > 1) {
                     List<Member> mentioned = e.getMessage().getMentionedMembers();
@@ -76,8 +79,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
                 break;
             case "notify":
                 if (this.isBirthdayAdmin(e.getMember())) {
-                    ServiceManager.instance.findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
-                    // ServiceManager.instance.findNotifierService(TestService.class).execute(e.getChannel());
+                    ServiceManager.getInstance().findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
                 }
                 break;
 
@@ -101,9 +103,12 @@ public class BirthdayCommand implements GuildExecuteHandler {
         e.getMessage().delete().queue();
     }
 
-    private void saveBirthday(long userId, Date bday, User sender) {
+    private void saveBirthday(long userId, Date bday, User sender, MessageChannel ch, String asMention) {
         try {
             BirthdayCodec.newBirthday(userId, bday);
+            sender.openPrivateChannel().flatMap(channel -> channel.sendMessage(EmbedUtil.createSuccessEmbed().addField("Geburtstag", "Der Geburtstag wurde erfolgreich gespeichert!", true).build())).queue();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            ch.sendMessage(String.format("%s hat am %s Geburtstag.", asMention, sdf.format(bday))).queue();
         } catch (NullPointerException e1) {
             sender.openPrivateChannel().flatMap(channel -> channel.sendMessage(EmbedUtil.createErrorEmbed().addField("Datenbank", "Beim Hinzufügen des Geburtstags zur Datenbank ist leider ein Fehler aufgetreten. Bitte versuche es später erneut oder wende dich an einen Administrator.", false).build())).queue();
         }
