@@ -5,11 +5,10 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 public class CommandBuilder {
 
-    private Set<String> alias = new HashSet<>();
+    private final Set<String> alias = new HashSet<>();
     private BiConsumer<GuildMessageReceivedEvent, String[]> guildHandler;
     private BiConsumer<PrivateMessageReceivedEvent, String[]> privateHandler;
     private String description = "";
@@ -19,8 +18,7 @@ public class CommandBuilder {
     }
 
     public CommandBuilder addAlias(String... alias) {
-        for (String a : alias)
-            this.alias.add(a);
+        this.alias.addAll(Arrays.asList(alias));
         return this;
     }
 

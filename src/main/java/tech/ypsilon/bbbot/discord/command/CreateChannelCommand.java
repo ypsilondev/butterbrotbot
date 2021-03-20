@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class CreateChannelCommand implements GuildExecuteHandler {
 
     private final HashMap<String, Integer> games = new HashMap<>();
-    public static List<VoiceChannel> channels = new ArrayList<>();
+    public static final List<VoiceChannel> channels = new ArrayList<>();
 
     public CreateChannelCommand() {
         games.put("Among us", 10);
