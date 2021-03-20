@@ -18,6 +18,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class BirthdayCommand implements GuildExecuteHandler {
@@ -29,6 +30,8 @@ public class BirthdayCommand implements GuildExecuteHandler {
         Guild guild = e.getGuild();
         TextChannel channel = e.getChannel();
 
+        if (args.length < 1) return;
+
         switch (args[0].toLowerCase()) {
             case "set":
                 if (args[1].matches(DATE_REGEX)) {
@@ -36,10 +39,10 @@ public class BirthdayCommand implements GuildExecuteHandler {
                     saveBirthday(e.getMember().getIdLong(), parseDate(args[1], e), e.getMember().getUser());
                 } else {
                     if (isBirthdayAdmin(e.getMember())) {
-                        long id = getMemberIdLong(args[1]);
-                        if (id != -1) {
+                        List<Member> mentioned = e.getMessage().getMentionedMembers();
+                        if (mentioned.size() == 1) {
                             // Others bday
-                            saveBirthday(id, parseDate(args[2], e), e.getMember().getUser());
+                            saveBirthday(mentioned.get(0).getIdLong(), parseDate(args[2], e), e.getMember().getUser());
                         }
                     }
                 }
@@ -49,17 +52,25 @@ public class BirthdayCommand implements GuildExecuteHandler {
                 break;
             case "get":
                 if (args.length > 1) {
-                    long id = getMemberIdLong(args[1]);
-                    Date bday = this.getBirthday(id);
-                    String userAsMention = this.asMention(id, guild);
-                    if (!bday.equals(new Date(0))) {
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
-                        e.getMember().getUser().openPrivateChannel().flatMap(privateChannel ->
-                                privateChannel.sendMessage(EmbedUtil.createSuccessEmbed()
-                                        .addField(userAsMention, formatter.format(bday), true).build())
-                        ).queue();
-                    } else {
-                        e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField(userAsMention, "Hat keinen Geburtstag angegeben", true).build())).queue();
+                    List<Member> mentioned = e.getMessage().getMentionedMembers();
+                    if (!mentioned.isEmpty()) {
+                        for (Member m : mentioned) {
+                            try{
+                                Date bday = this.getBirthday(m.getIdLong());
+                                String userAsMention = this.asMention(m.getIdLong(), guild);
+                                if (!bday.equals(new Date(0))) {
+                                    SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
+                                    e.getMember().getUser().openPrivateChannel().flatMap(privateChannel ->
+                                            privateChannel.sendMessage(EmbedUtil.createSuccessEmbed()
+                                                    .addField(userAsMention, formatter.format(bday), true).build())
+                                    ).queue();
+                                } else {
+                                    e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField(userAsMention, "Hat keinen Geburtstag angegeben", true).build())).queue();
+                                }
+                            } catch (NullPointerException e1){
+                                e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField("Datenbankabfrage", "Es gab einen Fehler, während das Geburtsdatum aus der Datenbank geladen wurde. Sollte dieses Problem weiterhin bestehen, wende dich bitte an einen Administrator.", false).build())).queue();
+                            }
+                        }
                     }
                 }
                 break;
@@ -90,16 +101,16 @@ public class BirthdayCommand implements GuildExecuteHandler {
         e.getMessage().delete().queue();
     }
 
-    private void saveBirthday(long userId, Date bday, User sender){
-        try{
+    private void saveBirthday(long userId, Date bday, User sender) {
+        try {
             BirthdayCodec.newBirthday(userId, bday);
-        }catch (NullPointerException e1){
+        } catch (NullPointerException e1) {
             sender.openPrivateChannel().flatMap(channel -> channel.sendMessage(EmbedUtil.createErrorEmbed().addField("Datenbank", "Beim Hinzufügen des Geburtstags zur Datenbank ist leider ein Fehler aufgetreten. Bitte versuche es später erneut oder wende dich an einen Administrator.", false).build())).queue();
         }
     }
 
     private String asMention(long id, Guild g) {
-        return g.getJDA().retrieveUserById(id).complete().getAsMention();
+        return g.getJDA().retrieveUserById(id).complete().getAsTag();
     }
 
     private Date getBirthday(long memberId) {
@@ -113,15 +124,6 @@ public class BirthdayCommand implements GuildExecuteHandler {
             }
         }
         return new Date(0);
-    }
-
-    private long getMemberIdLong(String mention) {
-        String m = mention.replace("<", "").replace(">", "").replace("!", "").replace("@", "");
-        try {
-            return Long.parseLong(m);
-        } catch (NumberFormatException e1) {
-            return -1;
-        }
     }
 
     private Date parseDate(String dateString, GuildMessageReceivedEvent e) {
