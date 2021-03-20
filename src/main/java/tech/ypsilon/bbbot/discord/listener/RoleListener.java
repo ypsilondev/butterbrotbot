@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
 
 import java.util.Objects;

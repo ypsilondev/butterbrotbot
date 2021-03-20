@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class CensorWatcherListener extends ListenerAdapter {
-    public static HashMap<TextChannel, Message> lastMessages = new HashMap<>();
-    public static HashMap<User, Integer> censoredMember = new HashMap<>();
+    public static final HashMap<TextChannel, Message> lastMessages = new HashMap<>();
+    public static final HashMap<User, Integer> censoredMember = new HashMap<>();
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {

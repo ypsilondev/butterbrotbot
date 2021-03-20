@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class NewMemberJoinListener extends ListenerAdapter {
-    ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+    final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {

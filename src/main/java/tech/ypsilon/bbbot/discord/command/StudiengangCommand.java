@@ -22,7 +22,7 @@ public class StudiengangCommand extends LegacyCommand {
     private final String messageEnd = "\n" + "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
     public static final long messageId = 759043590432882798L;
     public static final long channelId = 759033520680599553L;
-    MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
+    final MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
 
     @Override
     public String[] getAlias() {

@@ -47,7 +47,7 @@ public class BirthdayMongoDBWrapper {
 		// DBObject query = new BasicDBObject("*", "*");
 		MongoCursor<Document> cursor = collection.find().cursor();
 		Document usr;
-		HashMap<Long, Date> ret = new HashMap<Long, Date>();
+		HashMap<Long, Date> ret = new HashMap<>();
 		while(cursor.hasNext()) {
 			usr = (Document) cursor.next();
 			ret.put((long)usr.get("userId"), (Date)usr.get("birthday"));
@@ -61,7 +61,7 @@ public class BirthdayMongoDBWrapper {
 		// DBObject query = new BasicDBObject("*", "*");
 		MongoCursor<Document> cursor = collection.find().cursor();
 		Document usr;
-		HashMap<String, String> ret = new HashMap<String, String>();
+		HashMap<String, String> ret = new HashMap<>();
 		while(cursor.hasNext()) {
 			usr = (Document) cursor.next();
 			ret.put((String)usr.get("name"), (String)usr.get("bday"));
