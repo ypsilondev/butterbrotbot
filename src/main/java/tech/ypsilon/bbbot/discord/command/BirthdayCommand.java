@@ -51,14 +51,15 @@ public class BirthdayCommand implements GuildExecuteHandler {
                 if (args.length > 1) {
                     long id = getMemberIdLong(args[1]);
                     Date bday = this.getBirthday(id);
+                    String userAsMention = this.asMention(id, guild);
                     if (!bday.equals(new Date(0))) {
                         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
                         e.getMember().getUser().openPrivateChannel().flatMap(privateChannel ->
                                 privateChannel.sendMessage(EmbedUtil.createSuccessEmbed()
-                                        .addField(asMention(id, guild), formatter.format(bday), true).build())
+                                        .addField(userAsMention, formatter.format(bday), true).build())
                         ).queue();
                     } else {
-                        e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField(asMention(id, guild), "Hat keinen Geburtstag angegeben", true).build())).queue();
+                        e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField(userAsMention, "Hat keinen Geburtstag angegeben", true).build())).queue();
                     }
                 }
                 break;
