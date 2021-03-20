@@ -35,7 +35,8 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new AddDirectoryCommand());
         registerFunction(new EditDirectoryCommand());
 
-        registerFunction(new StudiengangCommand());
+
+        // registerFunction(new StudiengangCommand());
 
         registerFunction(new WriteAfterMeCommand());
         //registerFunction(new VoicePlayCommand());
