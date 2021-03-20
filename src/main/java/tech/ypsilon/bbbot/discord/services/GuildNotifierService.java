@@ -1,7 +1,6 @@
 package tech.ypsilon.bbbot.discord.services;
 
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.w3c.dom.Text;
 import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.Calendar;
