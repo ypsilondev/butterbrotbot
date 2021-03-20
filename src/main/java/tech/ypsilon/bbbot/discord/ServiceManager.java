@@ -18,7 +18,7 @@ public class ServiceManager {
     }
 
     private void registerAllServices(JDA jda){
-        this.registerService(new BirthdayNotifierService(jda));
+        //this.registerService(new BirthdayNotifierService(jda));
     }
 
     public void initialize() {
