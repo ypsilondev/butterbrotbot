@@ -78,7 +78,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
                 break;
             case "notify":
                 if (this.isBirthdayAdmin(e.getMember())) {
-                    ServiceManager.instance.findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
+                    ServiceManager.getInstance().findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
                 }
                 break;
 

@@ -26,7 +26,7 @@ public class CommandManager extends ListenerAdapter {
      * Registering all the Commands by calling the {@link #registerFunction(DiscordFunction...)}
      * and registering the EventListeners by calling {@link #registerEventListener(Object...)}
      */
-    public CommandManager(){
+    public CommandManager() {
         instance = this;
 
         registerFunction(new ListCommand());
@@ -35,7 +35,7 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new AddDirectoryCommand());
         registerFunction(new EditDirectoryCommand());
 
-        registerFunction(new StudiengangCommand());
+
 
         registerFunction(new WriteAfterMeCommand());
         //registerFunction(new VoicePlayCommand());
@@ -64,14 +64,15 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Register a new function for Discord
      * You can add a new command by passing a instance of {@link Command} or {@link CommandBucket}
+     *
      * @param functions an instance from the Function
      */
-    private void registerFunction(DiscordFunction... functions) {
+    public void registerFunction(DiscordFunction... functions) {
         for (DiscordFunction function : functions) {
-            if(function instanceof Command) {
+            if (function instanceof Command) {
                 commands.add((Command) function);
             }
-            if(function instanceof CommandBucket) {
+            if (function instanceof CommandBucket) {
                 ArrayList<DiscordFunction> discordFunctions = new ArrayList<>();
                 ((CommandBucket) function).register(discordFunctions);
                 discordFunctions.forEach(this::registerFunction);
@@ -79,9 +80,14 @@ public class CommandManager extends ListenerAdapter {
         }
     }
 
+    public static CommandManager getInstance() {
+        return instance;
+    }
+
     /**
      * Register new eventListeners
      * Just adds it to the JDA instance but use the method anyway for future feature compatibility
+     *
      * @param eventListeners an instance from the EventListener
      */
     private void registerEventListener(Object... eventListeners) {
@@ -90,6 +96,7 @@ public class CommandManager extends ListenerAdapter {
 
     /**
      * Get all currently registered commands
+     *
      * @return a List with Commands
      */
     public static List<Command> getCommands() {
@@ -110,19 +117,19 @@ public class CommandManager extends ListenerAdapter {
      * Check if a received message is a command by checking the prefix and if the alias is a registered command.
      * If so the command gets executed by calling the
      * {@link LegacyCommand#onExecute(GuildMessageReceivedEvent, String[]) method.
-     *
+     * <p>
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NEVER BE CALLED FROM A COMMAND OR OTHER CLASS!
      *
      * @param event from the EventHandler
      */
-    private static void checkForExecute(GuildMessageReceivedEvent event){
+    private static void checkForExecute(GuildMessageReceivedEvent event) {
         String[] arguments = checkPrefix(event.getMessage());
-        if(arguments == null) return;
+        if (arguments == null) return;
 
-        for(Command command : instance.commands){
-            if(command instanceof GuildExecuteHandler) {
-                if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
-                    String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
+        for (Command command : instance.commands) {
+            if (command instanceof GuildExecuteHandler) {
+                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))) {
+                    String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
                     ((GuildExecuteHandler) command).onExecute(event, args);
                 }
             }
@@ -133,20 +140,20 @@ public class CommandManager extends ListenerAdapter {
      * Check if a received private message is a command by checking the prefix and if the alias is a registered command.
      * If so the command gets executed by calling
      * the {@link PrivateExecuteHandler#onPrivateExecute(PrivateMessageReceivedEvent, String[])} method.
-     *
+     * <p>
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NEVER BE CALLED FROM A COMMAND OR OTHER CLASS!
      *
      * @param event fromt eh EventHandler
      */
-    private static void checkForExecute(PrivateMessageReceivedEvent event){
+    private static void checkForExecute(PrivateMessageReceivedEvent event) {
         String[] arguments = checkPrefix(event.getMessage());
-        if(arguments == null) return;
+        if (arguments == null) return;
 
-        for(Command command : instance.commands){
-            if(command instanceof PrivateExecuteHandler) {
-                if(Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))){
-                    String[] args = Arrays.copyOfRange(arguments,2, arguments.length);
-                    ((PrivateExecuteHandler)command).onPrivateExecute(event, args);
+        for (Command command : instance.commands) {
+            if (command instanceof PrivateExecuteHandler) {
+                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))) {
+                    String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
+                    ((PrivateExecuteHandler) command).onPrivateExecute(event, args);
                 }
             }
         }
@@ -156,7 +163,7 @@ public class CommandManager extends ListenerAdapter {
      * Checks if the prefix from a given command is one of the prefix defined in the settings.yml
      * If to it parses the message to a array later used in the onExecuted from {@link LegacyCommand} or {@link PrivateExecuteHandler}
      * Uses a parsed to detect longer strings by double quotes.
-     *
+     * <p>
      * THIS METHOD IS FOR INTERNAL USE AND SHOULD NOT BE CALLED UNLESS YOU KNOW WHAT YOU ARE DOING!
      *
      * @param message the message as an JDA Object
@@ -165,13 +172,13 @@ public class CommandManager extends ListenerAdapter {
     @SuppressWarnings("unchecked")
     private static String[] checkPrefix(Message message) {
         String msg = message.getContentDisplay();
-        if(((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(msg::startsWith)){
+        if (((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(msg::startsWith)) {
             return null;
         }
 
         String[] arguments = parseString(msg).toArray(new String[0]);
 
-        if(arguments.length == 0){
+        if (arguments.length == 0) {
             return null;
         }
         return arguments;
