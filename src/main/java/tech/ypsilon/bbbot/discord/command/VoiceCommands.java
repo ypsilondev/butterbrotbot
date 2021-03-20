@@ -11,6 +11,8 @@ import tech.ypsilon.bbbot.voice.AudioManager;
 import tech.ypsilon.bbbot.voice.AudioUtil;
 import tech.ypsilon.bbbot.voice.TrackScheduler;
 
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,5 +140,40 @@ public class VoiceCommands implements CommandBucket {
                     }
                 }).buildAndAdd(functions);
 
+        //Jump to
+        new CommandBuilder("jumpto")
+                .setDescription("Jump to a specific time in an audio track")
+                .setExecutor((e, args) -> {
+                    if (args.length == 0) {
+                        e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Argument fehlt",
+                                "Bitte gebe die Zeit an im Format: mm:ss, hh:mm:ss, ss", false).build()).queue();
+                        return;
+                    }
+
+                    if (!Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).inVoiceChannel()) {
+                        EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                        b.setDescription("Bot kann nur aus einem Voice-Channel heraus gerufen werden");
+                        e.getChannel().sendMessage(b.build()).queue();
+                        return;
+                    }
+
+                    Duration duration = null;
+                    try {
+                        duration = Duration.parse("PT" + args[0].replace(":", "M") + "S");
+                    } catch (DateTimeParseException ex) {
+                        try {
+                            duration = Duration.parse("PT" + args[0].replaceFirst(":", "H")
+                                    .replace(":", "M") + "S");
+                        } catch (DateTimeParseException ex1) {
+                            e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Argument fehlerhaft",
+                                    "Bitte gebe die Zeit an im Format: mm:ss, hh:mm:ss, ss", false).build()).queue();
+                        }
+                    }
+
+                    if (duration != null){
+                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer()
+                                .getPlayingTrack().setPosition(duration.getSeconds() * 1000);
+                    }
+                }).buildAndAdd(functions);
     }
 }
