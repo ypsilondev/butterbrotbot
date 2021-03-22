@@ -39,7 +39,7 @@ public class GitHubCommand extends FullStackedExecutor {
         b.setDescription("Butterbrot ist ein Open-Source-Projekt, das bedeutet, "
                 + "dass jeder (der Lust und Zeit hat und obendrein das Chaos auch noch versteht) helfen kann, diesen Bot zu verbessern, wobei das ja kaum möglich ist. Butterbrot ist ja eigentlich schon perfekt :D");
         b.addField("GitHub-Repository",
-                "Hier findest du Butterbrot auf GitHub: https://github.com/ypsilondev/butterbrotbot/tree/dev",
+                "Hier findest du Butterbrot auf GitHub: https://github.com/ypsilondev/butterbrotbot/",
                 false);
         channel.sendMessage(b.build()).queue();
     }
