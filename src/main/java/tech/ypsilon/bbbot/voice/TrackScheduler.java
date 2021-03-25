@@ -6,13 +6,14 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class TrackScheduler implements AudioEventListener {
 
     private final AudioPlayer PLAYER;
-    private final BlockingQueue<AudioTrack> QUEUE = new LinkedBlockingDeque<>();
+    private final BlockingDeque<AudioTrack> QUEUE = new LinkedBlockingDeque<>();
 
     public TrackScheduler(final AudioPlayer PLAYER) {
         this.PLAYER = PLAYER;
@@ -20,6 +21,14 @@ public class TrackScheduler implements AudioEventListener {
 
     public AudioPlayer getPlayer() {
         return PLAYER;
+    }
+
+    public void addTrackPrioritized(AudioTrack track){
+        if(PLAYER.getPlayingTrack() == null) {
+            PLAYER.playTrack(track);
+        } else {
+            QUEUE.addFirst(track);
+        }
     }
 
     public void addTrack(AudioTrack track) {

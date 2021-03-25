@@ -91,6 +91,71 @@ public class VoiceCommands implements CommandBucket {
                 })
                 .buildAndAdd(functions);
 
+        // Play Command [for single videos]
+        new CommandBuilder("pplay")
+                .setDescription("Mit 'kit play [Link]' joined der Bot deinem Voice-Channel und spielt die Audio des Links [ohne Beachtung der Queue]")
+                .setExecutor((e, args) -> {
+                    if (args.length == 0) {
+                        EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                        b.setDescription("Übergebe einen Link");
+                        e.getChannel().sendMessage(b.build()).queue();
+                        return;
+                    }
+
+                    if (!Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).inVoiceChannel()) {
+                        EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                        b.setDescription("Bot kann nur aus einem Voice-Channel heraus gerufen werden");
+                        e.getChannel().sendMessage(b.build()).queue();
+                        return;
+                    }
+
+                    e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
+
+                    try {
+                        AudioItem itemBlocking = AudioUtil.getItemBlocking(args[0].split("&list")[0]);
+                        if (itemBlocking == null) {
+                            EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                            b.setDescription("Link nicht abspielbar");
+                            e.getChannel().sendMessage(b.build()).queue();
+                            return;
+                        }
+                        AudioManager.getInstance().addTrackPrioritized(e.getGuild(), itemBlocking);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                })
+                .buildAndAdd(functions);
+
+        new CommandBuilder("join")
+                .setDescription("Let's the bot join your channel")
+                .setExecutor((e, args) -> {
+                    if (!Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).inVoiceChannel()) {
+                        EmbedBuilder b = EmbedUtil.createErrorEmbed();
+                        b.setDescription("Bot kann nur aus einem Voice-Channel heraus gerufen werden");
+                        e.getChannel().sendMessage(b.build()).queue();
+                        return;
+                    }
+                    e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
+                }).buildAndAdd(functions);
+
+        new CommandBuilder("pause")
+                .setDescription("Pauses the playback")
+                .setExecutor((e, args) -> {
+                    if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
+                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(true);
+                        e.getMessage().delete().queue();
+                    }
+                }).buildAndAdd(functions);
+
+        new CommandBuilder("resume")
+                .setDescription("Resumes the playback")
+                .setExecutor((e, args) -> {
+                    if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
+                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(false);
+                        e.getMessage().delete().queue();
+                    }
+                }).buildAndAdd(functions);
+
         // Leave Command
         new CommandBuilder("leave")
                 .setDescription("Let the bot leave the channel")
