@@ -1,12 +1,7 @@
 package tech.ypsilon.bbbot.console.commands;
 
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.console.ConsoleCommand;
-import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
-import tech.ypsilon.bbbot.database.wrapper.BirthdayMongoDBWrapper;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MigrateBirthdays extends ConsoleCommand {
     @Override
@@ -21,7 +16,8 @@ public class MigrateBirthdays extends ConsoleCommand {
 
     @Override
     public void onExecute(String[] args) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        ButterBrot.LOGGER.info("This command is not longer supported; the only reason it existed is gone since a long time.");
+        /*SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         BirthdayMongoDBWrapper.oldGetBirthdayEntrys().forEach((s, s2) -> {
             try {
                 Long aLong = Long.valueOf(s.substring(21, 39));
@@ -31,6 +27,6 @@ public class MigrateBirthdays extends ConsoleCommand {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        });
+        });*/
     }
 }

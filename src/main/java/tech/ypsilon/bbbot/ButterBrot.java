@@ -25,7 +25,12 @@ public class ButterBrot {
     static {
         File data = new File("data");
         if (!data.exists()) {
-            data.mkdir();
+            LOGGER.info("data-directory could not be found; trying to create a new one.");
+            if (data.mkdir()) {
+                LOGGER.info("Successfully created data-directory.");
+            } else {
+                LOGGER.warn("Could not create data-directory!");
+            }
         }
         SETTINGS_FILE = new File(data, "settings.yml");
     }

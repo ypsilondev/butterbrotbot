@@ -43,6 +43,17 @@ public class AudioManager {
         }
     }
 
+    public void addTrackPrioritized(Guild g, AudioItem i) {
+        TrackScheduler scheduler = getScheduler(g);
+        if(i instanceof AudioTrack){
+            scheduler.addTrackPrioritized((AudioTrack) i);
+        } else if(i instanceof AudioPlaylist) {
+            AudioPlaylist i1 = (AudioPlaylist) i;
+            for (AudioTrack track : i1.getTracks())
+                scheduler.addTrackPrioritized(track);
+        }
+    }
+
     public TrackScheduler getScheduler(Guild g) {
         if(TRACK_SCHEDULERS.containsKey(g))
             return TRACK_SCHEDULERS.get(g);
