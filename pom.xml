@@ -114,6 +114,11 @@
             <version>1.28</version>
         </dependency>
         <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.5.0-b01</version>
+        </dependency>
+        <dependency>
             <groupId>me.gregyyy.jduden</groupId>
             <artifactId>JDuden</artifactId>
             <version>0.2.0</version>

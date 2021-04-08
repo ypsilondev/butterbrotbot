@@ -4,7 +4,21 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.StudentUtil;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.util.Properties;
 
 /**
  * Command for handling email student verification
@@ -36,7 +50,7 @@ public class VerifyCommand extends FullStackedExecutor {
                             + "du alternativ einem der Moderatoren oder Admins per DM ein Bild deines "
                             + "Studentenausweises schicken. (Bild, Nachname und Matrikelnummer bitte zensieren)\n"
                             + "-----\n"
-                            + "¹ ersetze uxxxx mit deinem persönlichen U-Kürzel"
+                            + "¹ ersetze uxxxx mit deinem persönlichen U-Kürzel\n"
                             + "² ersetze 000 mit dem per E-Mail gesendeten Code",
                     false
             )
@@ -52,11 +66,32 @@ public class VerifyCommand extends FullStackedExecutor {
                             + "have no access to your student.kit.edu mailbox you can send us a photo of your "
                             + "student id. Just make sure to censor the image, surname and matriculation number.\n"
                             + "-----\n"
-                            + "¹ instead of uxxxx, enter your personal u-code"
+                            + "¹ instead of uxxxx, enter your personal u-code\n"
                             + "² instead of 000, enter the verification code sent by mail",
                     false
             )
             .build();
+
+    private Session mailSession;
+
+    public VerifyCommand() {
+        Properties mailSessionProperties = new Properties();
+        mailSessionProperties.put("mail.smtp.auth", true);
+        mailSessionProperties.put("mail.smtp.starttls.enable", "true");
+        mailSessionProperties.put("mail.smtp.host", SettingsController.getValue("mail.smtp.host"));
+        mailSessionProperties.put("mail.smtp.port", SettingsController.getValue("mail.smtp.port"));
+        mailSessionProperties.put("mail.smtp.ssl.trust", SettingsController.getValue("mail.smtp.ssl.trust"));
+
+        mailSession = Session.getInstance(mailSessionProperties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(
+                        (String) SettingsController.getValue("mail.smtp.username"),
+                        (String) SettingsController.getValue("mail.smtp.password")
+                );
+            }
+        });
+    }
 
     @Override
     public String[] getAlias() {
@@ -93,5 +128,24 @@ public class VerifyCommand extends FullStackedExecutor {
             // TODO: 3. check if u code is already verified under a different user
             // TODO: 4. if none of the above apply, send help message
         }
+    }
+
+    private void sendEmail(String recipient) throws MessagingException {
+        Message message = new MimeMessage(this.mailSession);
+        message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient + "@student.kit.edu"));
+        message.setSubject("");
+
+        String msg = "This is my first email using JavaMailer";
+
+        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+        mimeBodyPart.setContent(msg, "text/html");
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(mimeBodyPart);
+
+        message.setContent(multipart);
+
+        Transport.send(message);
     }
 }
