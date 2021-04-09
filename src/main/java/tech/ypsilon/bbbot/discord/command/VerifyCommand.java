@@ -4,7 +4,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import org.bson.Document;
+import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
+import tech.ypsilon.bbbot.database.structs.VerificationDocument;
 import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
 
 import javax.mail.Authenticator;
@@ -38,6 +42,7 @@ public class VerifyCommand extends FullStackedExecutor {
     private static final MessageEmbed HELP_EMBED = new EmbedBuilder()
             .setColor(DISCORD_INFO)
             .setTitle("Help - Discord Verifizierung")
+            .setDescription("\\*\\*ENGLISH VERSION BELOW\\*\\*")
             .addField(
                     "Deutsch",
                     "Der KIT Discord Sever ist grundsätzlich für jedermann zugänglich. Wenn du am KIT studierst "
@@ -113,30 +118,98 @@ public class VerifyCommand extends FullStackedExecutor {
 
     @Override
     public void onPrivateExecute(PrivateMessageReceivedEvent event, String[] args) {
-        if (args.length < 1) {
+        if (isVerified(event.getAuthor().getIdLong())) {
+            // user already verified
+            event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_WARNING,
+                    "Du bist schon verifiziert / Already verified")).queue();
+        } else if (args.length < 1) {
+            // too few arguments specified
             event.getChannel().sendMessage(HELP_EMBED).queue();
         } else if (StudentUtil.isStudentCode(args[0])) {
-            // TODO: 1. check if user is already verified
-            // TODO: 2. check if user has already initiated, but not completed a verification sequence
-            // TODO: 3. check if u code is already verified under a different user
-            // TODO: 4. if none of the above apply, initiate verification sequence
+            // user sent student u-code
+            if (isVerifying(event.getAuthor().getIdLong())) {
+                // check if user has already initiated, but not completed a verification sequence
+                event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
+                        "Du hast bereits eine Anfrage geschickt / "
+                                + "You've already submitted a verification request")).queue();
+            } else if (studentCodeTaken(args[0])) {
+                // check if u code is already verified under a different user
+                event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
+                        "Dieses u Kürzel wurde bereits verwendet, um einen anderen User zu verifizieren / "
+                                + "This student code is already in use by another account")).queue();
+            } else {
+                // if none of the above apply, initiate verification sequence
+                VerificationCodec.insert(event.getAuthor().getIdLong(), args[0]);
+                try {
+                    sendEmail(event.getAuthor().getIdLong(), args[0]);
+                    event.getChannel().sendMessage(EmbedUtil.createDefaultEmbed()
+                            .setColor(DISCORD_WARNING)
+                            .addField("Deutsch", "Eine Bestätigungsmail wurde an `" + args[0]
+                                    + "@student.kit.edu` gesendet. Bestätige diesen Account nun mit dem Befehl "
+                                    + "`kit verify <Bestätigungscode>`.", false)
+                            .addField("English", "A verification email was sent to `"
+                                    + args[0] + "@student.kit.edu`. Verify your account with the command "
+                                    + "`kit verify <verification_code>`.", false)
+                            .build()).queue();
+                } catch (MessagingException exception) {
+                    event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
+                            "Die E-Mail konnte nicht gesendet werden, bitte wende dich an ein Teammitglied / "
+                                    + "The email couldn't be sent, please contact the server staff")).queue();
+                }
+            }
         } else {
-            // TODO: 1. check if user is already verified
-            // TODO: 2. check if user has already initiated, but not completed a verification sequence
-                // TODO 2.1: check if code is correct and verify the user (+insert into database)
-                // TODO 2.2: else send error
-            // TODO: 3. check if u code is already verified under a different user
-            // TODO: 4. if none of the above apply, send help message
+            // user send non-student code (could be a verification code)
+            if (isVerifying(event.getAuthor().getIdLong())) {
+                // check if user has already initiated, but not completed a verification sequence
+                VerificationDocument verificationDocument = VerificationCodec.getCollection()
+                        .find(new Document(VerificationCodec.FIELD_USER_ID, event.getAuthor().getIdLong())).first();
+
+                assert verificationDocument != null; // has to be... otherwise isVerifying fails but IntelliJ is stoopid
+                if (args[0].equalsIgnoreCase(verificationDocument.getVerificationCode())) {
+                    // check if code is correct and verify the user (+insert into database)
+                    verificationDocument.setVerified(true);
+                    VerificationCodec.save(verificationDocument);
+                } else {
+                    // else send error on incorrect code
+                    event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
+                            "Falscher Bestätigungscode / "
+                                    + "Incorrect verification code")).queue();
+                }
+            } else {
+                // verification was not already initiated and input wasn't a student code
+                event.getChannel().sendMessage(HELP_EMBED).queue();
+            }
         }
     }
 
-    private void sendEmail(String recipient) throws MessagingException {
+    private boolean isVerified(long userId) {
+        VerificationDocument verificationDocument = VerificationCodec.getCollection()
+                .find(new Document(VerificationCodec.FIELD_USER_ID, userId)).first();
+        return verificationDocument != null && verificationDocument.getVerified();
+    }
+
+    private boolean isVerifying(long userId) {
+        VerificationDocument verificationDocument = VerificationCodec.getCollection()
+                .find(new Document(VerificationCodec.FIELD_USER_ID, userId)).first();
+        return verificationDocument != null && !verificationDocument.getVerified();
+    }
+
+    private boolean studentCodeTaken(String studentCode) {
+        VerificationDocument verificationDocument = VerificationCodec.getCollection()
+                .find(new Document(VerificationCodec.FIELD_STUDENT_CODE, studentCode)).first();
+        return verificationDocument != null && verificationDocument.getVerified();
+    }
+
+    private void sendEmail(long userId, String recipient) throws MessagingException {
+        VerificationDocument document = VerificationCodec.insert(userId, recipient);
+
         Message message = new MimeMessage(this.mailSession);
         message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient + "@student.kit.edu"));
-        message.setSubject("");
+        message.setSubject("Verification Code: " + document.getVerificationCode());
 
-        String msg = "This is my first email using JavaMailer";
+        String msg = "Hi,\n\nYour Verification Code is: " + document.getVerificationCode()
+                + "\n\nWe wish you a great time on the Discord KIT Guild!";
 
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setContent(msg, "text/html");
