@@ -23,8 +23,15 @@ public class VerificationCodec implements Codec<VerificationDocument> {
     private static final String MONGO_COLLECTION = "Verification";
     private static final int VERIFICATION_CODE_LENGTH = 3;
 
+    private static final String FIELD_ID = "_id";
+    private static final String FIELD_USER_ID = "userId";
+    private static final String FIELD_STUDENT_CODE = "studentCode";
+    private static final String FIELD_VERIFICATION_CODE = "verificationCode";
+    private static final String FIELD_VERIFIED = "verified";
+    private static final String FIELD_EMAIL_LAST_SENT = "emailLastSent";
+
     private static String generateVerificationCode() {
-        int number = new Random().nextInt(1000);
+        int number = new Random().nextInt((int) Math.pow(10, VERIFICATION_CODE_LENGTH));
         StringBuilder builder = new StringBuilder(number);
         while (builder.length() < VERIFICATION_CODE_LENGTH)
             builder.insert(0, "0");
@@ -59,12 +66,12 @@ public class VerificationCodec implements Codec<VerificationDocument> {
     @Override
     public void encode(BsonWriter bsonWriter, VerificationDocument authCodec, EncoderContext encoderContext) {
         bsonWriter.writeStartDocument();
-        bsonWriter.writeObjectId("_id", authCodec.get_id());
-        bsonWriter.writeInt64("userId", authCodec.getUserId());
-        bsonWriter.writeString("studentCode", authCodec.getStudentCode());
-        bsonWriter.writeString("verificationCode", authCodec.getVerificationCode());
-        bsonWriter.writeBoolean("verified", authCodec.getVerified());
-        bsonWriter.writeDateTime("emailLastSent", authCodec.getEmailLastSent().getTime());
+        bsonWriter.writeObjectId(FIELD_ID, authCodec.get_id());
+        bsonWriter.writeInt64(FIELD_USER_ID, authCodec.getUserId());
+        bsonWriter.writeString(FIELD_STUDENT_CODE, authCodec.getStudentCode());
+        bsonWriter.writeString(FIELD_VERIFICATION_CODE, authCodec.getVerificationCode());
+        bsonWriter.writeBoolean(FIELD_VERIFIED, authCodec.getVerified());
+        bsonWriter.writeDateTime(FIELD_EMAIL_LAST_SENT, authCodec.getEmailLastSent().getTime());
         bsonWriter.writeEndDocument();
     }
 
