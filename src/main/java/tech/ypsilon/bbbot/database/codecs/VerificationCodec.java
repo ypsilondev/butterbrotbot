@@ -53,12 +53,12 @@ public class VerificationCodec implements Codec<VerificationDocument> {
     @Override
     public VerificationDocument decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
-        ObjectId _id = bsonReader.readObjectId("_id");
-        Long userId = bsonReader.readInt64("userId");
-        String studentCode = bsonReader.readString("studentCode");
-        String verificationCode = bsonReader.readString("verificationCode");
-        Boolean verified = bsonReader.readBoolean("verified");
-        Date emailLastSent = new Date(bsonReader.readDateTime("emailLastSent"));
+        ObjectId _id = bsonReader.readObjectId(FIELD_ID);
+        Long userId = bsonReader.readInt64(FIELD_ID);
+        String studentCode = bsonReader.readString(FIELD_ID);
+        String verificationCode = bsonReader.readString(FIELD_ID);
+        Boolean verified = bsonReader.readBoolean(FIELD_ID);
+        Date emailLastSent = new Date(bsonReader.readDateTime(FIELD_ID));
         bsonReader.readEndDocument();
         return new VerificationDocument(_id, userId, studentCode, verificationCode, verified, emailLastSent);
     }
