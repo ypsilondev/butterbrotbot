@@ -15,6 +15,13 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.16.12</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
                 <version>3.8.1</version>
             </plugin>
@@ -92,6 +99,12 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
             <version>4.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
