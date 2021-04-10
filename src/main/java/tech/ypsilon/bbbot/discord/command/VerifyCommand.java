@@ -1,11 +1,13 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
@@ -21,6 +23,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -99,10 +102,28 @@ public class VerifyCommand extends FullStackedExecutor {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent event, String[] args) {
-        event.getMessage().delete().queue();
-        event.getAuthor().openPrivateChannel().flatMap(privateChannel ->
-                privateChannel.sendMessage("For security reasons, the `verify` command "
-                        + "is only allowed per direct message")).queue();
+        if (Objects.requireNonNull(event.getMember()).getRoles().stream().anyMatch(role ->
+                role.getIdLong() == (long) SettingsController.getValue("discord.roles.admin"))) {
+            for (Member mentionedMember : event.getMessage().getMentionedMembers()) {
+                VerificationDocument document = new VerificationDocument(new ObjectId(), event.getAuthor().getIdLong());
+                document.setVerified(true);
+                VerificationCodec.save(document);
+
+                Role student = event.getJDA()
+                        .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+                assert student != null;
+                DiscordController.getHomeGuild().addRoleToMember(mentionedMember.getIdLong(), student).queue();
+
+                event.getChannel().sendMessage(EmbedUtil
+                        .colorDescriptionBuild(DISCORD_SUCCESS, "Verified user "
+                                + mentionedMember.getAsMention())).queue();
+            }
+        } else {
+            event.getMessage().delete().queue();
+            event.getAuthor().openPrivateChannel().flatMap(privateChannel ->
+                    privateChannel.sendMessage("For security reasons, the `verify` command "
+                            + "is only allowed per direct message")).queue();
+        }
     }
 
     @Override
