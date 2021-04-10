@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.settings;
 
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -50,27 +51,83 @@ public class SettingsController {
         return getValue(key, instance.DATA);
     }
 
+    /**
+     * Get a setting and cast it to the provided class
+     * Structure depth increment by using the '.'
+     *
+     * @param key the key from the setting
+     * @param clazz the class the value should be cast to
+     * @return the value or null
+     * @throws ClassCastException when the stored data has a different type.
+     * @throws RuntimeException when a structure depth change was requested but cannot be executed
+     *                          because of a missing key
+     */
+    @Nullable
     public static <T> T getValue(String key, Class<? extends T> clazz) {
         Object value = getValue(key);
         if (value != null) {
             return clazz.cast(value);
         }
-        throw new NullPointerException(String.format("key %s is invalid!", key));
+        return null;
     }
 
-    public static long getLong(String key) {
+    /**
+     * Get a setting as {@link Long}
+     * Structure depth increment by using the '.'
+     *
+     * @param key the key from the setting
+     * @return the value or null
+     * @throws ClassCastException when the stored data has a different type.
+     * @throws RuntimeException when a structure depth change was requested but cannot be executed
+     *                          because of a missing key
+     */
+    @Nullable
+    public static Long getLong(String key) {
         return getValue(key, Long.class);
     }
 
+    /**
+     * Get a setting as {@link String}
+     * Structure depth increment by using the '.'
+     *
+     * @param key the key from the setting
+     * @return the value or null
+     * @throws ClassCastException when the stored data has a different type.
+     * @throws RuntimeException when a structure depth change was requested but cannot be executed
+     *                          because of a missing key
+     */
+    @Nullable
     public static String getString(String key) {
         return getValue(key, String.class);
     }
 
-    public static int getInt(String key) {
+    /**
+     * Get a setting as {@link Integer}
+     * Structure depth increment by using the '.'
+     *
+     * @param key the key from the setting
+     * @return the value or null
+     * @throws ClassCastException when the stored data has a different type.
+     * @throws RuntimeException when a structure depth change was requested but cannot be executed
+     *                          because of a missing key
+     */
+    @Nullable
+    public static Integer getInt(String key) {
         return getValue(key, Integer.class);
     }
 
-    public static boolean getBoolean(String key) {
+    /**
+     * Get a setting as {@link Boolean}
+     * Structure depth increment by using the '.'
+     *
+     * @param key the key from the setting
+     * @return the value or null
+     * @throws ClassCastException when the stored data has a different type.
+     * @throws RuntimeException when a structure depth change was requested but cannot be executed
+     *                          because of a missing key
+     */
+    @Nullable
+    public static Boolean getBoolean(String key) {
         return getValue(key, Boolean.class);
     }
 
