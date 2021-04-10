@@ -33,7 +33,7 @@ public class VerificationCodec implements Codec<VerificationDocument> {
 
     private static String generateVerificationCode() {
         int number = new Random().nextInt((int) Math.pow(10, VERIFICATION_CODE_LENGTH));
-        StringBuilder builder = new StringBuilder(number);
+        StringBuilder builder = new StringBuilder(Integer.toString(number));
         while (builder.length() < VERIFICATION_CODE_LENGTH)
             builder.insert(0, "0");
         return builder.toString();

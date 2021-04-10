@@ -127,9 +127,9 @@
             <version>1.28</version>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.5.0-b01</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>me.gregyyy.jduden</groupId>

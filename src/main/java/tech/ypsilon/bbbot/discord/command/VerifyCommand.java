@@ -2,26 +2,25 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.bson.Document;
+import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
+import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
 
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
 
 /**
@@ -77,25 +76,15 @@ public class VerifyCommand extends FullStackedExecutor {
             )
             .build();
 
-    private Session mailSession;
+    private Properties mailSessionProperties;
 
     public VerifyCommand() {
-        Properties mailSessionProperties = new Properties();
-        mailSessionProperties.put("mail.smtp.auth", true);
-        mailSessionProperties.put("mail.smtp.starttls.enable", "true");
+        mailSessionProperties = new Properties();
         mailSessionProperties.put("mail.smtp.host", SettingsController.getValue("mail.smtp.host"));
-        mailSessionProperties.put("mail.smtp.port", SettingsController.getValue("mail.smtp.port"));
-        mailSessionProperties.put("mail.smtp.ssl.trust", SettingsController.getValue("mail.smtp.ssl.trust"));
-
-        mailSession = Session.getInstance(mailSessionProperties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(
-                        (String) SettingsController.getValue("mail.smtp.username"),
-                        (String) SettingsController.getValue("mail.smtp.password")
-                );
-            }
-        });
+        mailSessionProperties.put("mail.smtp.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.auth", "true");
+        mailSessionProperties.put("mail.smtp.socketFactory.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
     }
 
     @Override
@@ -155,6 +144,8 @@ public class VerifyCommand extends FullStackedExecutor {
                     event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
                             "Die E-Mail konnte nicht gesendet werden, bitte wende dich an ein Teammitglied / "
                                     + "The email couldn't be sent, please contact the server staff")).queue();
+                    exception.printStackTrace();
+                    LoggerFactory.getLogger(VerifyCommand.class).error("");
                 }
             }
         } else {
@@ -164,11 +155,21 @@ public class VerifyCommand extends FullStackedExecutor {
                 VerificationDocument verificationDocument = VerificationCodec.getCollection()
                         .find(new Document(VerificationCodec.FIELD_USER_ID, event.getAuthor().getIdLong())).first();
 
-                assert verificationDocument != null; // has to be... otherwise isVerifying fails but IntelliJ is stoopid
+                assert verificationDocument != null;
                 if (args[0].equalsIgnoreCase(verificationDocument.getVerificationCode())) {
                     // check if code is correct and verify the user (+insert into database)
+                    Role student = event.getJDA()
+                            .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+
+                    assert student != null;
+                    DiscordController.getHomeGuild().addRoleToMember(event.getAuthor().getIdLong(), student).queue();
+
                     verificationDocument.setVerified(true);
                     VerificationCodec.save(verificationDocument);
+
+                    event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_SUCCESS,
+                            "Du hast dich erfolgreich verifiziert / "
+                                    + "You have been verified successfully")).queue();
                 } else {
                     // else send error on incorrect code
                     event.getChannel().sendMessage(EmbedUtil.colorDescriptionBuild(DISCORD_ERROR,
@@ -201,23 +202,28 @@ public class VerifyCommand extends FullStackedExecutor {
     }
 
     private void sendEmail(long userId, String recipient) throws MessagingException {
+        Session session = Session.getInstance(mailSessionProperties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(
+                        (String) SettingsController.getValue("mail.smtp.address"),
+                        (String) SettingsController.getValue("mail.smtp.password")
+                );
+            }
+        });
+
         VerificationDocument document = VerificationCodec.insert(userId, recipient);
 
-        Message message = new MimeMessage(this.mailSession);
-        message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient + "@student.kit.edu"));
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("notificationdiscord@gmail.com"));
+        message.setRecipients(
+                Message.RecipientType.TO,
+                InternetAddress.parse(recipient + "@student.kit.edu")
+        );
+
         message.setSubject("Verification Code: " + document.getVerificationCode());
+        message.setText("Hi,\n\nYour Verification Code is: " + document.getVerificationCode()
+                + "\n\nWe wish you a great time on the Discord KIT Guild!");
 
-        String msg = "Hi,\n\nYour Verification Code is: " + document.getVerificationCode()
-                + "\n\nWe wish you a great time on the Discord KIT Guild!";
-
-        MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(msg, "text/html");
-
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(mimeBodyPart);
-
-        message.setContent(multipart);
 
         Transport.send(message);
     }

@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -38,5 +39,13 @@ public class DiscordController {
      */
     public static JDA getJDA() {
         return instance.jda;
+    }
+
+    /**
+     * Get the home Guild object
+     * @return home Guild object
+     */
+    public static Guild getHomeGuild() {
+        return getJDA().getGuildById((long) SettingsController.getValue("discord.guild"));
     }
 }
