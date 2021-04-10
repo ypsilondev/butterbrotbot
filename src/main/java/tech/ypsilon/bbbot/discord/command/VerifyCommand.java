@@ -214,7 +214,7 @@ public class VerifyCommand extends FullStackedExecutor {
         VerificationDocument document = VerificationCodec.insert(userId, recipient);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("notificationdiscord@gmail.com"));
+        message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
         message.setRecipients(
                 Message.RecipientType.TO,
                 InternetAddress.parse(recipient + "@student.kit.edu")
@@ -223,7 +223,6 @@ public class VerifyCommand extends FullStackedExecutor {
         message.setSubject("Verification Code: " + document.getVerificationCode());
         message.setText("Hi,\n\nYour Verification Code is: " + document.getVerificationCode()
                 + "\n\nWe wish you a great time on the Discord KIT Guild!");
-
 
         Transport.send(message);
     }
