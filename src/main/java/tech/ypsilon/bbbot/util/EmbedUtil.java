@@ -1,6 +1,8 @@
 package tech.ypsilon.bbbot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+
 import java.awt.*;
 
 public class EmbedUtil {
@@ -53,6 +55,10 @@ public class EmbedUtil {
         embedBuilder.setTitle("Info");
         embedBuilder.setColor(Color.decode("#41e3fc"));
         return embedBuilder;
+    }
+
+    public static MessageEmbed colorDescriptionBuild(int color, String description) {
+        return createDefaultEmbed().setColor(color).setDescription(description).build();
     }
 
 }

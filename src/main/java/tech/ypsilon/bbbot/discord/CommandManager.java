@@ -51,6 +51,7 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new VoiceCommands());
         // registerFunction(new GBILocationCommand()); // Disabled; test over...
         registerFunction(new GitHubCommand());
+        registerFunction(new VerifyCommand());
 
         registerEventListener(this);
         registerEventListener(new DefaultListener());

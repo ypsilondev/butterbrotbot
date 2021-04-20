@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.bson.Document;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
+import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,7 +80,8 @@ public class BirthdayNotifierService extends GuildNotifierService {
     }
 
     private static TextChannel getChannel(JDA jda) {
-        long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, 756547960229199902L));
+        long guildId = (long) SettingsController.getValue("discord.guild");
+        long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, guildId));
         return jda.getTextChannelById(channelId);
     }
 }
