@@ -1,0 +1,27 @@
+info: "Copy this file to data/settings.yml and edit all the settings below. Also remove this line."
+mongo:
+  host: 127.0.0.1
+  port: 27017
+  username: "user"
+  authDatabase: "admin"
+  password: "pass"
+discord:
+  prefix:
+    - kitbot
+    - bb
+    - kit
+  token: "token"
+  guild: guildid
+  roles:
+    admin: roleid
+    student: roleid
+  toolsurl: "https://raw.githubusercontent.com/ypsilondev/butterbrotbot/master/tools.txt"
+mail:
+  smtp:
+    address: noreply@example.com
+    host: smtp.example.com
+    port: 465
+    username: username
+    password: password
+    ssl:
+      trust: smtp.example.com
