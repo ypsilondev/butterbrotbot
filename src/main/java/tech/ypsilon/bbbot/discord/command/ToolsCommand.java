@@ -17,11 +17,12 @@ public class ToolsCommand extends FullStackedExecutor {
 
     @Override
     public String getDescription() {
-        return null;
+        return "Zeigt eine Liste mit hilfreichen Werkzeugen für Studierende an.";
     }
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
+        e.getMessage().delete().queue();
         e.getAuthor().openPrivateChannel().queue(this::response);
     }
 

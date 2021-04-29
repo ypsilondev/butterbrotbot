@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ToolUpdaterService extends GuildNotifierService {
@@ -20,7 +21,7 @@ public class ToolUpdaterService extends GuildNotifierService {
 
     public ToolUpdaterService(TextChannel channel) {
         super(channel);
-        ToolUpdaterService.links = new HashMap<>();
+        ToolUpdaterService.links = new LinkedHashMap<>();
         ToolUpdaterService.requestUrl = SettingsController.getString("discord.toolsurl");
     }
 
@@ -29,7 +30,7 @@ public class ToolUpdaterService extends GuildNotifierService {
         ButterBrot.LOGGER.info(String.format("[%s] updating link-list", this.getServiceName()));
         List<String> lines = Arrays.asList(getUrlContents(ToolUpdaterService.requestUrl).split("\n"));
 
-        HashMap<String, String> newList = new HashMap<>();
+        HashMap<String, String> newList = new LinkedHashMap<>();
 
         String title = "";
         StringBuilder links = new StringBuilder();
