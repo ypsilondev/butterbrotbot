@@ -1,0 +1,56 @@
+Mathe
+https://www.wolframalpha.com/ (Taschenrechner++)
+https://www.wolfram.com/mathematica/ (Taschenrechner auf Drogen, kostenlos für Studis)
+https://www.geogebra.org/ (Funktionen etc. plotten)
+https://www.integral-calculator.com/ (Integralrechner mit Rechenweg)
+https://www.derivative-calculator.net/ (Ableitungsrecher mit Rechenweg)
+https://www.sagemath.org/ (Mathe-Bibliotheken, u. a. für lineare Algebra nützlich)
+https://www.arndt-bruenner.de/mathe/scripts/Zahlensysteme.htm (Umrechnung von Zahlensystemen)
+https://matrixcalc.org/ (Matrizen-Rechner)
+
+Texte
+https://detexify.kirelabs.org/classify.html (Symbole zeichnen und den passenden LaTeX-Command dafür bekommen)
+https://www.overleaf.com/ (Online LaTeX-Editor; gibt's auch self-hosted; Vollversion für KIT-Leute kostenlos)
+https://www.codecogs.com/latex/eqneditor.php (Online LaTeX-Formel-Editor)
+https://www.deepl.com/translator (Wie Google Übersetzer aber viel besser)
+
+Programmierung
+https://codetester.ialistannen.de/ (Kooperative Software-Tests für das Programmieren-Modul)
+https://www.toptal.com/developers/gitignore (Vorlagen für .gitignore-Dateien)
+https://www.jetbrains.com/idea/ (die beste™️ Entwicklungsumgebung für Java, Vollversion gibt's für Studis auch kostenlos)
+https://www.jetbrains.com/help/idea/code-with-me.html (Plugin für IntelliJ für gleichzeitiges Arbeiten an denselben Dateien)
+https://code.visualstudio.com/ (Code Editor, sprachenunabhängig)
+https://regexr.com/ (RegEx schreiben und testen)
+https://maven.apache.org/ (Build Tool für Java, am besten nicht über die IDE installieren)
+https://git-scm.com/ (Versionsverwaltung für Software)
+https://education.github.com/students (Ganz viele Vergünstigungen für Studis)
+https://learngitbranching.js.org/ (Git lernen)
+
+Lernen
+https://ocw.mit.edu/ (Lernmaterial vom MIT)
+https://de.wikiversity.org/wiki/Hauptseite (Ganz viel Lernmaterial)
+https://apps.ankiweb.net/ (Karteikarten)
+
+Diagramme
+https://app.diagrams.net/ (Verschiedene Diagramme online erstellen)
+https://swimlanes.io/gallery/full-syntax (Swimlanes)
+
+Office
+https://get.adobe.com/reader/ (Adobe Acrobat Reder für PDF Dateien)
+https://www.xodo.com/ (PDF Tool für Windows)
+https://bildung365.de/ (OneDrive)
+https://www.onenote.com/ (Notizbuch)
+https://www.thunderbird.net/ (Mail Client für mehrere Konten)
+https://www.microsoft.com/en-us/edge (MS Edge, besser geeignet für Teams)
+https://www.drawboard.com/pdf/ PDFs auf dem Tablet annotieren (Altklausuren, Übungsblätter etc.)
+
+Sonstiges
+https://github.com/Garmelon/PFERD (ILIAS runterladen)
+https://www.h-schmidt.net/FloatConverter/IEEE754.html (IEEE-754 Gleitkommazahlen)
+https://openvpn.net/ (Artemis, Springer-Schnorcheln, etc.)
+https://add0n.com/tab-reloader.html (hält einen im Shibboleth, siehe angehängte Datei unten¹)
+
+KIT-spezifisch
+https://primo.bibliothek.kit.edu/primo_library/libweb/action/search.do (KIT-Bibliothek, viele tolle Bücher zum Download for free)
+https://bwsyncandshare.kit.edu/ (NextCloud-Instanz)
+https://owa.kit.edu/ (Web Interface für die Uni-Mail)
