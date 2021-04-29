@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
 import tech.ypsilon.bbbot.discord.services.GuildNotifierService;
+import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ServiceManager {
 
     private void registerAllServices(JDA jda){
         // Register normal services
+        this.registerService(new ToolUpdaterService(null));
 
         if(!ButterBrot.DEBUG_MODE){
             registerDBServices(jda);
@@ -28,7 +30,6 @@ public class ServiceManager {
 
     private void registerDBServices(JDA jda){
         // Register services which require the Mongo-DB to be present
-
         this.registerService(new BirthdayNotifierService(jda));
     }
 

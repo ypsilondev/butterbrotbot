@@ -54,6 +54,7 @@ public abstract class GuildNotifierService {
         private int startMinute;
         private int startSecond;
         private int secondInterval;
+        private boolean instantStart;
 
         public static final int HOURLY = 60 * 60;
         public static final int DAILY = 60 * 60 * 24;
@@ -63,6 +64,7 @@ public abstract class GuildNotifierService {
             this.startMinute = startMinute;
             this.startSecond = startSecond;
             this.secondInterval = secondInterval;
+            this.instantStart = false;
         }
 
         public NotifyTime setStartHour(int hour) {
@@ -101,12 +103,21 @@ public abstract class GuildNotifierService {
             return secondInterval;
         }
 
+        public NotifyTime noInitialDelay() {
+            this.instantStart = true;
+            return this;
+        }
+
         public int getSecondDelay() {
             int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int minute = Calendar.getInstance().get(Calendar.MINUTE);
             int second = Calendar.getInstance().get(Calendar.SECOND);
 
-            return delayTo(hour, minute, second);
+            if (!this.instantStart) {
+                return delayTo(hour, minute, second);
+            } else {
+                return 0;
+            }
         }
 
         private int delayTo(int hour, int minute, int second) {

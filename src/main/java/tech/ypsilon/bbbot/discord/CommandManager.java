@@ -52,6 +52,7 @@ public class CommandManager extends ListenerAdapter {
         // registerFunction(new GBILocationCommand()); // Disabled; test over...
         registerFunction(new GitHubCommand());
         registerFunction(new VerifyCommand());
+        registerFunction(new ToolsCommand());
 
         registerEventListener(this);
         registerEventListener(new DefaultListener());
