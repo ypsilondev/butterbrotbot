@@ -7,11 +7,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.discord.command.*;
 import tech.ypsilon.bbbot.discord.listener.*;
+import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
 import static tech.ypsilon.bbbot.util.StringUtil.parseString;
@@ -28,7 +31,9 @@ public class CommandManager extends ListenerAdapter {
      */
     public CommandManager() {
         instance = this;
+    }
 
+    public void registerFunctions() {
         registerFunction(new ListCommand());
         registerFunction(new StoreCommand());
         registerFunction(new GetDirectoryCommand());
@@ -51,8 +56,8 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new VoiceCommands());
         // registerFunction(new GBILocationCommand()); // Disabled; test over...
         registerFunction(new GitHubCommand());
-        registerFunction(new VerifyCommand());
         registerFunction(new ToolsCommand());
+        registerFunction(new ReloadCommand());
 
         registerEventListener(this);
         registerEventListener(new DefaultListener());
@@ -129,9 +134,21 @@ public class CommandManager extends ListenerAdapter {
         String[] arguments = checkPrefix(event.getMessage());
         if (arguments == null) return;
 
+        String alias = AliasService.getAlias(arguments[1]);
+        if (alias != null) {
+            List<String> override = new LinkedList<>();
+            override.add(arguments[0]);
+
+            override.addAll(Arrays.asList(alias.split(" ")));
+            override.addAll(Arrays.asList(arguments).subList(2, arguments.length));
+            arguments = override.toArray(new String[0]);
+        }
+
+        String[] finalArguments = arguments;
+
         for (Command command : instance.commands) {
             if (command instanceof GuildExecuteHandler) {
-                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))) {
+                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(finalArguments[1]))) {
                     String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
                     ((GuildExecuteHandler) command).onExecute(event, args);
                 }
@@ -152,9 +169,20 @@ public class CommandManager extends ListenerAdapter {
         String[] arguments = checkPrefix(event.getMessage());
         if (arguments == null) return;
 
+        String alias = AliasService.getAlias(arguments[1]);
+        if (alias != null) {
+            List<String> override = new LinkedList<>();
+            override.add(arguments[0]);
+
+            override.addAll(Arrays.asList(alias.split(" ")));
+            override.addAll(Arrays.asList(arguments).subList(2, arguments.length));
+            arguments = override.toArray(new String[0]);
+        }
+
+        String[] finalArguments = arguments;
         for (Command command : instance.commands) {
             if (command instanceof PrivateExecuteHandler) {
-                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(arguments[1]))) {
+                if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(finalArguments[1]))) {
                     String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
                     ((PrivateExecuteHandler) command).onPrivateExecute(event, args);
                 }

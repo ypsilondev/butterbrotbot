@@ -13,6 +13,7 @@ import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
 
@@ -102,8 +103,7 @@ public class VerifyCommand extends FullStackedExecutor {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent event, String[] args) {
-        if (Objects.requireNonNull(event.getMember()).getRoles().stream().anyMatch(role ->
-                role.getIdLong() == (long) SettingsController.getValue("discord.roles.admin"))) {
+        if(DiscordUtil.isAdmin(event.getMember())) {
             for (Member mentionedMember : event.getMessage().getMentionedMembers()) {
                 VerificationDocument document = new VerificationDocument(new ObjectId(), event.getAuthor().getIdLong());
                 document.setVerified(true);
