@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.discord.services;
 
 import net.dv8tion.jda.api.entities.TextChannel;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.io.BufferedReader;
@@ -38,6 +39,8 @@ public class AliasService extends GuildNotifierService {
             e.printStackTrace();
         }
 
+        ButterBrot.LOGGER.info(ALIAS.entrySet().toString());
+        ButterBrot.LOGGER.info("update alias service");
     }
 
     public static String getAlias(String key) {
