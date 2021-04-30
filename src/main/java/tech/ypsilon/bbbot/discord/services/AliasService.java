@@ -30,7 +30,7 @@ public class AliasService extends GuildNotifierService {
                 String[] data = line.split("->");
 
                 String alias = data[0];
-                String command = line.replaceFirst(line + "->", "");
+                String command = line.replaceFirst(alias + "->", "");
 
                 ALIAS.put(alias, command);
             }
