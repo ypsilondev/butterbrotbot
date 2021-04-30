@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.DiscordUtil;
 
 public class WriteAfterMeCommand implements GuildExecuteHandler {
     @Override
@@ -11,8 +12,7 @@ public class WriteAfterMeCommand implements GuildExecuteHandler {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
-        if(e.getMember().getRoles().stream().anyMatch(role ->
-                role.getIdLong() == (long) SettingsController.getValue("discord.roles.admin"))) {
+        if(DiscordUtil.isAdmin(e.getMember())) {
             e.getChannel().sendMessage(e.getMessage().getContentRaw().substring(8)).complete();
             e.getMessage().delete().complete();
         }

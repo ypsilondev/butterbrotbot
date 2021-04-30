@@ -7,6 +7,7 @@ import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.discord.ServiceManager;
 import tech.ypsilon.bbbot.discord.command.CreateInviteCommand;
 import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
+import tech.ypsilon.bbbot.discord.command.VerifyCommand;
 import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.voice.AudioManager;
 
@@ -39,6 +40,7 @@ public class Init {
             new MongoController();
             CommandManager.getInstance().registerFunction(new StudiengangCommand());
             CommandManager.getInstance().registerFunction(new CreateInviteCommand());
+            CommandManager.getInstance().registerFunction(new VerifyCommand());
         }
     }
 

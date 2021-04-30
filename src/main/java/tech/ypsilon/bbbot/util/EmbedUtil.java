@@ -22,6 +22,11 @@ public class EmbedUtil {
         return embedBuilder;
     }
 
+    public static EmbedBuilder createNoPermEmbed() {
+        return EmbedUtil.createErrorEmbed().addField("Kein Recht",
+                "Du hast kein Recht diesen Befehl auszuführen", false);
+    }
+
     public static EmbedBuilder createSuccessEmbed() {
         EmbedBuilder embedBuilder = createDefaultEmbed();
         embedBuilder.setTitle("Erfolg");
