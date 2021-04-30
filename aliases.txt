@@ -1,2 +1,2 @@
 dev->github
-rickroll->kit play https://www.youtube.com/watch?v=dQw4w9WgXcQ
+rickroll->play https://www.youtube.com/watch?v=dQw4w9WgXcQ
