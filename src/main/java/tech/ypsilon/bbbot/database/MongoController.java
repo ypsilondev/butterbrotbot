@@ -33,11 +33,15 @@ public class MongoController {
      */
     public MongoController() {
         instance = this;
-        MongoCredential credential = MongoCredential.createCredential(
-                ((String) SettingsController.getValue("mongo.username")),
-                ((String) SettingsController.getValue("mongo.authDatabase")),
-                ((String) SettingsController.getValue("mongo.password")).toCharArray()
-        );
+        MongoCredential credential = null;
+        if (SettingsController.getValue("mongo.username") != null) {
+            System.out.println("not null");
+             credential = MongoCredential.createCredential(
+                    ((String) SettingsController.getValue("mongo.username")),
+                    ((String) SettingsController.getValue("mongo.authDatabase")),
+                    ((String) SettingsController.getValue("mongo.password")).toCharArray()
+            );
+        }
 
         CodecRegistry extraCodecs = CodecRegistries.fromCodecs(
                 LinkCodec.EMPTY_CODEC,
@@ -48,17 +52,16 @@ public class MongoController {
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry()
                 , extraCodecs);
 
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .credential(credential)
-                .applyToClusterSettings(builder -> builder.hosts(Collections.singletonList(
+        MongoClientSettings.Builder builder = MongoClientSettings.builder()
+                .applyToClusterSettings(b -> b.hosts(Collections.singletonList(
                         new ServerAddress(
                                 ((String) SettingsController.getValue("mongo.host")),
                                 ((int) SettingsController.getValue("mongo.port"))
                         )
                 )))
-                .codecRegistry(codecRegistry)
-                .build();
-
+                .codecRegistry(codecRegistry);
+        if (credential != null) builder.credential(credential);
+        MongoClientSettings settings = builder.build();
 
         CLIENT = MongoClients.create(settings);
         this.DATABASE = CLIENT.getDatabase(BotInfo.NAME);

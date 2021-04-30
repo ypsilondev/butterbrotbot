@@ -59,6 +59,7 @@ public class CommandManager extends ListenerAdapter {
         registerEventListener(new NewMemberJoinListener());
         registerEventListener(new CensorWatcherListener());
         registerEventListener(new RankSystemListener());
+        registerEventListener(new InviteListener());
     }
 
     /**
