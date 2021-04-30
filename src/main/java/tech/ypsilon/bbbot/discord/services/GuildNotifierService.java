@@ -17,6 +17,10 @@ public abstract class GuildNotifierService {
         this.channel = channel;
     }
 
+    public GuildNotifierService() {
+        this.channel = null;
+    }
+
     public TextChannel getChannel() {
         return this.channel;
     }

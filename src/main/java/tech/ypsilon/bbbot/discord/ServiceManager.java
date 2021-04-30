@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord;
 
 import net.dv8tion.jda.api.JDA;
 import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
 import tech.ypsilon.bbbot.discord.services.GuildNotifierService;
 import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
@@ -22,6 +23,7 @@ public class ServiceManager {
     private void registerAllServices(JDA jda){
         // Register normal services
         this.registerService(new ToolUpdaterService(null));
+        this.registerService(new AliasService());
 
         if(!ButterBrot.DEBUG_MODE){
             registerDBServices(jda);

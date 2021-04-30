@@ -27,7 +27,8 @@ public class Init {
 
     static void postInit() throws Exception {
         LOGGER.info("Starting post-init state");
-        new CommandManager();
+        CommandManager commandManager = new CommandManager();
+        commandManager.registerFunctions();
         new AudioManager();
         LOGGER.info("Passed post-init state");
     }
