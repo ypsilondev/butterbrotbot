@@ -28,6 +28,7 @@ public class ReloadCommand implements GuildExecuteHandler{
     private void handle(Member member, MessageChannel channel) {
         if(!DiscordUtil.isAdmin(member)) {
             channel.sendMessage(EmbedUtil.createNoPermEmbed().build()).queue();
+            return;
         }
         ServiceManager.getInstance().findNotifierService(AliasService.class).execute(null);
         channel.sendMessage(EmbedUtil.createSuccessEmbed().setDescription("Die Aliase wurden reloaded!").build()).queue();
