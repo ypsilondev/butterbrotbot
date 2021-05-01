@@ -22,7 +22,7 @@ public class ServiceManager {
 
     private void registerAllServices(JDA jda){
         // Register normal services
-        this.registerService(new ToolUpdaterService(null));
+        this.registerService(new ToolUpdaterService());
         this.registerService(new AliasService());
 
         if(!ButterBrot.DEBUG_MODE){

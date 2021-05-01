@@ -19,8 +19,8 @@ public class ToolUpdaterService extends GuildNotifierService {
 
     private static String requestUrl;
 
-    public ToolUpdaterService(TextChannel channel) {
-        super(channel);
+    public ToolUpdaterService() {
+        super();
         ToolUpdaterService.links = new LinkedHashMap<>();
         ToolUpdaterService.requestUrl = SettingsController.getString("discord.toolsurl");
     }
