@@ -42,7 +42,6 @@ https://bildung365.de/ (OneDrive)
 https://www.onenote.com/ (Notizbuch)
 https://www.thunderbird.net/ (Mail Client für mehrere Konten)
 https://www.microsoft.com/en-us/edge (MS Edge, besser geeignet für Teams)
-https://www.drawboard.com/pdf/ PDFs auf dem Tablet annotieren (Altklausuren, Übungsblätter etc.)
 
 Sonstiges
 https://github.com/Garmelon/PFERD (ILIAS runterladen)
