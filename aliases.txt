@@ -1,2 +1,3 @@
 dev->github
 rickroll->play https://www.youtube.com/watch?v=dQw4w9WgXcQ
+mensa->exec 1000 .mensa
