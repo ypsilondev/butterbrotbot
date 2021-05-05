@@ -10,10 +10,6 @@ import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
@@ -39,7 +35,6 @@ public class CommandManager extends ListenerAdapter {
         registerFunction(new GetDirectoryCommand());
         registerFunction(new AddDirectoryCommand());
         registerFunction(new EditDirectoryCommand());
-
 
 
         registerFunction(new WriteAfterMeCommand());
@@ -142,6 +137,12 @@ public class CommandManager extends ListenerAdapter {
             override.addAll(Arrays.asList(alias.split(" ")));
             override.addAll(Arrays.asList(arguments).subList(2, arguments.length));
             arguments = override.toArray(new String[0]);
+
+            // Check for side-loaded exec-command.
+            if (arguments[1].equals("exec")) {
+                AliasCommandExecutor.execute(event, Arrays.copyOfRange(arguments, 2, arguments.length));
+                return;
+            }
         }
 
         String[] finalArguments = arguments;
