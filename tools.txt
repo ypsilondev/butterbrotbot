@@ -26,6 +26,24 @@ https://git-scm.com/ (Versionsverwaltung für Software)
 https://education.github.com/students (Ganz viele Vergünstigungen für Studis)
 https://learngitbranching.js.org/ (Git lernen)
 
+Theoretische Informatik
+https://xlinux.nist.gov/dads/ (Übersicht über Datenstrukturen und Algorithmen)
+https://visualgo.net/en (Algorithmen visualisieren)
+https://turingmachinesimulator.com/, https://turingmachine.io/ (Turingmaschinen simulieren)
+https://automatonsimulator.com/ (Endliche Automaten simulieren)
+http://ivanzuzak.info/noam/webapps/fsm_simulator/ (Regulären Ausdruck in Automat überführen)
+
+Digitaltechnik
+https://github.com/hneemann/Digital, http://falstad.com/circuit/ (Digitale Schaltungen simulieren)
+https://www.h-schmidt.net/FloatConverter/IEEE754.html (IEEE-754 Gleitkommazahlen)
+https://www.dcode.fr/boolean-expressions-calculator (Wahrheitstabelle erstellen, Boolesche Ausdrücke vereinfachen uvm.)
+http://wahrheitstabelle.daug.de/, https://www.erpelstolz.at/gateway/formular-zentral.html, https://stuff.marc-hoersken.de/btt.php?lang=de (Wahrheitstabellen)
+http://falstad.com/circuit/ (Schaltungen simulieren online)
+https://arndt-bruenner.de/mathe/scripts/Zahlensysteme.htm (Zahlensysteme umrechnen)
+https://stuff.marc-hoersken.de/btt.php?lang=de (Wahrheitstabelle)
+https://www.erpelstolz.at/gateway/formular-zentral.html (Wahrheitstabelle)
+http://wahrheitstabelle.daug.de/#/tabelle (Wahrheitstabellen)
+
 Lernen
 https://ocw.mit.edu/ (Lernmaterial vom MIT)
 https://de.wikiversity.org/wiki/Hauptseite (Ganz viel Lernmaterial)
@@ -53,3 +71,15 @@ KIT-spezifisch
 https://primo.bibliothek.kit.edu/primo_library/libweb/action/search.do (KIT-Bibliothek, viele tolle Bücher zum Download for free)
 https://bwsyncandshare.kit.edu/ (NextCloud-Instanz)
 https://owa.kit.edu/ (Web Interface für die Uni-Mail)
+https://scc.fail/ (Informationen über KIT-Downtime)
+
+YouTube-Kanäle (Mathe und Info)
+https://www.youtube.com/channel/UC6AqaL6fH91U5YhyUCI0ZOQ (KIT Lehre und Wissen; Vorlesungen des KIT; de)
+https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw (3Blue1Brown; sehr intuitive Visualisierungen für Mathe; en)
+https://www.youtube.com/c/brightsideofmaths (The Bright Side of Mathematics; Analysis und LA; en & de)
+https://www.youtube.com/user/pharithmetik (Christian Spannagel; Informatiker und Mathe-Prof Heidelberg; de)
+https://www.youtube.com/c/JoernLoviscach (Jörn Loviscach; Mathe- und Info-Prof Bielefeld; de)
+https://www.youtube.com/c/mathintuition (Math Intuition; Uni-Mathe mit Fokus auf intuitivem Verständnis; de)
+https://www.youtube.com/c/IngmatheDe (Angewandte Mathematik für Ingenieure; v. a. Analysis; de)
+https://www.youtube.com/channel/UCjTfChr0yyz4iZq0x12Q6xA (Weitz / Haw Hamburg; Mathematik-Vorlesungen; de)
+https://www.youtube.com/c/khanacademy (Khan Academy; breit gefächerte Themen; en)
