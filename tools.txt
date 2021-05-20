@@ -73,7 +73,7 @@ https://bwsyncandshare.kit.edu/ (NextCloud-Instanz)
 https://owa.kit.edu/ (Web Interface für die Uni-Mail)
 https://scc.fail/ (Informationen über KIT-Downtime)
 
-YouTube-Kanäle (Mathe und Info)
+YouTube-Kanäle
 https://www.youtube.com/channel/UC6AqaL6fH91U5YhyUCI0ZOQ (KIT Lehre und Wissen; Vorlesungen des KIT; de)
 https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw (3Blue1Brown; sehr intuitive Visualisierungen für Mathe; en)
 https://www.youtube.com/c/brightsideofmaths (The Bright Side of Mathematics; Analysis und LA; en & de)
