@@ -2,15 +2,18 @@ package tech.ypsilon.bbbot.discord.listener;
 
 import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class RoleListener extends ListenerAdapter {
 
@@ -127,4 +130,26 @@ public class RoleListener extends ListenerAdapter {
             }
         }
     }
+
+    @Override
+    public void onButtonClick(@NotNull ButtonClickEvent event) {
+        if (!Objects.requireNonNull(Objects.requireNonNull(event.getButton()).getId()).startsWith("studiengang-"))
+            return;
+
+        MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
+        Document doc = collection.find(new Document("_id",
+                new ObjectId(Objects.requireNonNull(event.getButton().getId()).split("-")[1]))).first();
+        assert doc != null;
+        Role role = Objects.requireNonNull(event.getGuild()).getRoleById(doc.getLong("roleId"));
+
+        assert role != null;
+        if (Objects.requireNonNull(event.getMember()).getRoles().contains(role)) {
+            event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
+            event.reply("Rolle " + role.getAsMention()  + " entfernt").setEphemeral(true).queue();
+        } else {
+            event.getGuild().addRoleToMember(event.getMember(), role).queue();
+            event.reply("Rolle " + role.getAsMention()  + " hinzugefügt").setEphemeral(true).queue();
+        }
+    }
+
 }
