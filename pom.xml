@@ -94,7 +94,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.1_265</version>
+            <version>4.2.INTERACTIONS_1_DEV</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
