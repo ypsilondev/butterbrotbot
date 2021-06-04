@@ -4,7 +4,6 @@ import com.mongodb.client.MongoCollection;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.interactions.components.Component;
@@ -18,9 +17,9 @@ import java.util.*;
 
 public class StudiengangCommand extends LegacyCommand {
 
-    private final String messageStart = "Herzlich willkommen auf dem Ersti-Server fürs <:KIT:759041596460236822> . " +
-            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n";
-    private final String messageEnd = "\n" + "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
+    private final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +
+            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
+            "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
     public static final long channelId = 759033520680599553L;
     final MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
 
@@ -137,18 +136,47 @@ public class StudiengangCommand extends LegacyCommand {
 
                 List<Message> pinnedMessages = textChannel.retrievePinnedMessages().complete();
                 if (pinnedMessages.size() > 0) {
-                    textChannel.editMessageById(pinnedMessages.get(0).getId(), messageStart + messageEnd)
-                            .setActionRows(actionRows).queue();
+                    int i = pinnedMessages.size() - 1;
+                    while (actionRows.size() > 0) {
+                        List<ActionRow> sendList = getFirstActionRows(actionRows);
+
+                        if (i >= 0) {
+                            textChannel.editMessageById(pinnedMessages.get(i).getId(), i == pinnedMessages.size() - 1 ? MESSAGE : ".")
+                                    .setActionRows(sendList).queue();
+                        } else {
+                            textChannel.sendMessage(".").setActionRows(sendList)
+                                    .queue(message -> textChannel.pinMessageById(message.getId()).queue());
+                        }
+                        i--;
+                    }
                 } else {
-                    textChannel.sendMessage(messageStart + messageEnd).setActionRows(actionRows).queue(message -> {
-                        textChannel.pinMessageById(message.getId()).queue();
-                    });
+                    int i = 0;
+                    while (actionRows.size() > 0) {
+                        List<ActionRow> sendList = getFirstActionRows(actionRows);
+
+                        textChannel.sendMessage(i > 0 ? "." : MESSAGE).setActionRows(sendList)
+                                .queue(message -> textChannel.pinMessageById(message.getId()).queue());
+                        i++;
+                    }
                 }
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
                         .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
                                 false).build()).queue();
         }
+    }
+
+    private List<ActionRow> getFirstActionRows(List<ActionRow> actionRows) {
+        int count = 0;
+        List<ActionRow> sendList = new ArrayList<>();
+        for (ActionRow actionRow : actionRows) {
+            if (count >= 5)
+                break;
+            sendList.add(actionRow);
+            count++;
+        }
+        actionRows.removeAll(sendList);
+        return sendList;
     }
 
 }
