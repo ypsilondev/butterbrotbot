@@ -1,10 +1,16 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.Component;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import tech.ypsilon.bbbot.database.MongoController;
@@ -12,17 +18,15 @@ import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class StudiengangCommand extends LegacyCommand {
 
-    private final String messageStart = "Herzlich willkommen auf dem Ersti-Server fürs <:KIT:759041596460236822> . " +
-            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n";
-    private final String messageEnd = "\n" + "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
-    public static final long messageId = 759043590432882798L;
+    private final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +
+            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
+            "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
     public static final long channelId = 759033520680599553L;
     final MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
+    final MongoCollection<Document> collectionCategories = MongoController.getInstance().getCollection("StudiengaengeCategories");
 
     @Override
     public String[] getAlias() {
@@ -37,17 +41,17 @@ public class StudiengangCommand extends LegacyCommand {
     @Override
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
         if (Objects.requireNonNull(e.getMember()).getRoles().stream().noneMatch(role -> role.getIdLong() == 759072770751201361L
-                || role.getIdLong() == 757718320526000138L)) {
+                || role.getIdLong() == 757718320526000138L) && e.getAuthor().getIdLong() != 117625148785295363L) {
             e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Kein Recht",
                     "Du hast kein Recht diesen Befehl auszuführen", false).build()).queue();
             return;
         }
 
-        switch (checkArgs(0, args, new String[]{"add", "remove", "list", "reload", "update"}, e)) {
+        switch (checkArgs(0, args, new String[]{"add", "remove", "list", "setCategory", "update"}, e)) {
             case "add":
-                if (args.length < 4) {
+                if (args.length < 5) {
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
-                            "Eingabe: :emote @role Name", false).build()).queue();
+                            "Eingabe: <categoryId> :emote: <@role> <Name>", false).build()).queue();
                     return;
                 }
 
@@ -63,22 +67,29 @@ public class StudiengangCommand extends LegacyCommand {
                     return;
                 }
 
-                if (collection.countDocuments(new Document("emote", e.getMessage().getContentRaw().split(" ")[3])) > 0) {
+                if (collection.countDocuments(new Document("emote", e.getMessage().getContentRaw().split(" ")[4])) > 0) {
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Fehler beim Erstellen",
                             "Der Emote wird schon benutzt", false).build()).queue();
                     return;
                 }
 
-                if (collection.countDocuments(new Document("name", args[3])) > 0) {
+                if (collection.countDocuments(new Document("name", args[4])) > 0) {
                     e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Fehler beim Erstellen",
                             "Der Name wird schon benutzt", false).build()).queue();
                     return;
                 }
 
+                if (!args[1].matches("-?\\d+(\\.\\d+)?")) {
+                    e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Keine Zahl",
+                            "Die Kategorie muss eine Zahl sein", false).build()).queue();
+                    return;
+                }
+
                 collection.insertOne(new Document("_id", new ObjectId())
+                        .append("category", Integer.parseInt(args[1]))
                         .append("roleId", e.getMessage().getMentionedRoles().get(0).getIdLong())
-                        .append("emote", e.getMessage().getContentRaw().split(" ")[3])
-                        .append("name", args[3]));
+                        .append("emote", e.getMessage().getContentRaw().split(" ")[4])
+                        .append("name", args[4]));
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
                         .addField("Studiengang hinzugefügt", "Der Studiengang wurde erfolgreich hinzugefügt",
@@ -116,80 +127,108 @@ public class StudiengangCommand extends LegacyCommand {
                 list = new StringBuilder(list.toString().replace(", ", ""));
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed().addField("Studiengänge", list.toString(), false).build()).queue();
-            case "update":
-                ArrayList<String> emotes = new ArrayList<>();
-
-                StringBuilder msg = new StringBuilder();
-                for (Document doc : collection.find()) {
-                    emotes.add(doc.getString("emote"));
-                    msg.append(doc.getString("emote")).append(" - ").append(doc.getString("name")).append("\n");
+            case "setCategory":
+                if (args.length < 3) {
+                    e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("Falsche Argumente",
+                            "Eingabe: <Id> <Name>", false).build()).queue();
+                    return;
                 }
 
-                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
-                textChannel.retrieveMessageById(messageId).queue(message ->
-                        message.editMessage(messageStart + msg.toString() + messageEnd).queue());
+                try {
+                    int id = Integer.parseInt(args[1]);
+                    String[] nameArray = Arrays.copyOfRange(args, 2, args.length);
+                    String name = String.join(" ", nameArray);
 
-                ArrayList<Message> messageList = new ArrayList<>();
-                textChannel.retrievePinnedMessages().queue(messages -> {
-                    messageList.addAll(messages);
-                    addReactionsToMessage(emotes, messageList, textChannel);
-                });
+                    collectionCategories.updateOne(Filters.eq("id", id),
+                            Updates.combine(Updates.set("id", id), Updates.set("name", name)),
+                            new UpdateOptions().upsert(true));
+
+                    e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
+                            .addField("Kategorie erfolgreich gesetzt",
+                                    "Die Kategorie wurde erfolgreich gesetzt", false).build()).queue();
+                } catch (NumberFormatException ex) {
+                    e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed().addField("Keine Zahl",
+                            "Die Id muss eine Zahl sein", false).build()).queue();
+                    return;
+                }
+                break;
+            case "update":
+                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
+
+                e.getChannel().sendMessage(EmbedUtil.createInfoEmbed()
+                        .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert. " +
+                                "Dies kann ein paar Sekunden dauern, da Discord Rate-Limits hat.",
+                                false).build()).queue();
+
+                boolean first = true;
+                int messageSend = 0;
+                for (Document catDoc : collectionCategories.find().sort(Sorts.ascending("id"))) {
+                    List<ActionRow> actionRows = new ArrayList<>();
+
+                    List<Component> components = new ArrayList<>();
+                    for (Document doc : collection.find(Filters.eq("category", catDoc.getInteger("id")))) {
+                        String id = "studiengang-" + doc.getObjectId("_id").toHexString();
+                        components.add(Button.primary(id, doc.getString("emote") + " " + doc.getString("name")));
+
+                        if (components.size() == 5) {
+                            actionRows.add(ActionRow.of(components));
+                            components.clear();
+                        }
+                    }
+
+                    String category = catDoc.getString("name");
+                    String firstMessage = MESSAGE + "\n\n" + category;
+
+                    if (components.size() > 0)
+                        actionRows.add(ActionRow.of(components));
+
+                    List<Message> returnMessages = textChannel.retrievePinnedMessages().complete();
+                    List<Message> pinnedMessages = returnMessages.subList(0, returnMessages.size() - messageSend);
+                    if (pinnedMessages.size() > 0) {
+                        int i = pinnedMessages.size() - 1;
+                        while (actionRows.size() > 0) {
+                            List<ActionRow> sendList = getFirstActionRows(actionRows);
+
+                            if (i >= 0) {
+                                textChannel.editMessageById(pinnedMessages.get(i).getId(), first ? firstMessage : category)
+                                        .setActionRows(sendList).queue();
+                                first = false;
+                            } else {
+                                textChannel.sendMessage(category).setActionRows(sendList)
+                                        .queue(message -> textChannel.pinMessageById(message.getId()).queue());
+                            }
+                            messageSend++;
+                            i--;
+                        }
+                    } else {
+                        while (actionRows.size() > 0) {
+                            List<ActionRow> sendList = getFirstActionRows(actionRows);
+
+                            textChannel.sendMessage(first ? firstMessage : category).setActionRows(sendList)
+                                    .queue(message -> textChannel.pinMessageById(message.getId()).queue());
+                            first = false;
+                            messageSend++;
+                        }
+                    }
+                }
 
                 e.getChannel().sendMessage(EmbedUtil.createSuccessEmbed()
-                        .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert",
+                        .addField("Nachricht wurde aktualisiert", "Die Nachricht wurde aktualisiert",
                                 false).build()).queue();
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void addReactionsToMessage(ArrayList<String> emotes, ArrayList<Message> messages, TextChannel textChannel) {
-        HashMap<Message, List<MessageReaction>> reactions = new HashMap<>();
-        HashMap<Message, Integer> reactionSize = new HashMap<>();
-        for (Message message : messages) {
-            List<MessageReaction> list = retrieveMessageReaction(message);
-            reactions.put(message, list);
-            reactionSize.put(message, list.size());
+    private List<ActionRow> getFirstActionRows(List<ActionRow> actionRows) {
+        int count = 0;
+        List<ActionRow> sendList = new ArrayList<>();
+        for (ActionRow actionRow : actionRows) {
+            if (count >= 5)
+                break;
+            sendList.add(actionRow);
+            count++;
         }
-
-        for (String emote : ((ArrayList<String>) emotes.clone())) {
-            if (messages.stream().noneMatch(message -> reactions.get(message).stream()
-                    .anyMatch(reaction -> reaction.getReactionEmote().getEmoji().equals(emote)))) {
-                for (Message message : (ArrayList<Message>) messages.clone()) {
-                    if (reactionSize.get(message) < 20) {
-                        message.addReaction(emote).queue();
-                        emotes.remove(emote);
-                        reactionSize.put(message, reactionSize.get(message) + 1);
-                        break;
-                    } else {
-                        messages.remove(message);
-                    }
-                }
-            } else {
-                emotes.remove(emote);
-            }
-        }
-
-        if (emotes.size() > 0) {
-            textChannel.sendMessage("-").queue(message -> {
-                message.pin().queue();
-                messages.add(message);
-                addReactionsToMessage(emotes, messages, textChannel);
-            });
-        }
-    }
-
-    private List<MessageReaction> retrieveMessageReaction(Message message) {
-        AtomicReference<List<MessageReaction>> list = new AtomicReference<>();
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> {
-            list.set(msg.getReactions());
-            countDownLatch.countDown();
-        });
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException ignored) {
-        }
-        return list.get();
+        actionRows.removeAll(sendList);
+        return sendList;
     }
 
 }
