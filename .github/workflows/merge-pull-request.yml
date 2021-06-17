@@ -1,0 +1,16 @@
+name: Automatically merge dependabot pull requests
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull-request merge
+        uses: sudo-bot/action-pull-request-merge@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.pull_request.number }}
+          allowed-usernames-regex: ^dependabot$
