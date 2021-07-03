@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.discord;
 
+import io.prometheus.client.Counter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
@@ -21,12 +22,20 @@ public class CommandManager extends ListenerAdapter {
 
     private final List<Command> commands = new ArrayList<>();
 
+    private static Counter guildCommandCounter;
+    private static Counter privateCommandCounter;
+
     /**
      * Registering all the Commands by calling the {@link #registerFunction(DiscordFunction...)}
      * and registering the EventListeners by calling {@link #registerEventListener(Object...)}
      */
     public CommandManager() {
         instance = this;
+
+        guildCommandCounter = Counter.build()
+                .name("butterbrot_commands_guild").help("The executed commands").labelNames("command").register();
+        privateCommandCounter = Counter.build()
+                .name("butterbrot_commands_private").help("The executed commands").labelNames("command").register();
     }
 
     public void registerFunctions() {
@@ -152,6 +161,7 @@ public class CommandManager extends ListenerAdapter {
                 if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(finalArguments[1]))) {
                     String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
                     ((GuildExecuteHandler) command).onExecute(event, args);
+                    guildCommandCounter.labels(command.getAlias()[0]).inc();
                 }
             }
         }
@@ -186,6 +196,7 @@ public class CommandManager extends ListenerAdapter {
                 if (Arrays.stream(command.getAlias()).anyMatch(s -> s.equalsIgnoreCase(finalArguments[1]))) {
                     String[] args = Arrays.copyOfRange(arguments, 2, arguments.length);
                     ((PrivateExecuteHandler) command).onPrivateExecute(event, args);
+                    privateCommandCounter.labels(command.getAlias()[0]).inc();
                 }
             }
         }
