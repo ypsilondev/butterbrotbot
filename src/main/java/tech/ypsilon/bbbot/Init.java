@@ -19,6 +19,7 @@ public class Init {
     static void preInit() throws Exception {
         LOGGER.info("Starting pre-init state");
         new SettingsController(ButterBrot.SETTINGS_FILE);
+        StatsManager.getInstance();
         LOGGER.info("Passed pre-init state");
     }
 
