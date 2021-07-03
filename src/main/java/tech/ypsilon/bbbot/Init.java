@@ -9,6 +9,7 @@ import tech.ypsilon.bbbot.discord.command.CreateInviteCommand;
 import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
 import tech.ypsilon.bbbot.discord.command.VerifyCommand;
 import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.stats.StatsManager;
 import tech.ypsilon.bbbot.voice.AudioManager;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
