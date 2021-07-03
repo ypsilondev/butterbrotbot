@@ -13,7 +13,6 @@ public class StatsManager {
     private static final int PORT = 9090;
 
     private static StatsManager instance;
-    private final CollectorRegistry registry;
 
     public static StatsManager getInstance() {
         if (instance == null) {
@@ -25,9 +24,8 @@ public class StatsManager {
     private StatsManager() {
         instance = this;
 
-        registry = new CollectorRegistry();
         try {
-            HTTPServer server = new HTTPServer(new InetSocketAddress(PORT), registry, false);
+            HTTPServer server = new HTTPServer(new InetSocketAddress(PORT), CollectorRegistry.defaultRegistry, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,14 +33,14 @@ public class StatsManager {
 
     public Gauge getGauge(String name, String help, String... labels) {
         Gauge gauge = new Gauge.Builder().name(name).help(help).labelNames(labels).create();
-        gauge.register(registry);
+        gauge.register();
 
         return gauge;
     }
 
     public Counter getCounter(String name, String help, String... labels) {
         Counter counter = new Counter.Builder().name(name).help(help).labelNames(labels).create();
-        counter.register(registry);
+        counter.register();
 
         return counter;
     }
