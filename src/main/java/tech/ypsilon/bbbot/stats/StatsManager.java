@@ -26,7 +26,7 @@ public class StatsManager {
 
     private StatsManager() {
         instance = this;
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new StatsPoll(), 0, 30, TimeUnit.MINUTES);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new StatsPoll(), 1, 30, TimeUnit.MINUTES);
 
         try {
             HTTPServer server = new HTTPServer(new InetSocketAddress(PORT), CollectorRegistry.defaultRegistry, false);

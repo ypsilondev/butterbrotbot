@@ -24,8 +24,8 @@ public class DiscordController {
     public DiscordController() throws LoginException {
         instance = this;
         Collection<GatewayIntent> gatewayIntents = Arrays.asList(GatewayIntent.GUILD_VOICE_STATES,
-                GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES
-                , GatewayIntent.GUILD_MEMBERS
+                GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.GUILD_PRESENCES
         );
 
         jda = JDABuilder.createDefault((String) SettingsController.getValue("discord.token"), gatewayIntents)

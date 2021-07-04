@@ -3,11 +3,9 @@ package tech.ypsilon.bbbot.stats;
 import io.prometheus.client.Gauge;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
-import java.util.List;
-
 public class StatsPoll implements Runnable {
 
-    Gauge totalUsers = Gauge.build().name("butterbrot_total_users").help("-").register();
+    private static final Gauge totalUsers = Gauge.build().name("butterbrot_total_users").help("-").register();
 
     /**
      * When an object implementing interface {@code Runnable} is used
@@ -23,6 +21,8 @@ public class StatsPoll implements Runnable {
     @Override
     public void run() {
         // maybe replace with loadMembers
-        totalUsers.set(DiscordController.getHomeGuild().retrieveMetaData().complete().getApproximatePresences());
+        int presences = DiscordController.getHomeGuild().retrieveMetaData().complete().getApproximatePresences();
+        System.out.println("ErstiesMembers: " + presences);
+        totalUsers.set(presences);
     }
 }
