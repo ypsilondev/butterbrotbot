@@ -7,7 +7,7 @@ import java.util.List;
 
 public class StatsPoll implements Runnable {
 
-    Gauge totalUsers = Gauge.build().name("butterbrot_total_users").help("").register();
+    Gauge totalUsers = Gauge.build().name("butterbrot_total_users").help("-").register();
 
     /**
      * When an object implementing interface {@code Runnable} is used
