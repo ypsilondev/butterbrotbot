@@ -7,6 +7,9 @@ import io.prometheus.client.exporter.HTTPServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class StatsManager {
 
@@ -23,6 +26,7 @@ public class StatsManager {
 
     private StatsManager() {
         instance = this;
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new StatsPoll(), 0, 30, TimeUnit.MINUTES);
 
         try {
             HTTPServer server = new HTTPServer(new InetSocketAddress(PORT), CollectorRegistry.defaultRegistry, false);

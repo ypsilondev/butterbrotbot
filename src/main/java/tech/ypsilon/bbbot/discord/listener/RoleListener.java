@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.discord.listener;
 
 import com.mongodb.client.MongoCollection;
+import io.prometheus.client.Counter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -13,9 +14,11 @@ import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+
 
 public class RoleListener extends ListenerAdapter {
+
+    private Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
 
     /*
     public enum Roles {
@@ -149,6 +152,9 @@ public class RoleListener extends ListenerAdapter {
         } else {
             event.getGuild().addRoleToMember(event.getMember(), role).queue();
             event.reply("Rolle " + role.getAsMention()  + " hinzugefügt").setEphemeral(true).queue();
+
+            // increase stats :)
+            counter.labels(event.getButton().getLabel()).inc();
         }
     }
 
