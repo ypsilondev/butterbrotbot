@@ -40,8 +40,7 @@ public abstract class GuildNotifierService {
 
         NotifyTime notifyTime = this.getNotifyTime();
 
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
-        ScheduledFuture<?> scheduledFuture = ses.scheduleAtFixedRate(() -> {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             try {
                 this.execute(this.getChannel());
             } catch (Exception e) {
