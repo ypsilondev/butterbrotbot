@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 public class BirthdayNotifierService extends GuildNotifierService {
 
+    private static Logger logger = LoggerFactory.getLogger(BirthdayNotifierService.class);
 
     public BirthdayNotifierService(JDA jda) {
         super(getChannel(jda));
@@ -25,15 +28,20 @@ public class BirthdayNotifierService extends GuildNotifierService {
 
     @Override
     public void onExecute(TextChannel channel) {
+        logger.info("Birthday-onExecute invoked");
         Map<Long, Date> bdays = this.getBirthdays();
+        logger.info("Starting iteration");
         bdays.keySet().forEach(userId -> {
+            logger.info(String.format("Iteration over bday-key-set (%d)", userId));
             notifyBday(channel, userId, bdays.get(userId));
         });
+        logger.info("Iteration ended");
     }
 
     private void notifyBday(TextChannel channel, long userId, Date bday) {
         List<Member> members = channel.getGuild().retrieveMembersByIds(userId).get();
         if (!members.isEmpty()) {
+            logger.info(String.format("Notifiziere einen Geburtstag (%d)", userId));
             String userName = members.get(0).getAsMention();
 
             Date now = new Date(System.currentTimeMillis());
@@ -42,6 +50,7 @@ public class BirthdayNotifierService extends GuildNotifierService {
 
             channel.sendMessage(userName + " hat heute Geburtstag und wurde " + age + " Jahre alt!\nHerzlichen Glückwunsch!")
                     .queue(message -> {
+                        logger.info("Adding reactions");
                         message.addReaction("U+1F381").queue();
                         message.addReaction("U+1F382").queue();
                     });
