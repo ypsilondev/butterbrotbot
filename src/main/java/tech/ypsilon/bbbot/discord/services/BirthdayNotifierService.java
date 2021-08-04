@@ -70,6 +70,23 @@ public class BirthdayNotifierService extends GuildNotifierService {
         }
     }
 
+    private WebhookClient getBirthdayWebhook(TextChannel channel) {
+        Webhook webhook;
+        List<Webhook> channelWebhooks = channel.retrieveWebhooks().complete();
+        if (channelWebhooks.size() > 0) {
+            webhook = channelWebhooks.stream().findAny().get();
+        } else {
+            webhook = channel.createWebhook("BirthdayBot").complete();
+        }
+        if (webhook.getToken() != null) {
+            WebhookClient client = WebhookClient.withId(webhook.getIdLong(), webhook.getToken());
+            return client;
+        } else {
+            ButterBrot.LOGGER.warn("Webhook could not be created!");
+        }
+        return null;
+    }
+
     private Map<Long, Date> getBirthdays() {
         MongoCollection<Document> collection = MongoController.getInstance().getCollection("Birthdays");
         MongoCursor<Document> cursor = collection.find().cursor();
