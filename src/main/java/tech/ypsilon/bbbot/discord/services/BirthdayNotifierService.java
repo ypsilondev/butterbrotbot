@@ -1,13 +1,17 @@
 package tech.ypsilon.bbbot.discord.services;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Webhook;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -48,12 +52,21 @@ public class BirthdayNotifierService extends GuildNotifierService {
             SimpleDateFormat formatter = new SimpleDateFormat("YYYY");
             int age = Integer.parseInt(formatter.format(now)) - Integer.parseInt(formatter.format(bday));
 
-            channel.sendMessage(userName + " hat heute Geburtstag und wurde " + age + " Jahre alt!\nHerzlichen Glückwunsch!")
+            WebhookClient client = this.getBirthdayWebhook(channel);
+
+            WebhookMessageBuilder builder = new WebhookMessageBuilder();
+            builder.setUsername("BirthdayBot")
+                    .setAvatarUrl("")
+                    .setContent(userName + " hat heute Geburtstag und wurde " + age + " Jahre alt!\nHerzlichen Glückwunsch!");
+
+            client.send(builder.build());
+
+            /*channel.sendMessage(userName + " hat heute Geburtstag und wurde " + age + " Jahre alt!\nHerzlichen Glückwunsch!")
                     .queue(message -> {
                         logger.info("Adding reactions");
                         message.addReaction("U+1F381").queue();
                         message.addReaction("U+1F382").queue();
-                    });
+                    });*/
         }
     }
 

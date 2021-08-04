@@ -7,12 +7,24 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 
 public class ChannelListener extends ListenerAdapter {
     private final static long CAT_ID = 762052348259467275L;
+
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (event.getMessage().isWebhookMessage()) {
+            if (event.getMessage().getAuthor().getName().toLowerCase().contains("birthday")) {
+                // Birthday-webhook
+                event.getMessage().addReaction("U+1F381").queue();
+                event.getMessage().addReaction("U+1F382").queue();
+            }
+        }
+    }
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent e) {
@@ -55,8 +67,8 @@ public class ChannelListener extends ListenerAdapter {
 
     private void updateChannels(VoiceChannel channelLeft, Member member) {
         Category parent = channelLeft.getParent();
-        if(parent == null) return;
-        if(parent.getIdLong() != CAT_ID) return;
+        if (parent == null) return;
+        if (parent.getIdLong() != CAT_ID) return;
         StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
         if (channelLeft.getName().equals(group.getName()) && channelLeft.getMembers().size() == 0) {
             channelLeft.delete().queue();
