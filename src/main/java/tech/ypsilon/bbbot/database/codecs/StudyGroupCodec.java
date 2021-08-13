@@ -29,7 +29,21 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     private final List<Long> users;
 
     /**
+     * Internal method for creating objects
+     *
+     * @param _id   the ID
+     * @param name  the name
+     * @param users the users
+     */
+    private StudyGroupCodec(ObjectId _id, String name, List<Long> users) {
+        this._id = _id;
+        this.name = name;
+        this.users = users;
+    }
+
+    /**
      * Retrieve a group with a given name
+     *
      * @param name the name from the group
      * @return the group or null if the name is not found
      */
@@ -39,6 +53,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     /**
      * Retrieve the group from a user
+     *
      * @param user the user from JDA
      * @return the group or null if the user is in no group
      */
@@ -49,18 +64,19 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     /**
      * Create a new group with a given name
-     * @param name the name from the group
+     *
+     * @param name    the name from the group
      * @param members the initial members that should be in the group
      * @return the group
      * @throws ArrayIndexOutOfBoundsException if the member array is empty
-     * @throws UserInGroupException if one of the members is already in a group
+     * @throws UserInGroupException           if one of the members is already in a group
      */
     public static StudyGroupCodec createGroup(String name, List<User> members) {
         StudyGroupCodec studyGroupCodec = retrieveStudyGroup(name);
-        if(studyGroupCodec != null) {
+        if (studyGroupCodec != null) {
             return null; //Group name already taken
         }
-        if(members.size() == 0)
+        if (members.size() == 0)
             throw new ArrayIndexOutOfBoundsException();
         if (members.stream().anyMatch(user -> retrieveStudyGroup(user) != null)) {
             throw new UserInGroupException();
@@ -74,8 +90,9 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     /**
      * Adds a user to a given group
+     *
      * @param group The group the user should be added to
-     * @param user The user that should be added
+     * @param user  The user that should be added
      * @return false if the user is already in a group
      * @deprecated Use {@link StudyGroupCodec#addToGroup(User)} inside an object instead
      */
@@ -84,8 +101,13 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         return group.addToGroup(user);
     }
 
+    private static MongoCollection<StudyGroupCodec> getCollection() {
+        return MongoController.getInstance().getCollection("studyGroups", StudyGroupCodec.class);
+    }
+
     /**
      * Add a user to a given group
+     *
      * @param user the user that should be added
      */
     public boolean addToGroup(User user) {
@@ -105,19 +127,8 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
     }
 
     /**
-     * Internal method for creating objects
-     * @param _id the ID
-     * @param name the name
-     * @param users the users
-     */
-    private StudyGroupCodec(ObjectId _id, String name, List<Long> users) {
-        this._id = _id;
-        this.name = name;
-        this.users = users;
-    }
-
-    /**
      * Get the ID from the dataset
+     *
      * @return the ObjectID
      */
     public ObjectId getID() {
@@ -126,6 +137,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     /**
      * Get the name from the dataset
+     *
      * @return the name
      */
     public String getName() {
@@ -134,6 +146,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
 
     /**
      * Get the Discord ids from the members
+     *
      * @return the List<Long> with the ids
      */
     public List<Long> getUserIDs() {
@@ -149,7 +162,7 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         reader.readName("users");
         reader.readStartArray();
         List<Long> users = new ArrayList<>();
-        while(reader.readBsonType() != BsonType.END_OF_DOCUMENT)
+        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT)
             users.add(reader.readInt64());
         reader.readEndArray();
 
@@ -171,16 +184,12 @@ public class StudyGroupCodec implements Codec<StudyGroupCodec> {
         writer.writeEndDocument();
     }
 
-    private static MongoCollection<StudyGroupCodec> getCollection() {
-        return MongoController.getInstance().getCollection("studyGroups", StudyGroupCodec.class);
-    }
-
     @Override
     public Class<StudyGroupCodec> getEncoderClass() {
         return StudyGroupCodec.class;
     }
 
-    public static class UserInGroupException extends RuntimeException{
+    public static class UserInGroupException extends RuntimeException {
 
     }
 

@@ -19,8 +19,8 @@ import static tech.ypsilon.bbbot.Init.*;
 public class ButterBrot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("tech.ypsilon.bbbot");
-    public static boolean DEBUG_MODE;
     static final File SETTINGS_FILE;
+    public static boolean DEBUG_MODE;
 
     static {
         File data = new File("data");

@@ -30,6 +30,12 @@ public class BirthdayNotifierService extends GuildNotifierService {
         super(getChannel(jda));
     }
 
+    private static TextChannel getChannel(JDA jda) {
+        long guildId = (long) SettingsController.getValue("discord.guild");
+        long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, guildId));
+        return jda.getTextChannelById(channelId);
+    }
+
     @Override
     public void onExecute(TextChannel channel) {
         logger.info("Birthday-onExecute invoked");
@@ -116,11 +122,5 @@ public class BirthdayNotifierService extends GuildNotifierService {
     @Override
     public String getServiceName() {
         return "Birthday";
-    }
-
-    private static TextChannel getChannel(JDA jda) {
-        long guildId = (long) SettingsController.getValue("discord.guild");
-        long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, guildId));
-        return jda.getTextChannelById(channelId);
     }
 }

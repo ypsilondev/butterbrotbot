@@ -34,9 +34,9 @@ public class AudioManager {
 
     public void addTrack(Guild g, AudioItem i) {
         TrackScheduler scheduler = getScheduler(g);
-        if(i instanceof AudioTrack){
+        if (i instanceof AudioTrack) {
             scheduler.addTrack((AudioTrack) i);
-        } else if(i instanceof AudioPlaylist) {
+        } else if (i instanceof AudioPlaylist) {
             AudioPlaylist i1 = (AudioPlaylist) i;
             for (AudioTrack track : i1.getTracks())
                 scheduler.addTrack(track);
@@ -45,9 +45,9 @@ public class AudioManager {
 
     public void addTrackPrioritized(Guild g, AudioItem i) {
         TrackScheduler scheduler = getScheduler(g);
-        if(i instanceof AudioTrack){
+        if (i instanceof AudioTrack) {
             scheduler.addTrackPrioritized((AudioTrack) i);
-        } else if(i instanceof AudioPlaylist) {
+        } else if (i instanceof AudioPlaylist) {
             AudioPlaylist i1 = (AudioPlaylist) i;
             for (AudioTrack track : i1.getTracks())
                 scheduler.addTrackPrioritized(track);
@@ -55,7 +55,7 @@ public class AudioManager {
     }
 
     public TrackScheduler getScheduler(Guild g) {
-        if(TRACK_SCHEDULERS.containsKey(g))
+        if (TRACK_SCHEDULERS.containsKey(g))
             return TRACK_SCHEDULERS.get(g);
         AudioPlayer player = PLAYER_MANAGER.createPlayer();
         TrackScheduler trackScheduler = new TrackScheduler(player);

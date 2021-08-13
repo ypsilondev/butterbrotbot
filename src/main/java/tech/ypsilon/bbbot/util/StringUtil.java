@@ -12,17 +12,18 @@ public class StringUtil {
         for (char c : toParse.trim().toCharArray()) {
             switch (c) {
                 case '"': {
-                    if(isInString) {
+                    if (isInString) {
                         isInString = false;
                         parsed.add(builder.toString());
                         builder = new StringBuilder();
                     } else {
                         isInString = true;
                     }
-                }break;
+                }
+                break;
                 case ' ': {
-                    if(!isInString) {
-                        if(builder.length() > 0)
+                    if (!isInString) {
+                        if (builder.length() > 0)
                             parsed.add(builder.toString());
                         builder = new StringBuilder();
                         break;

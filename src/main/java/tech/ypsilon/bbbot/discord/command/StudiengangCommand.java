@@ -17,16 +17,19 @@ import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class StudiengangCommand extends LegacyCommand {
 
-    private final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +
-            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
-            "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
     public static final long channelId = 759033520680599553L;
     final MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
     final MongoCollection<Document> collectionCategories = MongoController.getInstance().getCollection("StudiengaengeCategories");
+    private final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +
+            "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
+            "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
 
     @Override
     public String[] getAlias() {
@@ -157,7 +160,7 @@ public class StudiengangCommand extends LegacyCommand {
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed()
                         .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert. " +
-                                "Dies kann ein paar Sekunden dauern, da Discord Rate-Limits hat.",
+                                        "Dies kann ein paar Sekunden dauern, da Discord Rate-Limits hat.",
                                 false).build()).queue();
 
                 boolean first = true;

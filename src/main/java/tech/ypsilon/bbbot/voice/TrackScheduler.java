@@ -23,8 +23,8 @@ public class TrackScheduler implements AudioEventListener {
         return PLAYER;
     }
 
-    public void addTrackPrioritized(AudioTrack track){
-        if(PLAYER.getPlayingTrack() == null) {
+    public void addTrackPrioritized(AudioTrack track) {
+        if (PLAYER.getPlayingTrack() == null) {
             PLAYER.playTrack(track);
         } else {
             QUEUE.addFirst(track);
@@ -32,7 +32,7 @@ public class TrackScheduler implements AudioEventListener {
     }
 
     public void addTrack(AudioTrack track) {
-        if(PLAYER.getPlayingTrack() == null) {
+        if (PLAYER.getPlayingTrack() == null) {
             PLAYER.playTrack(track);
         } else {
             QUEUE.add(track);
@@ -44,13 +44,13 @@ public class TrackScheduler implements AudioEventListener {
     }
 
     public void skip(int count) {
-        if(count <= 0)
+        if (count <= 0)
             return;
         AudioTrack track = null;
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             track = this.QUEUE.poll();
         }
-        if(track == null)
+        if (track == null)
             this.PLAYER.stopTrack();
         else
             this.PLAYER.playTrack(track);
@@ -59,10 +59,10 @@ public class TrackScheduler implements AudioEventListener {
 
     @Override
     public void onEvent(AudioEvent audioEvent) {
-        if(audioEvent instanceof TrackEndEvent) {
-            if(((TrackEndEvent) audioEvent).endReason.mayStartNext) {
+        if (audioEvent instanceof TrackEndEvent) {
+            if (((TrackEndEvent) audioEvent).endReason.mayStartNext) {
                 AudioTrack poll = QUEUE.poll();
-                if(poll != null)
+                if (poll != null)
                     PLAYER.playTrack(poll);
             }
         }

@@ -2,7 +2,8 @@ package tech.ypsilon.bbbot.discord.listener;
 
 import com.mongodb.client.MongoCollection;
 import io.prometheus.client.Counter;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
@@ -104,9 +105,9 @@ public class RoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        if(event.getChannel().getIdLong() == StudiengangCommand.channelId) {
+        if (event.getChannel().getIdLong() == StudiengangCommand.channelId) {
             MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
-            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
+            if (collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0) {
                 Document doc = collection.find(new Document("emote", event.getReactionEmote().getEmoji())).first();
 
                 assert doc != null;
@@ -119,12 +120,12 @@ public class RoleListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
         Member member = event.getMember();
-        if(member == null) {
+        if (member == null) {
             member = event.getGuild().retrieveMemberById(event.getUserIdLong()).complete();
         }
-        if(event.getChannel().getIdLong() == StudiengangCommand.channelId && member != null) {
+        if (event.getChannel().getIdLong() == StudiengangCommand.channelId && member != null) {
             MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
-            if(collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0){
+            if (collection.countDocuments(new Document("emote", event.getReactionEmote().getEmoji())) > 0) {
                 Document doc = collection.find(new Document("emote", event.getReactionEmote().getEmoji())).first();
 
                 assert doc != null;
@@ -148,10 +149,10 @@ public class RoleListener extends ListenerAdapter {
         assert role != null;
         if (Objects.requireNonNull(event.getMember()).getRoles().contains(role)) {
             event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
-            event.reply("Rolle " + role.getAsMention()  + " entfernt").setEphemeral(true).queue();
+            event.reply("Rolle " + role.getAsMention() + " entfernt").setEphemeral(true).queue();
         } else {
             event.getGuild().addRoleToMember(event.getMember(), role).queue();
-            event.reply("Rolle " + role.getAsMention()  + " hinzugefügt").setEphemeral(true).queue();
+            event.reply("Rolle " + role.getAsMention() + " hinzugefügt").setEphemeral(true).queue();
 
             // increase stats :)
             counter.labels(event.getButton().getLabel()).inc();

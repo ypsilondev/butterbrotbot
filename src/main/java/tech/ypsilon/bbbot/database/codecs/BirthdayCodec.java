@@ -27,11 +27,6 @@ public class BirthdayCodec implements Codec<BirthdayCodec> {
         this.userId = userId;
         this.birthday = birthday;
     }
-    
-    public BirthdayCodec fixTimeZone() {
-    	birthday.setTime(birthday.getTime() + Calendar.getInstance().get(Calendar.DST_OFFSET) + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
-    	return this;
-    }
 
     public static BirthdayCodec newBirthday(User user, Date birthday) {
         BirthdayCodec birthdayCodec = new BirthdayCodec(new ObjectId(), user.getIdLong(), birthday).fixTimeZone();
@@ -48,6 +43,11 @@ public class BirthdayCodec implements Codec<BirthdayCodec> {
 
     private static MongoCollection<BirthdayCodec> getCollection() {
         return MongoController.getInstance().getCollection("Birthdays", BirthdayCodec.class);
+    }
+
+    public BirthdayCodec fixTimeZone() {
+        birthday.setTime(birthday.getTime() + Calendar.getInstance().get(Calendar.DST_OFFSET) + Calendar.getInstance().get(Calendar.ZONE_OFFSET));
+        return this;
     }
 
     @Override

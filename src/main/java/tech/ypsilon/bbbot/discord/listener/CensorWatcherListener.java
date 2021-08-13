@@ -21,7 +21,7 @@ public class CensorWatcherListener extends ListenerAdapter {
             Integer deletionLimit = censoredMember.get(event.getMember().getUser());
             if (deletionLimit != null && deletionLimit > 0) {
                 event.getMessage().delete().queue();
-                censoredMember.put(event.getMember().getUser(), deletionLimit-1);
+                censoredMember.put(event.getMember().getUser(), deletionLimit - 1);
             } else {
                 lastMessages.put(event.getChannel(), event.getMessage());
             }

@@ -25,6 +25,23 @@ public class ToolUpdaterService extends GuildNotifierService {
         ToolUpdaterService.requestUrl = SettingsController.getString("discord.toolsurl");
     }
 
+    private static String getUrlContents(String urlString) {
+        StringBuilder content = new StringBuilder();
+        try {
+            URL url = new URL(urlString);
+            URLConnection urlConnection = url.openConnection();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line + "\n");
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content.toString();
+    }
+
     @Override
     protected void onExecute(TextChannel channel) {
         ButterBrot.LOGGER.info(String.format("[%s] updating link-list", this.getServiceName()));
@@ -57,22 +74,5 @@ public class ToolUpdaterService extends GuildNotifierService {
     @Override
     public String getServiceName() {
         return "Tool-updater-service";
-    }
-
-    private static String getUrlContents(String urlString) {
-        StringBuilder content = new StringBuilder();
-        try {
-            URL url = new URL(urlString);
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                content.append(line + "\n");
-            }
-            bufferedReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return content.toString();
     }
 }

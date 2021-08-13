@@ -11,11 +11,7 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
-import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
-import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
-import tech.ypsilon.bbbot.database.codecs.LinkCodec;
-import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
-import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
+import tech.ypsilon.bbbot.database.codecs.*;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.util.Collections;
@@ -37,7 +33,7 @@ public class MongoController {
         MongoCredential credential = null;
         if (SettingsController.getValue("mongo.username") != null) {
             System.out.println("not null");
-             credential = MongoCredential.createCredential(
+            credential = MongoCredential.createCredential(
                     ((String) SettingsController.getValue("mongo.username")),
                     ((String) SettingsController.getValue("mongo.authDatabase")),
                     ((String) SettingsController.getValue("mongo.password")).toCharArray()
@@ -78,6 +74,7 @@ public class MongoController {
 
     /**
      * Get the MongoClient database connection
+     *
      * @return the Client
      */
     public MongoClient getClient() {
@@ -88,6 +85,7 @@ public class MongoController {
      * Returns the database that is used to store all the collections that are necessary for
      * the bot to function.
      * Name of the Database is ButterBrot {@link BotInfo#NAME}
+     *
      * @return the project database
      */
     public MongoDatabase getDatabase() {
@@ -96,9 +94,10 @@ public class MongoController {
 
     /**
      * Return a collection inside the database for the project
-     * @param name the name from the collection
+     *
+     * @param name   the name from the collection
      * @param aClass the class type
-     * @param <T> the Datatype
+     * @param <T>    the Datatype
      * @return a collection with the datatype T
      */
     public <T> MongoCollection<T> getCollection(String name, Class<T> aClass) {
@@ -107,6 +106,7 @@ public class MongoController {
 
     /**
      * Return a collection inside the database for the project with type Document(BSON)
+     *
      * @param name the name from the collection
      * @return a collection with the name and type Document(BSON)
      */
@@ -116,6 +116,7 @@ public class MongoController {
 
     /**
      * Get the Host
+     *
      * @return the hostname as a String
      */
     public String getHost() {
@@ -124,6 +125,7 @@ public class MongoController {
 
     /**
      * Get the Port
+     *
      * @return the port as a Integer
      */
     public int getPort() {

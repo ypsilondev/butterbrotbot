@@ -8,7 +8,6 @@ import io.prometheus.client.exporter.HTTPServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class StatsManager {
@@ -16,13 +15,6 @@ public class StatsManager {
     private static final int PORT = 9090;
 
     private static StatsManager instance;
-
-    public static StatsManager getInstance() {
-        if (instance == null) {
-            instance = new StatsManager();
-        }
-        return instance;
-    }
 
     private StatsManager() {
         instance = this;
@@ -33,6 +25,13 @@ public class StatsManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static StatsManager getInstance() {
+        if (instance == null) {
+            instance = new StatsManager();
+        }
+        return instance;
     }
 
     public Gauge getGauge(String name, String help, String... labels) {

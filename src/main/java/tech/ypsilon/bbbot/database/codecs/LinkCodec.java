@@ -28,6 +28,14 @@ public class LinkCodec implements Codec<LinkCodec> {
     private final Long userId;
     private final String link;
 
+    private LinkCodec(ObjectId _id, String name, List<String> keywords, Long userId, String link) {
+        this.name = name;
+        this._id = _id;
+        this.keywords = keywords;
+        this.userId = userId;
+        this.link = link;
+    }
+
     public static LinkCodec createLink(String name, User user, String link, List<String> keywords) {
         LinkCodec linkCodec = new LinkCodec(new ObjectId(), name, keywords, user.getIdLong(), link);
         getCollection().insertOne(linkCodec);
@@ -66,14 +74,6 @@ public class LinkCodec implements Codec<LinkCodec> {
         return getCollection().find(Filters.or(bson));
     }
 
-    private LinkCodec(ObjectId _id, String name, List<String> keywords, Long userId, String link) {
-        this.name = name;
-        this._id = _id;
-        this.keywords = keywords;
-        this.userId = userId;
-        this.link = link;
-    }
-
     private static MongoCollection<LinkCodec> getCollection() {
         return MongoController.getInstance().getCollection("links", LinkCodec.class);
     }
@@ -107,7 +107,7 @@ public class LinkCodec implements Codec<LinkCodec> {
         reader.readName("keywords");
         reader.readStartArray();
         List<String> keywords = new ArrayList<>();
-        while(reader.readBsonType() != BsonType.END_OF_DOCUMENT)
+        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT)
             keywords.add(reader.readString());
         reader.readEndArray();
 

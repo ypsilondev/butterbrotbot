@@ -16,6 +16,8 @@ import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
 public class Init {
 
+    static boolean shutdown = false;
+
     static void preInit() throws Exception {
         LOGGER.info("Starting pre-init state");
         new SettingsController(ButterBrot.SETTINGS_FILE);
@@ -37,8 +39,8 @@ public class Init {
         LOGGER.info("Passed post-init state");
     }
 
-    static void databaseModulesInit() throws Exception{
-        if(!ButterBrot.DEBUG_MODE){
+    static void databaseModulesInit() throws Exception {
+        if (!ButterBrot.DEBUG_MODE) {
             new MongoController();
             CommandManager.getInstance().registerFunction(new StudiengangCommand());
             CommandManager.getInstance().registerFunction(new CreateInviteCommand());
@@ -57,16 +59,15 @@ public class Init {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> stopBot(false)));
     }
 
-    static boolean shutdown = false;
-    public static void stopBot(boolean systemExit){
-        if(shutdown)
+    public static void stopBot(boolean systemExit) {
+        if (shutdown)
             return;
 
         DiscordController.getJDA().shutdown();
         shutdown = true;
 
         LOGGER.info("Good Bye! :c");
-        if(systemExit) System.exit(0);
+        if (systemExit) System.exit(0);
     }
 
 }

@@ -55,12 +55,12 @@ public class SettingsController {
      * Get a setting and cast it to the provided class
      * Structure depth increment by using the '.'
      *
-     * @param key the key from the setting
+     * @param key   the key from the setting
      * @param clazz the class the value should be cast to
      * @return the value or null
      * @throws ClassCastException when the stored data has a different type.
-     * @throws RuntimeException when a structure depth change was requested but cannot be executed
-     *                          because of a missing key
+     * @throws RuntimeException   when a structure depth change was requested but cannot be executed
+     *                            because of a missing key
      */
     @Nullable
     public static <T> T getValue(String key, Class<? extends T> clazz) {
@@ -78,8 +78,8 @@ public class SettingsController {
      * @param key the key from the setting
      * @return the value or null
      * @throws ClassCastException when the stored data has a different type.
-     * @throws RuntimeException when a structure depth change was requested but cannot be executed
-     *                          because of a missing key
+     * @throws RuntimeException   when a structure depth change was requested but cannot be executed
+     *                            because of a missing key
      */
     @Nullable
     public static Long getLong(String key) {
@@ -93,8 +93,8 @@ public class SettingsController {
      * @param key the key from the setting
      * @return the value or null
      * @throws ClassCastException when the stored data has a different type.
-     * @throws RuntimeException when a structure depth change was requested but cannot be executed
-     *                          because of a missing key
+     * @throws RuntimeException   when a structure depth change was requested but cannot be executed
+     *                            because of a missing key
      */
     @Nullable
     public static String getString(String key) {
@@ -108,8 +108,8 @@ public class SettingsController {
      * @param key the key from the setting
      * @return the value or null
      * @throws ClassCastException when the stored data has a different type.
-     * @throws RuntimeException when a structure depth change was requested but cannot be executed
-     *                          because of a missing key
+     * @throws RuntimeException   when a structure depth change was requested but cannot be executed
+     *                            because of a missing key
      */
     @Nullable
     public static Integer getInt(String key) {
@@ -123,8 +123,8 @@ public class SettingsController {
      * @param key the key from the setting
      * @return the value or null
      * @throws ClassCastException when the stored data has a different type.
-     * @throws RuntimeException when a structure depth change was requested but cannot be executed
-     *                          because of a missing key
+     * @throws RuntimeException   when a structure depth change was requested but cannot be executed
+     *                            because of a missing key
      */
     @Nullable
     public static Boolean getBoolean(String key) {
@@ -134,7 +134,7 @@ public class SettingsController {
     /**
      * Get a setting.
      * Structure depth increment by using the '.'
-     *
+     * <p>
      * INTERNAL METHOD! NOT MEANT TO BE USED!
      *
      * @param key the key from the setting

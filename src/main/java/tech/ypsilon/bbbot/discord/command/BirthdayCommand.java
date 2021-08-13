@@ -2,11 +2,7 @@ package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.bson.Document;
 import tech.ypsilon.bbbot.database.MongoController;
@@ -58,7 +54,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
                     List<Member> mentioned = e.getMessage().getMentionedMembers();
                     if (!mentioned.isEmpty()) {
                         for (Member m : mentioned) {
-                            try{
+                            try {
                                 Date bday = this.getBirthday(m.getIdLong());
                                 String userAsMention = this.asMention(m.getIdLong(), guild);
                                 if (!bday.equals(new Date(0))) {
@@ -70,7 +66,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
                                 } else {
                                     e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField(userAsMention, "Hat keinen Geburtstag angegeben", true).build())).queue();
                                 }
-                            } catch (NullPointerException e1){
+                            } catch (NullPointerException e1) {
                                 e.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(EmbedUtil.createErrorEmbed().addField("Datenbankabfrage", "Es gab einen Fehler, während das Geburtsdatum aus der Datenbank geladen wurde. Sollte dieses Problem weiterhin bestehen, wende dich bitte an einen Administrator.", false).build())).queue();
                             }
                         }

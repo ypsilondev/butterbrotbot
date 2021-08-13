@@ -13,8 +13,12 @@ import java.util.Objects;
 
 public class AliasService extends GuildNotifierService {
 
-    private static boolean disabled = false;
     private static final Map<String, String> ALIAS = new HashMap<>();
+    private static boolean disabled = false;
+
+    public static String getAlias(String key) {
+        return disabled ? null : ALIAS.get(key);
+    }
 
     @Override
     protected void onExecute(TextChannel channel) {
@@ -41,10 +45,6 @@ public class AliasService extends GuildNotifierService {
 
         ButterBrot.LOGGER.info(ALIAS.entrySet().toString());
         ButterBrot.LOGGER.info("update alias service");
-    }
-
-    public static String getAlias(String key) {
-        return disabled ? null : ALIAS.get(key);
     }
 
     @Override

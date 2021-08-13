@@ -37,7 +37,7 @@ public class GBILocationCommand implements GuildExecuteHandler, PrivateExecuteHa
                     .flatMap(channel -> channel.sendMessage(this.gbiLocation(matrNbr))).queue();
         } catch (NumberFormatException e) {
             member.getUser().openPrivateChannel().flatMap(
-                    channel -> channel.sendMessage("Leider konnte deine Matrikelnummer nicht geparsed werden!"))
+                            channel -> channel.sendMessage("Leider konnte deine Matrikelnummer nicht geparsed werden!"))
                     .queue();
         }
     }

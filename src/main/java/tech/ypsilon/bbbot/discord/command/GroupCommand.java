@@ -29,10 +29,18 @@ public class GroupCommand implements GuildExecuteHandler {
         }
 
         switch (args[0]) {
-            case "create": createGroup(e, args[1]); break;
-            case "add": addPlayerToGroup(e); break;
-            case "leave": leaveGroup(e); break;
-            case "list": listGroupMembers(e); break;
+            case "create":
+                createGroup(e, args[1]);
+                break;
+            case "add":
+                addPlayerToGroup(e);
+                break;
+            case "leave":
+                leaveGroup(e);
+                break;
+            case "list":
+                listGroupMembers(e);
+                break;
         }
     }
 

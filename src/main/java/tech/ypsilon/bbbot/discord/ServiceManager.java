@@ -12,25 +12,29 @@ import java.util.List;
 
 public class ServiceManager {
 
-    private final List<GuildNotifierService> notifierServices;
     private static ServiceManager instance;
+    private final List<GuildNotifierService> notifierServices;
 
     public ServiceManager() {
         instance = this;
         this.notifierServices = new ArrayList<>();
     }
 
-    private void registerAllServices(JDA jda){
+    public static ServiceManager getInstance() {
+        return instance;
+    }
+
+    private void registerAllServices(JDA jda) {
         // Register normal services
         this.registerService(new ToolUpdaterService());
         this.registerService(new AliasService());
 
-        if(!ButterBrot.DEBUG_MODE){
+        if (!ButterBrot.DEBUG_MODE) {
             registerDBServices(jda);
         }
     }
 
-    private void registerDBServices(JDA jda){
+    private void registerDBServices(JDA jda) {
         // Register services which require the Mongo-DB to be present
         this.registerService(new BirthdayNotifierService(jda));
     }
@@ -64,9 +68,5 @@ public class ServiceManager {
     public void registerService(GuildNotifierService service) {
         this.notifierServices.add(service);
         service.startService();
-    }
-
-    public static ServiceManager getInstance() {
-        return instance;
     }
 }

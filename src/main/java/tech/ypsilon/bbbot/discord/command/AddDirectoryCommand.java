@@ -31,7 +31,7 @@ public class AddDirectoryCommand extends LegacyCommand implements PrivateExecute
     @Override
     public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
         // bb mkdir [name] [shared] {names...}
-        if(args.length < 2) {
+        if (args.length < 2) {
             EmbedBuilder b = EmbedUtil.createErrorEmbed();
             b.setDescription("Übergebe den Namen und die Sichtbarkeit (public/private) des zu erstellenden Ordners");
             e.getAuthor().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage(b.build())).queue();

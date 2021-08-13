@@ -237,7 +237,7 @@ public class VoiceCommands implements CommandBucket {
                         }
                     }
 
-                    if (duration != null){
+                    if (duration != null) {
                         AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer()
                                 .getPlayingTrack().setPosition(duration.getSeconds() * 1000);
                     }

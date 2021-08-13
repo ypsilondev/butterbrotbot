@@ -29,8 +29,16 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
     private final boolean shared;
     private final List<ObjectId> links;
 
+    private DirectoryCodec(ObjectId _id, String name, Long userId, boolean shared, List<ObjectId> links) {
+        this._id = _id;
+        this.name = name;
+        this.userId = userId;
+        this.shared = shared;
+        this.links = links;
+    }
+
     public static DirectoryCodec addDirectory(User user, String name, List<LinkCodec> codecs) {
-        if(getCollection().countDocuments(Filters.or(
+        if (getCollection().countDocuments(Filters.or(
                 Filters.and(Filters.eq("name", name), Filters.eq("userId", user.getIdLong())),
                 Filters.and(Filters.eq("shared", true), Filters.eq("name", name)))
         ) > 0)
@@ -55,7 +63,7 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
     public static FindIterable<DirectoryCodec> getDirectories(User user, boolean withShared) {
         List<Bson> filters = new ArrayList<>();
         filters.add(Filters.eq("userId", user.getIdLong()));
-        if(withShared) {
+        if (withShared) {
             filters.add(Filters.eq("shared", true));
         }
         return getCollection().find(Filters.or(filters));
@@ -77,8 +85,8 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
     }
 
     public boolean setShared(boolean shared) {
-        if(shared) {
-            if(getCollection().countDocuments(Filters.and(Filters.eq("shared", true), Filters.eq("name", name))) > 0)
+        if (shared) {
+            if (getCollection().countDocuments(Filters.and(Filters.eq("shared", true), Filters.eq("name", name))) > 0)
                 return false;
         }
         getCollection().updateOne(Filters.eq("_id", _id), Updates.set("shared", shared));
@@ -117,14 +125,6 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
         return LinkCodec.getLinksWithIdsBulk(links);
     }
 
-    private DirectoryCodec(ObjectId _id, String name, Long userId, boolean shared, List<ObjectId> links) {
-        this._id = _id;
-        this.name = name;
-        this.userId = userId;
-        this.shared = shared;
-        this.links = links;
-    }
-
     @Override
     public DirectoryCodec decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
@@ -136,7 +136,7 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
         reader.readName("links");
         reader.readStartArray();
         List<ObjectId> links = new ArrayList<>();
-        while(reader.readBsonType() != BsonType.END_OF_DOCUMENT)
+        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT)
             links.add(reader.readObjectId());
         reader.readEndArray();
         reader.readEndDocument();

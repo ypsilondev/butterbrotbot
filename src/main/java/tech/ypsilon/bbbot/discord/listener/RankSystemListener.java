@@ -26,6 +26,7 @@ public class RankSystemListener extends ListenerAdapter {
 
     /**
      * Get the corresponding Collection
+     *
      * @return the collection
      */
     private static MongoCollection<Document> getCollection() {
@@ -33,7 +34,18 @@ public class RankSystemListener extends ListenerAdapter {
     }
 
     /**
+     * Get information from User
+     *
+     * @param user the {@link User}
+     * @return the RankInformation
+     */
+    public static RankInformation getRankInformation(User user) {
+        return new RankInformation(user.getIdLong());
+    }
+
+    /**
      * Returns milliseconds for a given amount of days
+     *
      * @param days the amount of days
      * @return the millis they take
      */
@@ -43,6 +55,7 @@ public class RankSystemListener extends ListenerAdapter {
 
     /**
      * Method to calculate points to add
+     *
      * @param streak the currentStreak
      * @return the points to add
      */
@@ -52,18 +65,19 @@ public class RankSystemListener extends ListenerAdapter {
 
     /**
      * Execute the event
+     *
      * @param event
      */
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if(event.getGuild().getIdLong() != 756547960229199902L) return; //Skip if not Kit Guild
+        if (event.getGuild().getIdLong() != 756547960229199902L) return; //Skip if not Kit Guild
 
-        if(lastMessage.getOrDefault(event.getAuthor().getIdLong(), 0L) + getMillisForDays(1) > System.currentTimeMillis())
+        if (lastMessage.getOrDefault(event.getAuthor().getIdLong(), 0L) + getMillisForDays(1) > System.currentTimeMillis())
             return; //Skip if cache hits the user last message
         Bson filer = Filters.eq("userId", event.getAuthor().getIdLong());
         Document user = getCollection().find(filer).first();
         boolean newCreate = false;
-        if(user == null) {
+        if (user == null) {
             user = new Document("_id", new ObjectId());
             user.put("userId", event.getAuthor().getIdLong());
             user.put("lastMessage", new Date());
@@ -75,7 +89,7 @@ public class RankSystemListener extends ListenerAdapter {
             newCreate = true;
         }
         Date lastMsgUser = user.getDate("lastMessage");
-        if(lastMsgUser.getTime()+getMillisForDays(1) > System.currentTimeMillis()) { //Skip if database hits the user last message
+        if (lastMsgUser.getTime() + getMillisForDays(1) > System.currentTimeMillis()) { //Skip if database hits the user last message
             lastMessage.put(event.getAuthor().getIdLong(), lastMsgUser.getTime());    //Refreshed the local cache if cache didnt hit but database does
             return;
         }
@@ -84,8 +98,8 @@ public class RankSystemListener extends ListenerAdapter {
         Integer currentStreak = user.getInteger("currentStreak");
 
         List<Bson> updates = new ArrayList<>();
-        if(lastMsgUser.getTime()+getMillisForDays(2) < System.currentTimeMillis() && !newCreate) {  //Lost Streak; No message for more than 48h
-            if(currentStreak > bestStreak) {    //CurrentStreak higher than bestStreak
+        if (lastMsgUser.getTime() + getMillisForDays(2) < System.currentTimeMillis() && !newCreate) {  //Lost Streak; No message for more than 48h
+            if (currentStreak > bestStreak) {    //CurrentStreak higher than bestStreak
                 updates.add(Updates.set("bestStreak", (currentStreak)));    //Set bestStreak = currentStreak
             }
             updates.add(Updates.set("currentStreak", 1));
@@ -97,15 +111,6 @@ public class RankSystemListener extends ListenerAdapter {
         lastMessage.put(event.getAuthor().getIdLong(), System.currentTimeMillis());
 
         getCollection().updateOne(filer, Updates.combine(updates));
-    }
-
-    /**
-     * Get information from User
-     * @param user the {@link User}
-     * @return the RankInformation
-     */
-    public static RankInformation getRankInformation(User user) {
-        return new RankInformation(user.getIdLong());
     }
 
     /**
@@ -124,13 +129,13 @@ public class RankSystemListener extends ListenerAdapter {
             Document document = getCollection().find(Filters.eq("userId", userId)).first();
 
             this.userId = userId;
-            if(document != null) {
+            if (document != null) {
                 this._id = document.getObjectId("_id");
                 this.points = document.getInteger("points");
                 this.currentStreak = document.getInteger("currentStreak");
                 this.bestStreak = document.getInteger("bestStreak");
                 this.lastMessage = document.getDate("lastMessage");
-                if(this.currentStreak > this.bestStreak)
+                if (this.currentStreak > this.bestStreak)
                     this.bestStreak = this.currentStreak;
             } else {
                 this._id = new ObjectId();

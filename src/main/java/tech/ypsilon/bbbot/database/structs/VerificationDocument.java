@@ -15,7 +15,10 @@ public class VerificationDocument {
     private final ObjectId _id;
     private final Long userId;
     private String studentCode;
-    private @Setter String verificationCode;
-    private @Setter Boolean verified;
-    private @Setter Date emailLastSent;
+    private @Setter
+    String verificationCode;
+    private @Setter
+    Boolean verified;
+    private @Setter
+    Date emailLastSent;
 }

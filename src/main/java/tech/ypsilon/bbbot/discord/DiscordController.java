@@ -19,6 +19,7 @@ public class DiscordController {
 
     /**
      * Registering the JDA with the needed GatewayIntents.
+     *
      * @throws LoginException when the provided token is invalid
      */
     public DiscordController() throws LoginException {
@@ -35,6 +36,7 @@ public class DiscordController {
 
     /**
      * Get the Main JDA instance for executing future tasks
+     *
      * @return the JDA instance from the BOT
      */
     public static JDA getJDA() {
@@ -43,6 +45,7 @@ public class DiscordController {
 
     /**
      * Get the home Guild object
+     *
      * @return home Guild object
      */
     public static Guild getHomeGuild() {

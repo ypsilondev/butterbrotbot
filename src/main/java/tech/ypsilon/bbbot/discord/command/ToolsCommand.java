@@ -10,6 +10,14 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.HashMap;
 
 public class ToolsCommand extends FullStackedExecutor {
+    private static EmbedBuilder getInfoEmbed() {
+        HashMap<String, String> data = ToolUpdaterService.links;
+        EmbedBuilder builder = EmbedUtil.createDefaultEmbed();
+        builder.setDescription("Auflistung nützlicher Tools für Studies:");
+        data.forEach((title, content) -> builder.addField(title, content, false));
+        return builder;
+    }
+
     @Override
     public String[] getAlias() {
         return new String[]{"tool", "tools"};
@@ -33,13 +41,5 @@ public class ToolsCommand extends FullStackedExecutor {
 
     private void response(MessageChannel channel) {
         channel.sendMessage(getInfoEmbed().build()).queue();
-    }
-
-    private static EmbedBuilder getInfoEmbed() {
-        HashMap<String, String> data = ToolUpdaterService.links;
-        EmbedBuilder builder = EmbedUtil.createDefaultEmbed();
-        builder.setDescription("Auflistung nützlicher Tools für Studies:");
-        data.forEach((title, content) -> builder.addField(title, content, false));
-        return builder;
     }
 }

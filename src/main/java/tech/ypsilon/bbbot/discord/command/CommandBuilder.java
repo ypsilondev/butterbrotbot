@@ -3,7 +3,10 @@ package tech.ypsilon.bbbot.discord.command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class CommandBuilder {
@@ -55,13 +58,13 @@ public class CommandBuilder {
 
             @Override
             public void onExecute(GuildMessageReceivedEvent e, String[] args) {
-                if(guildHandler != null)
+                if (guildHandler != null)
                     guildHandler.accept(e, args);
             }
 
             @Override
             public void onPrivateExecute(PrivateMessageReceivedEvent e, String[] args) {
-                if(privateHandler != null)
+                if (privateHandler != null)
                     privateHandler.accept(e, args);
             }
         };

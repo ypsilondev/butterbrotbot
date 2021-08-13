@@ -20,7 +20,7 @@ public class HelpCommand extends ConsoleCommand {
     @Override
     public void onExecute(String[] args) {
         LOGGER.info("List of all commands: ");
-        for(ConsoleCommand command : ConsoleManager.getCommands()){
+        for (ConsoleCommand command : ConsoleManager.getCommands()) {
             LOGGER.info(command.getAlias()[0] + " - " + command.getDescription());
         }
     }

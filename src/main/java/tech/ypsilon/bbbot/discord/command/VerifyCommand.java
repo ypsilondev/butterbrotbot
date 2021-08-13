@@ -17,14 +17,9 @@ import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -103,7 +98,7 @@ public class VerifyCommand extends FullStackedExecutor {
 
     @Override
     public void onExecute(GuildMessageReceivedEvent event, String[] args) {
-        if(DiscordUtil.isAdmin(event.getMember())) {
+        if (DiscordUtil.isAdmin(event.getMember())) {
             for (Member mentionedMember : event.getMessage().getMentionedMembers()) {
                 VerificationDocument document = new VerificationDocument(new ObjectId(), event.getAuthor().getIdLong());
                 document.setVerified(true);

@@ -11,7 +11,10 @@ import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
 import static tech.ypsilon.bbbot.util.StringUtil.parseString;
@@ -19,11 +22,9 @@ import static tech.ypsilon.bbbot.util.StringUtil.parseString;
 public class CommandManager extends ListenerAdapter {
 
     private static CommandManager instance;
-
-    private final List<Command> commands = new ArrayList<>();
-
     private static Counter guildCommandCounter;
     private static Counter privateCommandCounter;
+    private final List<Command> commands = new ArrayList<>();
 
     /**
      * Registering all the Commands by calling the {@link #registerFunction(DiscordFunction...)}
@@ -38,72 +39,8 @@ public class CommandManager extends ListenerAdapter {
                 .name("butterbrot_commands_private").help("The executed commands").labelNames("command").register();
     }
 
-    public void registerFunctions() {
-        registerFunction(new ListCommand());
-        registerFunction(new StoreCommand());
-        registerFunction(new GetDirectoryCommand());
-        registerFunction(new AddDirectoryCommand());
-        registerFunction(new EditDirectoryCommand());
-
-
-        registerFunction(new WriteAfterMeCommand());
-        //registerFunction(new VoicePlayCommand());
-        //registerFunction(new VoiceLeaveCommand());
-        registerFunction(new CreateChannelCommand());
-        registerFunction(new GroupCommand());
-        registerFunction(new BirthdayCommand());
-        registerFunction(new HelpCommand());
-        //registerFunction(new NotifySelectRoleCommand());
-        registerFunction(new CensorshipCommand());
-        registerFunction(new DudenCommand());
-        registerFunction(new RankSystemCommand());
-        registerFunction(new VoiceCommands());
-        // registerFunction(new GBILocationCommand()); // Disabled; test over...
-        registerFunction(new GitHubCommand());
-        registerFunction(new ToolsCommand());
-        registerFunction(new ReloadCommand());
-
-        registerEventListener(this);
-        registerEventListener(new DefaultListener());
-        registerEventListener(new RoleListener());
-        registerEventListener(new ChannelListener());
-        registerEventListener(new NewMemberJoinListener());
-        registerEventListener(new CensorWatcherListener());
-        registerEventListener(new RankSystemListener());
-        registerEventListener(new InviteListener());
-    }
-
-    /**
-     * Register a new function for Discord
-     * You can add a new command by passing a instance of {@link Command} or {@link CommandBucket}
-     *
-     * @param functions an instance from the Function
-     */
-    public void registerFunction(DiscordFunction... functions) {
-        for (DiscordFunction function : functions) {
-            if (function instanceof Command) {
-                commands.add((Command) function);
-            }
-            if (function instanceof CommandBucket) {
-                ArrayList<DiscordFunction> discordFunctions = new ArrayList<>();
-                ((CommandBucket) function).register(discordFunctions);
-                discordFunctions.forEach(this::registerFunction);
-            }
-        }
-    }
-
     public static CommandManager getInstance() {
         return instance;
-    }
-
-    /**
-     * Register new eventListeners
-     * Just adds it to the JDA instance but use the method anyway for future feature compatibility
-     *
-     * @param eventListeners an instance from the EventListener
-     */
-    private void registerEventListener(Object... eventListeners) {
-        getJDA().addEventListener(eventListeners);
     }
 
     /**
@@ -113,16 +50,6 @@ public class CommandManager extends ListenerAdapter {
      */
     public static List<Command> getCommands() {
         return instance.commands;
-    }
-
-    @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        CommandManager.checkForExecute(event);
-    }
-
-    @Override
-    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
-        CommandManager.checkForExecute(event);
     }
 
     /**
@@ -225,6 +152,80 @@ public class CommandManager extends ListenerAdapter {
             return null;
         }
         return arguments;
+    }
+
+    public void registerFunctions() {
+        registerFunction(new ListCommand());
+        registerFunction(new StoreCommand());
+        registerFunction(new GetDirectoryCommand());
+        registerFunction(new AddDirectoryCommand());
+        registerFunction(new EditDirectoryCommand());
+
+
+        registerFunction(new WriteAfterMeCommand());
+        //registerFunction(new VoicePlayCommand());
+        //registerFunction(new VoiceLeaveCommand());
+        registerFunction(new CreateChannelCommand());
+        registerFunction(new GroupCommand());
+        registerFunction(new BirthdayCommand());
+        registerFunction(new HelpCommand());
+        //registerFunction(new NotifySelectRoleCommand());
+        registerFunction(new CensorshipCommand());
+        registerFunction(new DudenCommand());
+        registerFunction(new RankSystemCommand());
+        registerFunction(new VoiceCommands());
+        // registerFunction(new GBILocationCommand()); // Disabled; test over...
+        registerFunction(new GitHubCommand());
+        registerFunction(new ToolsCommand());
+        registerFunction(new ReloadCommand());
+
+        registerEventListener(this);
+        registerEventListener(new DefaultListener());
+        registerEventListener(new RoleListener());
+        registerEventListener(new ChannelListener());
+        registerEventListener(new NewMemberJoinListener());
+        registerEventListener(new CensorWatcherListener());
+        registerEventListener(new RankSystemListener());
+        registerEventListener(new InviteListener());
+    }
+
+    /**
+     * Register a new function for Discord
+     * You can add a new command by passing a instance of {@link Command} or {@link CommandBucket}
+     *
+     * @param functions an instance from the Function
+     */
+    public void registerFunction(DiscordFunction... functions) {
+        for (DiscordFunction function : functions) {
+            if (function instanceof Command) {
+                commands.add((Command) function);
+            }
+            if (function instanceof CommandBucket) {
+                ArrayList<DiscordFunction> discordFunctions = new ArrayList<>();
+                ((CommandBucket) function).register(discordFunctions);
+                discordFunctions.forEach(this::registerFunction);
+            }
+        }
+    }
+
+    /**
+     * Register new eventListeners
+     * Just adds it to the JDA instance but use the method anyway for future feature compatibility
+     *
+     * @param eventListeners an instance from the EventListener
+     */
+    private void registerEventListener(Object... eventListeners) {
+        getJDA().addEventListener(eventListeners);
+    }
+
+    @Override
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        CommandManager.checkForExecute(event);
+    }
+
+    @Override
+    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+        CommandManager.checkForExecute(event);
     }
 
 }

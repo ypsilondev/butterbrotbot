@@ -5,8 +5,6 @@ import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.Calendar;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class GuildNotifierService {
@@ -53,14 +51,13 @@ public abstract class GuildNotifierService {
 
     public static class NotifyTime {
 
+        public static final int HOURLY = 60 * 60;
+        public static final int DAILY = 60 * 60 * 24;
         private int startHour;
         private int startMinute;
         private int startSecond;
         private int secondInterval;
         private boolean instantStart;
-
-        public static final int HOURLY = 60 * 60;
-        public static final int DAILY = 60 * 60 * 24;
 
         public NotifyTime(int startHour, int startMinute, int startSecond, int secondInterval) {
             this.startHour = startHour;
@@ -68,21 +65,6 @@ public abstract class GuildNotifierService {
             this.startSecond = startSecond;
             this.secondInterval = secondInterval;
             this.instantStart = false;
-        }
-
-        public NotifyTime setStartHour(int hour) {
-            this.startHour = hour;
-            return this;
-        }
-
-        public NotifyTime setStartMinute(int minute) {
-            this.startMinute = minute;
-            return this;
-        }
-
-        public NotifyTime setStartSecond(int second) {
-            this.startSecond = second;
-            return this;
         }
 
         public NotifyTime setStartInterval(int secondInterval) {
@@ -94,12 +76,27 @@ public abstract class GuildNotifierService {
             return startHour;
         }
 
+        public NotifyTime setStartHour(int hour) {
+            this.startHour = hour;
+            return this;
+        }
+
         public int getStartMinute() {
             return startMinute;
         }
 
+        public NotifyTime setStartMinute(int minute) {
+            this.startMinute = minute;
+            return this;
+        }
+
         public int getStartSecond() {
             return startSecond;
+        }
+
+        public NotifyTime setStartSecond(int second) {
+            this.startSecond = second;
+            return this;
         }
 
         public int getSecondInterval() {

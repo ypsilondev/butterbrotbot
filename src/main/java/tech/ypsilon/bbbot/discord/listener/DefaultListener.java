@@ -23,7 +23,7 @@ public class DefaultListener extends ListenerAdapter {
         try {
             String prefix = ((List<String>) SettingsController.getValue("discord.prefix")).get(0);
             event.getJDA().getPresence().setActivity(Activity.playing(prefix + " | v" + BotInfo.VERSION));
-        }catch (Exception e){
+        } catch (Exception e) {
             event.getJDA().getPresence().setActivity(Activity.playing("v" + BotInfo.VERSION));
         }
     }
@@ -38,8 +38,8 @@ public class DefaultListener extends ListenerAdapter {
         checkChannel(event.getChannelLeft());
     }
 
-    private void checkChannel(VoiceChannel channel){
-        if(CreateChannelCommand.channels.contains(channel) && channel.getMembers().size() == 0){
+    private void checkChannel(VoiceChannel channel) {
+        if (CreateChannelCommand.channels.contains(channel) && channel.getMembers().size() == 0) {
             new Thread(() -> {
                 long channelId = channel.getIdLong();
 
@@ -49,7 +49,7 @@ public class DefaultListener extends ListenerAdapter {
                     e.printStackTrace();
                 }
 
-                if(Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getMembers().size() == 0){
+                if (Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getMembers().size() == 0) {
                     Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getGuild().delete().queue();
                 }
             }).start();

@@ -24,7 +24,7 @@ public class InviteListener extends ListenerAdapter {
                 Document document = collection.find(new Document("inviteUrl", invite.getUrl())).first();
                 assert document != null;
 
-                if(document.getInteger("uses") < invite.getUses()){
+                if (document.getInteger("uses") < invite.getUses()) {
                     List<String> roles = document.getList("roles", String.class);
                     collection.updateOne(new Document("inviteUrl", invite.getUrl()), Updates.inc("uses", 1));
 
