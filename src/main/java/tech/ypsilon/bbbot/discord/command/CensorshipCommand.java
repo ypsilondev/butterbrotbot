@@ -3,6 +3,9 @@ package tech.ypsilon.bbbot.discord.command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.listener.CensorWatcherListener;
+import tech.ypsilon.bbbot.util.DiscordUtil;
+
+import java.util.Objects;
 
 public class CensorshipCommand implements GuildExecuteHandler {
     @Override
@@ -14,7 +17,7 @@ public class CensorshipCommand implements GuildExecuteHandler {
     public void onExecute(GuildMessageReceivedEvent e, String[] args) {
         // kit censor
         // kit censor @User [future messages to censor]
-        if (e.getMember().getRoles().stream().anyMatch(role -> role.getIdLong() == 757718320526000138L)) {
+        if (DiscordUtil.isAdmin(Objects.requireNonNull(e.getMember()))) {
             if (args.length > 1 && Integer.parseInt(args[1]) > 0) {
                 CensorWatcherListener.censoredMember.put(e.getMessage().getMentionedUsers().get(0), Integer.parseInt(args[1]));
             }
