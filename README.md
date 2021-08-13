@@ -1,4 +1,4 @@
-**Discord bot for the KIT Erstis WS 20/21 guild**
+**Discord bot for the unofficial [KIT](https://www.kit.edu/) Discord guild**
 
 [![Discord](https://img.shields.io/discord/756547960229199902.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ZADFRNu)
 
