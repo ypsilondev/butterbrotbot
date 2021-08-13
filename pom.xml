@@ -99,7 +99,7 @@
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>discord-webhooks</artifactId>
-            <version>0.1.6</version>
+            <version>0.5.8</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
