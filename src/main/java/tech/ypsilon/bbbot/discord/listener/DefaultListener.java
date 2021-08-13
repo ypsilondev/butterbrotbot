@@ -52,7 +52,7 @@ public class DefaultListener extends ListenerAdapter {
                 if(Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getMembers().size() == 0){
                     Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getGuild().delete().queue();
                 }
-            });
+            }).start();
         }
     }
 }
