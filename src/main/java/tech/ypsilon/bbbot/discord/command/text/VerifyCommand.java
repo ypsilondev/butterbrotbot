@@ -79,7 +79,7 @@ public class VerifyCommand extends FullStackedExecutor {
             )
             .build();
 
-    private Properties mailSessionProperties;
+    private final Properties mailSessionProperties;
 
     public VerifyCommand() {
         mailSessionProperties = new Properties();

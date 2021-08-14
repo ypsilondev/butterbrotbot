@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class BirthdayCommand implements GuildExecuteHandler {
 
     private static final String DATE_REGEX = "\\d\\d?\\.\\d\\d?\\.\\d\\d\\d\\d";

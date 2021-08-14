@@ -16,6 +16,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class VoiceCommands implements CommandBucket {
 
     @Override
