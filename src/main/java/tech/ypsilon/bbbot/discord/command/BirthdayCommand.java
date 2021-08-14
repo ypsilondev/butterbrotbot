@@ -10,7 +10,11 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 import tech.ypsilon.bbbot.database.MongoController;
+import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
+import tech.ypsilon.bbbot.discord.ServiceManager;
+import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
+import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +33,9 @@ public class BirthdayCommand extends SlashCommand {
                         .addOption(OptionType.STRING, "date", "Geburtsdatum (DD.MM.YYYY)", true),
                 new SubcommandData("get", "Erhalte den Geburtstag eines anderen Mitglieds")
                         .addOption(OptionType.USER, "member", "member", true),
-                new SubcommandData("remove", "Lösche deinen Geburtstag")
+                new SubcommandData("remove", "Lösche deinen Geburtstag"),
+                new SubcommandData("notify", "Sende die heutige Benachrichtigung erneut"),
+                new SubcommandData("notify-here", "Wechsle den Geburtstag-Kanal")
         );
     }
 
@@ -50,7 +56,13 @@ public class BirthdayCommand extends SlashCommand {
                 get(event);
                 return;
             case "remove":
+                remove(event);
                 return;
+            case "notify":
+                notify(event);
+                return;
+            case "notify-here":
+                notifyHere(event);
             default:
                 throw new CommandFailedException("Es ist ein Fehler aufgetreten");
         }
@@ -100,6 +112,37 @@ public class BirthdayCommand extends SlashCommand {
         }
     }
 
+    protected void remove(SlashCommandEvent event) {
+        try {
+            BirthdayCodec.newBirthday(event.getUser().getIdLong(), new Date(0));
+            event.reply("Geburtstag erfolgreich entfernt").queue();
+        } catch (IllegalStateException | IllegalArgumentException exception) {
+            event.reply("Geburtstag konnte nicht entfernt werden").queue();
+        }
+    }
+
+    protected void notify(SlashCommandEvent event) {
+        if (event.getMember() == null) throw new CommandFailedException();
+
+        if (DiscordUtil.isAdmin(event.getMember())) {
+            ServiceManager.getInstance().findNotifierService(BirthdayNotifierService.class).execute(event.getTextChannel());
+            event.reply("Geburtstage neu gesendet").setEphemeral(true).queue();
+        } else {
+            event.reply("").addEmbeds(EmbedUtil.createNoPermEmbed().build()).setEphemeral(true).queue();
+        }
+    }
+
+    protected void notifyHere(SlashCommandEvent event) {
+        if (event.getMember() == null || event.getGuild() == null) throw new CommandFailedException();
+
+        if (DiscordUtil.isAdmin(event.getMember())) {
+            MongoSettings.setValue(MongoSettings.TYPE.BirthdayChannel, event.getTextChannel(), event.getGuild().getIdLong());
+            event.reply("Du hast erfolgreich den BDAY-Broadcast-Kanal festgelegt: " + event.getTextChannel().getAsMention()).setEphemeral(true).queue();
+        } else {
+            event.reply("").addEmbeds(EmbedUtil.createNoPermEmbed().build()).setEphemeral(true).queue();
+        }
+    }
+
     private Date getBirthday(long memberId) {
         MongoCollection<Document> collection = MongoController.getInstance().getCollection("Birthdays");
         MongoCursor<Document> cursor = collection.find().cursor();
@@ -114,19 +157,16 @@ public class BirthdayCommand extends SlashCommand {
     }
 
     private Date parseDate(String dateString) {
-        int day = 0;
-        int month = 0;
-        int year = 0;
         try {
             String[] dateComponents = dateString.split("\\.");
-            day = Integer.parseInt(dateComponents[0]);
-            month = Integer.parseInt(dateComponents[1]) - 1;
-            year = Integer.parseInt(dateComponents[2]);
+            int day = Integer.parseInt(dateComponents[0]);
+            int month = Integer.parseInt(dateComponents[1]) - 1;
+            int year = Integer.parseInt(dateComponents[2]);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, day, 0, 0, 0);
+            return calendar.getTime();
         } catch (NumberFormatException e1) {
             throw new CommandFailedException("Das eingegebene Datumsformat ist fehlerhaft!");
         }
-        Calendar c = Calendar.getInstance();
-        c.set(year, month, day, 0, 0, 0);
-        return c.getTime();
     }
 }
