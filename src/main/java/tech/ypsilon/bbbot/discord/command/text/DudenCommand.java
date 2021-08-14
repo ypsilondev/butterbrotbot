@@ -12,6 +12,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.io.IOException;
 
+@Deprecated
 public class DudenCommand extends FullStackedExecutor {
 
     @Override
