@@ -37,9 +37,9 @@ public class ButterbrotCommand extends SlashCommand {
     private MessageEmbed getInformationEmbed() {
         return EmbedUtil.createInfoEmbed()
                 .setTitle("Was ist Butterbrot?")
-                .setDescription("Butterbrot ist ein Bot, der speziell für den KIT Discord Server entwickelt wurde. " +
-                        "An dieser Stelle könnte man natürlich eine gescheite Beschreibung machen " +
-                        "aber ich bin gerade ziemlich unkreativ :)")
+                .setDescription("Butterbrot ist ein Bot, der speziell für den KIT Discord Server entwickelt wurde. ")
+                .addField("Contributors", "<@!141171046777749504>, <@!358213000550809600>, " +
+                        "<@!117625148785295363>, <@!699011153208016926>, <@!237593967137390592>", false)
                 .build();
     }
 

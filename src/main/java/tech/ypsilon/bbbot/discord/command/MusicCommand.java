@@ -39,15 +39,15 @@ public class MusicCommand extends SlashCommand {
                 new SubcommandData("join", "Tritt deinem Sprachkanal bei"),
                 new SubcommandData("leave", "Verlässt den Sprachkanal"),
                 new SubcommandData("play", "Spielt eine URL ab")
-                        .addOptions(new OptionData(OptionType.STRING, "url", "Die URL zum abspielen")),
+                        .addOptions(new OptionData(OptionType.STRING, "url", "Die URL zum abspielen", true)),
                 new SubcommandData("playlist", "Lädt eine Playlist und spielt diese ab")
-                        .addOptions(new OptionData(OptionType.STRING, "url", "Die URL zum abspielen")),
+                        .addOptions(new OptionData(OptionType.STRING, "url", "Die URL zum abspielen", true)),
                 new SubcommandData("search", "Suche nach einem YouTube Video")
-                        .addOptions(new OptionData(OptionType.STRING, "query", "Die Sucheingabe")),
+                        .addOptions(new OptionData(OptionType.STRING, "query", "Die Sucheingabe", true)),
                 new SubcommandData("pause", "Pausiert die Wiedergabe"),
                 new SubcommandData("resume", "Setzt die Wiedergabe fort"),
                 new SubcommandData("jumpto", "Springt zu einem beliebigen Zeitpunkt im Lied")
-                        .addOptions(new OptionData(OptionType.STRING, "time", "Die Zielzeit")),
+                        .addOptions(new OptionData(OptionType.STRING, "time", "Die Zielzeit", true)),
                 new SubcommandData("skip", "Überspringt das aktuelle Lied"),
                 new SubcommandData("clear-queue", "Löscht die Warteschlange")
         );
