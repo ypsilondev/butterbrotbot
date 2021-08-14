@@ -37,7 +37,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new BirthdayCommand(),
                 new TestCommand(),
 
-                new CreateChannelSlashCommand()
+                new CreateChannelSlashCommand(),
+                new WriteAfterMeSlashCommand()
         );
     }
 
@@ -83,7 +84,7 @@ public class SlashCommandManager extends ListenerAdapter {
         if (commandMap.containsKey(event.getName())) {
             try {
                 commandMap.get(event.getName()).execute(event);
-            } catch (CommandFailedException exception) {
+            } catch (NullPointerException | CommandFailedException exception) {
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessage(exception.getMessage()).queue();
                 } else {
@@ -102,7 +103,15 @@ public class SlashCommandManager extends ListenerAdapter {
         if (split.length != 4 || !split[0].equalsIgnoreCase(SELECT_MENU_PREFIX)) {
             event.reply("Ein interner Fehler ist aufgetreten").setEphemeral(true).queue();
         } else if (commandMap.containsKey(split[1])) {
-            commandMap.get(split[1]).handleSelectionMenu(event, split[2]);
+            try {
+                commandMap.get(split[1]).handleSelectionMenu(event, split[2]);
+            } catch (NullPointerException | CommandFailedException exception) {
+                if (event.isAcknowledged()) {
+                    event.getHook().sendMessage(exception.getMessage()).queue();
+                } else {
+                    event.reply(exception.getMessage()).queue();
+                }
+            }
         } else {
             event.reply("Ein interner Fehler ist aufgetreten").setEphemeral(true).queue();
         }
@@ -115,7 +124,15 @@ public class SlashCommandManager extends ListenerAdapter {
         if (split.length != 4 || !split[0].equalsIgnoreCase(BUTTON_PREFIX)) {
             event.reply("Ein interner Fehler ist aufgetreten").setEphemeral(true).queue();
         } else if (commandMap.containsKey(split[1])) {
-            commandMap.get(split[1]).handleButtonInteraction(event, split[2]);
+            try {
+                commandMap.get(split[1]).handleButtonInteraction(event, split[2]);
+            } catch (NullPointerException | CommandFailedException exception) {
+                if (event.isAcknowledged()) {
+                    event.getHook().sendMessage(exception.getMessage()).queue();
+                } else {
+                    event.reply(exception.getMessage()).queue();
+                }
+            }
         } else {
             event.reply("Ein interner Fehler ist aufgetreten").setEphemeral(true).queue();
         }

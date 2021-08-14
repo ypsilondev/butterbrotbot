@@ -3,6 +3,7 @@ package tech.ypsilon.bbbot.discord.command.text;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 
+@Deprecated
 public class WriteAfterMeCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
