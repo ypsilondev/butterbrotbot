@@ -135,6 +135,7 @@ public class CommandManager extends ListenerAdapter {
      * @param event from the EventHandler
      */
     private static void checkForExecute(GuildMessageReceivedEvent event) {
+        if(event.getAuthor().isBot()) return;
         String[] arguments = checkPrefix(event.getMessage());
         if (arguments == null) return;
 
