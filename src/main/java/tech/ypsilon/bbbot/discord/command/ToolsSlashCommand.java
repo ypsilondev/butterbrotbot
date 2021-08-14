@@ -1,19 +1,26 @@
 package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ToolsSlashCommand extends SlashCommand {
+
     @Override
     public CommandData commandData() {
         return new CommandData("tools", "Liefert eine Auflistung sinnvoller und praktischer Werkzeuge für den Studienalltag");
@@ -26,26 +33,30 @@ public class ToolsSlashCommand extends SlashCommand {
 
     @Override
     public void execute(SlashCommandEvent event) {
-        // event.deferReply(true).queue();
-        // event.getHook().editOriginalEmbeds(getInfoEmbed().build()).queue();
-        event.reply("Wähle eine Kategorie aus:").addActionRow(
-                SelectionMenu.create(createSelectMenuId("a"))
-                        .addOption("option 1", "option 1")
-                        .addOption("option 2", "option 2")
-                        .build()
-        ).setEphemeral(true).queue();
+        SelectionMenu.Builder selectBuilder = SelectionMenu.create(createSelectMenuId(""))
+                .setRequiredRange(1, 10).setPlaceholder("Wähle eine Kategorie...");
+
+        for (String category : getInfoData().keySet())
+            selectBuilder.addOption(category, "Nützliche Infos zu " + category);
+
+        event.reply("Bitte wähle zuerst eine Kategorie. (Du kannst auch nacheinander verschiedene auswählen)")
+                .addActionRow(selectBuilder.build()).setEphemeral(true).queue();
     }
 
     @Override
     public void handleSelectionMenu(SelectionMenuEvent event, String data) {
-        event.editMessage("test").queue();
+        if (event.getSelectedOptions() == null) throw new CommandFailedException("Es ist ein Fehler aufgetreten");
+
+        event.editMessage("").setEmbeds(
+                event.getSelectedOptions().stream().map(option -> fromCategory(option.getLabel(), getInfoData().get(option.getLabel()))).collect(Collectors.toList())
+        ).queue();
     }
 
-    private static EmbedBuilder getInfoEmbed() {
-        HashMap<String, String> data = ToolUpdaterService.links;
-        EmbedBuilder builder = EmbedUtil.createDefaultEmbed();
-        builder.setDescription("Auflistung nützlicher Tools für Studies:");
-        data.forEach((title, content) -> builder.addField(title, content, false));
-        return builder;
+    private static MessageEmbed fromCategory(String title, String content) {
+        return EmbedUtil.createInfoEmbed().setTitle(title).setDescription(content).build();
+    }
+
+    private static Map<String, String> getInfoData() {
+        return ToolUpdaterService.links;
     }
 }
