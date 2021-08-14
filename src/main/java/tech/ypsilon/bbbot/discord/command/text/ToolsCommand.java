@@ -9,6 +9,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.HashMap;
 
+@Deprecated
 public class ToolsCommand extends FullStackedExecutor {
     @Override
     public String[] getAlias() {

@@ -17,6 +17,7 @@ import tech.ypsilon.bbbot.discord.command.GroupSlashCommand;
 import tech.ypsilon.bbbot.discord.command.ReloadSlashCommand;
 import tech.ypsilon.bbbot.discord.command.SlashCommand;
 import tech.ypsilon.bbbot.discord.command.DudenSlashCommand;
+import tech.ypsilon.bbbot.discord.command.ToolsSlashCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new GroupSlashCommand(),
                 new CreateInviteSlashCommand(),
                 new DudenSlashCommand(),
-                new ReloadSlashCommand()
+                new ReloadSlashCommand(),
+                new ToolsSlashCommand()
         );
     }
 
