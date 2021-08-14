@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class CreateChannelCommand implements GuildExecuteHandler {
 
     private final HashMap<String, Integer> games = new HashMap<>();

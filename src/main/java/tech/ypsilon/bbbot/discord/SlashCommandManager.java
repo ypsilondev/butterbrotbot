@@ -35,7 +35,9 @@ public class SlashCommandManager extends ListenerAdapter {
                 new ReloadSlashCommand(),
                 new ToolsSlashCommand(),
                 new BirthdayCommand(),
-                new TestCommand()
+                new TestCommand(),
+
+                new CreateChannelSlashCommand()
         );
     }
 

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
+@Deprecated
 public class GBILocationCommand implements GuildExecuteHandler, PrivateExecuteHandler {
     @Override
     public String[] getAlias() {
