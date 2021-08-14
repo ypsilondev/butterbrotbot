@@ -49,13 +49,13 @@ public abstract class SlashCommand {
     public void handleSelectionMenu(SelectionMenuEvent event, String data) {
     }
 
-    public synchronized String createButtonId(String data) {
+    public final synchronized String createButtonId(String data) {
         return SlashCommandManager.BUTTON_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
                 + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
                 + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
     }
 
-    public synchronized String createSelectMenuId(String data) {
+    public final synchronized String createSelectMenuId(String data) {
         return SlashCommandManager.SELECT_MENU_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
                 + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
                 + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
