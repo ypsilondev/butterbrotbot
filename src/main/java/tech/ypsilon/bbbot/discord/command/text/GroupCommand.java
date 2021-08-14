@@ -11,6 +11,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class GroupCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
