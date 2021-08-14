@@ -38,7 +38,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new TestCommand(),
 
                 new CreateChannelSlashCommand(),
-                new WriteAfterMeSlashCommand()
+                new WriteAfterMeSlashCommand(),
+                new CensorSlashCommand()
         );
     }
 

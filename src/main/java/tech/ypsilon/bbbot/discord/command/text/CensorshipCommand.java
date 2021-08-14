@@ -7,6 +7,7 @@ import tech.ypsilon.bbbot.util.DiscordUtil;
 
 import java.util.Objects;
 
+@Deprecated
 public class CensorshipCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+@Deprecated
 public class CommandBuilder {
 
     private final Set<String> alias = new HashSet<>();
