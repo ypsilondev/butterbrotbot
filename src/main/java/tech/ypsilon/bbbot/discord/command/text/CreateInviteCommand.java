@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class CreateInviteCommand implements GuildExecuteHandler {
 
     final MongoCollection<Document> collection = MongoController.getInstance().getCollection("Invites");

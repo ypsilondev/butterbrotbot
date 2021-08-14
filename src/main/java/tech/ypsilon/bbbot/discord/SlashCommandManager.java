@@ -12,6 +12,7 @@ import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.command.BirthdayCommand;
 import tech.ypsilon.bbbot.discord.command.ButterbrotCommand;
 import tech.ypsilon.bbbot.discord.command.CommandFailedException;
+import tech.ypsilon.bbbot.discord.command.CreateInviteSlashCommand;
 import tech.ypsilon.bbbot.discord.command.GroupSlashCommand;
 import tech.ypsilon.bbbot.discord.command.SlashCommand;
 
@@ -32,7 +33,8 @@ public class SlashCommandManager extends ListenerAdapter {
         registerCommands(jda,
                 new ButterbrotCommand(),
                 new BirthdayCommand(),
-                new GroupSlashCommand()
+                new GroupSlashCommand(),
+                new CreateInviteSlashCommand()
         );
     }
 
