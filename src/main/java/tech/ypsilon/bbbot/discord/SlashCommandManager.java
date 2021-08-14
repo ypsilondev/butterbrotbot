@@ -9,14 +9,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.discord.command.BirthdayCommand;
-import tech.ypsilon.bbbot.discord.command.ButterbrotCommand;
-import tech.ypsilon.bbbot.discord.command.CommandFailedException;
-import tech.ypsilon.bbbot.discord.command.CreateInviteSlashCommand;
-import tech.ypsilon.bbbot.discord.command.GroupSlashCommand;
-import tech.ypsilon.bbbot.discord.command.ReloadSlashCommand;
-import tech.ypsilon.bbbot.discord.command.SlashCommand;
-import tech.ypsilon.bbbot.discord.command.DudenSlashCommand;
+import tech.ypsilon.bbbot.discord.command.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +31,10 @@ public class SlashCommandManager extends ListenerAdapter {
                 new GroupSlashCommand(),
                 new CreateInviteSlashCommand(),
                 new DudenSlashCommand(),
-                new ReloadSlashCommand()
+                new ReloadSlashCommand(),
+                new ToolsSlashCommand(),
+                new BirthdayCommand(),
+                new TestCommand()
         );
     }
 
