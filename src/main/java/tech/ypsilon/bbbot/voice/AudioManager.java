@@ -15,21 +15,21 @@ public class AudioManager {
 
     private static AudioManager instance;
 
-    private final HashMap<Guild, TrackScheduler> TRACK_SCHEDULERS = new HashMap<>();
-    private final AudioPlayerManager PLAYER_MANAGER;
+    private final HashMap<Guild, TrackScheduler> trackSchedulers = new HashMap<>();
+    private final AudioPlayerManager playerManager;
 
     public AudioManager() {
         instance = this;
-        PLAYER_MANAGER = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(PLAYER_MANAGER);
+        playerManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
     public static AudioManager getInstance() {
         return instance;
     }
 
-    public AudioPlayerManager getPLAYER_MANAGER() {
-        return PLAYER_MANAGER;
+    public AudioPlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     public void addTrack(Guild g, AudioItem i) {
@@ -55,12 +55,12 @@ public class AudioManager {
     }
 
     public TrackScheduler getScheduler(Guild g) {
-        if(TRACK_SCHEDULERS.containsKey(g))
-            return TRACK_SCHEDULERS.get(g);
-        AudioPlayer player = PLAYER_MANAGER.createPlayer();
+        if(trackSchedulers.containsKey(g))
+            return trackSchedulers.get(g);
+        AudioPlayer player = playerManager.createPlayer();
         TrackScheduler trackScheduler = new TrackScheduler(player);
         player.addListener(trackScheduler);
-        TRACK_SCHEDULERS.put(g, trackScheduler);
+        trackSchedulers.put(g, trackScheduler);
         g.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player));
 
         return trackScheduler;

@@ -8,7 +8,7 @@ import tech.ypsilon.bbbot.util.DiscordUtil;
 
 import java.util.Objects;
 
-public class WriteAfterMeSlashCommand extends SlashCommand{
+public class WriteAfterMeSlashCommand extends SlashCommand {
     @Override
     public CommandData commandData() {
         return new CommandData("wam", "Lässt den Bot das schreiben, was du ihm sagst")
@@ -20,7 +20,7 @@ public class WriteAfterMeSlashCommand extends SlashCommand{
     @Override
     public void execute(SlashCommandEvent event) {
         event.deferReply(true).queue();
-        if(DiscordUtil.isAdmin(Objects.requireNonNull(event.getMember()))) {
+        if (DiscordUtil.isAdmin(Objects.requireNonNull(event.getMember()))) {
             String message = Objects.requireNonNull(event.getOption("text")).getAsString();
             event.getChannel().sendMessage(message).queue();
             event.getHook().editOriginal("Gesendet!").queue();

@@ -6,8 +6,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import tech.ypsilon.bbbot.discord.SlashCommandManager;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Interface to easier handle slash commands
  *

@@ -129,7 +129,7 @@ public class MusicCommand extends SlashCommand {
         // join the new channel
         Objects.requireNonNull(event.getGuild()).getAudioManager().openAudioConnection(channel);
 
-        AudioManager.getInstance().getPLAYER_MANAGER().loadItem(url, new AudioLoadResultHandler() {
+        AudioManager.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 AudioManager.getInstance().addTrack(event.getGuild(), audioTrack);
@@ -165,7 +165,7 @@ public class MusicCommand extends SlashCommand {
         // join the new channel
         Objects.requireNonNull(event.getGuild()).getAudioManager().openAudioConnection(channel);
 
-        AudioManager.getInstance().getPLAYER_MANAGER().loadItem(url, new AudioLoadResultHandler() {
+        AudioManager.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 throw new CommandFailedException("Dieser Link ist nicht abspielbar");

@@ -12,35 +12,35 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class TrackScheduler implements AudioEventListener {
 
-    private final AudioPlayer PLAYER;
-    private final BlockingDeque<AudioTrack> QUEUE = new LinkedBlockingDeque<>();
+    private final AudioPlayer player;
+    private final BlockingDeque<AudioTrack> audioQueue = new LinkedBlockingDeque<>();
 
     public TrackScheduler(final AudioPlayer PLAYER) {
-        this.PLAYER = PLAYER;
+        this.player = PLAYER;
     }
 
     public AudioPlayer getPlayer() {
-        return PLAYER;
+        return player;
     }
 
     public void addTrackPrioritized(AudioTrack track){
-        if(PLAYER.getPlayingTrack() == null) {
-            PLAYER.playTrack(track);
+        if(player.getPlayingTrack() == null) {
+            player.playTrack(track);
         } else {
-            QUEUE.addFirst(track);
+            audioQueue.addFirst(track);
         }
     }
 
     public void addTrack(AudioTrack track) {
-        if(PLAYER.getPlayingTrack() == null) {
-            PLAYER.playTrack(track);
+        if(player.getPlayingTrack() == null) {
+            player.playTrack(track);
         } else {
-            QUEUE.add(track);
+            audioQueue.add(track);
         }
     }
 
     public BlockingQueue<AudioTrack> getQueue() {
-        return QUEUE;
+        return audioQueue;
     }
 
     public void skip(int count) {
@@ -48,12 +48,12 @@ public class TrackScheduler implements AudioEventListener {
             return;
         AudioTrack track = null;
         for(int i = 0; i < count; i++) {
-            track = this.QUEUE.poll();
+            track = this.audioQueue.poll();
         }
         if(track == null)
-            this.PLAYER.stopTrack();
+            this.player.stopTrack();
         else
-            this.PLAYER.playTrack(track);
+            this.player.playTrack(track);
     }
 
 
@@ -61,9 +61,9 @@ public class TrackScheduler implements AudioEventListener {
     public void onEvent(AudioEvent audioEvent) {
         if(audioEvent instanceof TrackEndEvent) {
             if(((TrackEndEvent) audioEvent).endReason.mayStartNext) {
-                AudioTrack poll = QUEUE.poll();
+                AudioTrack poll = audioQueue.poll();
                 if(poll != null)
-                    PLAYER.playTrack(poll);
+                    player.playTrack(poll);
             }
         }
     }

@@ -5,10 +5,9 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Slash command for general information about the bot

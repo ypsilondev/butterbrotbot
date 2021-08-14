@@ -14,13 +14,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
-import javax.activation.CommandObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CreateChannelSlashCommand extends SlashCommand {

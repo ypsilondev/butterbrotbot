@@ -37,12 +37,12 @@ public class Init {
         new AudioManager();
 
         DiscordController.getJDA().awaitReady();
-        SlashCommandManager slashCommandManager = new SlashCommandManager(DiscordController.getJDA());
+        new SlashCommandManager(DiscordController.getJDA());
 
         LOGGER.info("Passed post-init state");
     }
 
-    static void databaseModulesInit() throws Exception {
+    static void databaseModulesInit() {
         if(!ButterBrot.DEBUG_MODE){
             new MongoController();
             TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
@@ -51,14 +51,14 @@ public class Init {
         }
     }
 
-    static void startupComplete() throws Exception {
+    static void startupComplete() {
         new ConsoleManager();
         // Register the Notifiers.
         new ServiceManager().initialize();
         LOGGER.info("Startup complete");
     }
 
-    static void addShutdownHook() throws Exception {
+    static void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> stopBot(false)));
     }
 

@@ -28,7 +28,7 @@ public class CensorSlashCommand extends SlashCommand {
     public void execute(SlashCommandEvent event) {
         event.deferReply(true).queue();
 
-        if(!DiscordUtil.isAdmin(event.getMember())) {
+        if (!DiscordUtil.isAdmin(event.getMember())) {
             event.getHook().editOriginalEmbeds(EmbedUtil.createNoPermEmbed().build()).queue();
             return;
         }
