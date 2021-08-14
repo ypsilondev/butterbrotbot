@@ -1,14 +1,21 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import tech.ypsilon.bbbot.discord.SlashCommandManager;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Interface to easier handle slash commands
  *
  * @author Christian Schliz (code@foxat.de)
  */
-public interface SlashCommand {
+public abstract class SlashCommand {
+
+    private static long counter;
 
     /**
      * JDA Command Data information used to register
@@ -16,7 +23,7 @@ public interface SlashCommand {
      *
      * @return command data
      */
-    CommandData commandData();
+    public abstract CommandData commandData();
 
     /**
      * Defines whether the command should be registered
@@ -24,7 +31,7 @@ public interface SlashCommand {
      *
      * @return whether the command is global
      */
-    default boolean isGlobal() {
+    public boolean isGlobal() {
         return false;
     }
 
@@ -34,6 +41,24 @@ public interface SlashCommand {
      *
      * @param event original event
      */
-    void execute(SlashCommandEvent event);
+    public abstract void execute(SlashCommandEvent event);
+
+    public void handleButtonInteraction(ButtonClickEvent event, String data) {
+    }
+
+    public void handleSelectionMenu(SelectionMenuEvent event, String data) {
+    }
+
+    public synchronized String createButtonId(String data) {
+        return SlashCommandManager.BUTTON_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
+                + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
+                + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
+    }
+
+    public synchronized String createSelectMenuId(String data) {
+        return SlashCommandManager.SELECT_MENU_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
+                + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
+                + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
+    }
 
 }

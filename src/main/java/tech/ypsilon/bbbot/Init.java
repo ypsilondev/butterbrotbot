@@ -34,8 +34,11 @@ public class Init {
         LOGGER.info("Starting post-init state");
         TextCommandManager commandManager = new TextCommandManager();
         commandManager.registerFunctions();
-        SlashCommandManager slashCommandManager = new SlashCommandManager(DiscordController.getJDA());
         new AudioManager();
+
+        DiscordController.getJDA().awaitReady();
+        SlashCommandManager slashCommandManager = new SlashCommandManager(DiscordController.getJDA());
+
         LOGGER.info("Passed post-init state");
     }
 

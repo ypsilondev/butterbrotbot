@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.awt.Color;
@@ -14,7 +15,7 @@ import java.awt.Color;
  *
  * @author Christian Schliz (code@foxat.de)
  */
-public class ButterbrotCommand implements SlashCommand {
+public class ButterbrotCommand extends SlashCommand {
 
     @Override
     public CommandData commandData() {
