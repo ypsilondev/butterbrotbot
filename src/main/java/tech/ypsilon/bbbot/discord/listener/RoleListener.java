@@ -11,7 +11,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
+import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
 
 import java.util.Objects;
 

@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.BotInfo;
 import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.discord.command.CreateChannelCommand;
+import tech.ypsilon.bbbot.discord.command.text.CreateChannelCommand;
 import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.util.List;
