@@ -14,6 +14,7 @@ import tech.ypsilon.bbbot.discord.command.ButterbrotCommand;
 import tech.ypsilon.bbbot.discord.command.CommandFailedException;
 import tech.ypsilon.bbbot.discord.command.CreateInviteSlashCommand;
 import tech.ypsilon.bbbot.discord.command.GroupSlashCommand;
+import tech.ypsilon.bbbot.discord.command.ReloadSlashCommand;
 import tech.ypsilon.bbbot.discord.command.SlashCommand;
 import tech.ypsilon.bbbot.discord.command.DudenSlashCommand;
 
@@ -36,7 +37,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new BirthdayCommand(),
                 new GroupSlashCommand(),
                 new CreateInviteSlashCommand(),
-                new DudenSlashCommand()
+                new DudenSlashCommand(),
+                new ReloadSlashCommand()
         );
     }
 

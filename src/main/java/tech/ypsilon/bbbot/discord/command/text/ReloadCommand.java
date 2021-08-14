@@ -9,6 +9,7 @@ import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+@Deprecated
 public class ReloadCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
