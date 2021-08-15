@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.listener.RankSystemListener;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+@Deprecated
 public class RankSystemCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {

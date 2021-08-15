@@ -52,7 +52,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new WriteAfterMeSlashCommand(),
                 new CensorSlashCommand(),
                 new StoreSlashCommand(),
-                new ListSlashCommand()
+                new ListSlashCommand(),
+                new RankSystemSlashCommand()
         );
     }
 
