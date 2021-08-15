@@ -39,7 +39,9 @@ public class SlashCommandManager extends ListenerAdapter {
                 new MusicCommand(),
                 new CreateChannelSlashCommand(),
                 new WriteAfterMeSlashCommand(),
-                new CensorSlashCommand()
+                new CensorSlashCommand(),
+                new StoreSlashCommand(),
+                new ListSlashCommand()
         );
     }
 

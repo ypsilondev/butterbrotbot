@@ -8,6 +8,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class StoreCommand extends LegacyCommand {
     @Override
     public String[] getAlias() {
