@@ -17,15 +17,26 @@ import java.util.stream.Collectors;
 
 public class SlashCommandManager extends ListenerAdapter {
 
+    /**
+     * This String is used by the {@link SlashCommand#createButtonId(String)} and
+     * {@link SlashCommand#createSelectMenuId(String)} to use a unique identifier per
+     * {@link net.dv8tion.jda.api.interactions.components.Button} /
+     * {@link net.dv8tion.jda.api.interactions.components.selections.SelectionMenu}
+     */
     public static final String INTERACTION_ID_DELIMITER = "∆";
     public static final String BUTTON_PREFIX = "button";
     public static final String SELECT_MENU_PREFIX = "select";
 
     private final Map<String, SlashCommand> commandMap;
 
+    /**
+     * Creates a new {@link SlashCommandManager} and registers all {@link SlashCommand}s
+     * @param jda the {@link JDA} to register the commands on
+     */
     public SlashCommandManager(JDA jda) {
         commandMap = new HashMap<>();
         jda.addEventListener(this);
+        // Register all slash-commands
         registerCommands(jda,
                 new ButterbrotCommand(),
                 new BirthdayCommand(),
@@ -141,6 +152,10 @@ public class SlashCommandManager extends ListenerAdapter {
         }
     }
 
+    /**
+     * Adds the commands to a guild, when new guild is joined.
+     * @param event the event
+     */
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         for (SlashCommand command : commandMap.values()) {

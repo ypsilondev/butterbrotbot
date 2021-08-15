@@ -46,12 +46,20 @@ public class LinkCodec implements Codec<LinkCodec> {
         return getCollection().find(Filters.regex("name", regEx, "i"));
     }
 
+    public static long countLinksForName(String regEx) {
+        return getCollection().countDocuments(Filters.regex("name", regEx, "i"));
+    }
+
     public static FindIterable<LinkCodec> getLinksFromUser(User user) {
         return getCollection().find(Filters.eq("userId", user.getIdLong()));
     }
 
     public static FindIterable<LinkCodec> getLinksFromKeyword(String keyword) {
         return getCollection().find(Filters.in("keywords", keyword));
+    }
+
+    public static long countLinksFromKeyword(String keyword) {
+        return getCollection().countDocuments(Filters.in("keywords", keyword));
     }
 
     public static LinkCodec getLinkWithId(ObjectId _id) {

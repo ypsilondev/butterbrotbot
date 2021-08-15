@@ -52,12 +52,13 @@ public class ListSlashCommand extends SlashCommand {
         } else {
             boolean hasMatches = false;
             for (String keyword : args) {
-                // TODO: what is this and why does it work?
-                for (LinkCodec linkCodec : LinkCodec.getLinksFromKeyword(keyword)) {
+                if (LinkCodec.countLinksFromKeyword(keyword) > 0) {
                     hasMatches = true;
+                    break;
                 }
-                for (LinkCodec linkCodec : LinkCodec.getLinksForName(keyword)) {
+                if (LinkCodec.countLinksForName(keyword) > 0) {
                     hasMatches = true;
+                    break;
                 }
             }
 
