@@ -19,6 +19,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.*;
 
+@Deprecated
 public class StudiengangCommand extends LegacyCommand {
 
     private final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +

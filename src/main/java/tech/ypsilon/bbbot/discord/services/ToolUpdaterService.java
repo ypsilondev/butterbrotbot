@@ -28,7 +28,7 @@ public class ToolUpdaterService extends GuildNotifierService {
     @Override
     protected void onExecute(TextChannel channel) {
         ButterBrot.LOGGER.info(String.format("[%s] updating link-list", this.getServiceName()));
-        List<String> lines = Arrays.asList(getUrlContents(ToolUpdaterService.requestUrl).split("\n"));
+        String[] lines = getUrlContents(ToolUpdaterService.requestUrl).split("\n");
 
         HashMap<String, String> newList = new LinkedHashMap<>();
 

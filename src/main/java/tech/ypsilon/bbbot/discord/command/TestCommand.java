@@ -3,6 +3,7 @@ package tech.ypsilon.bbbot.discord.command;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.Button;
@@ -15,7 +16,8 @@ public class TestCommand extends SlashCommand {
     public CommandData commandData() {
         return new CommandData("test", "Test").addSubcommands(
                 new SubcommandData("button", "button"),
-                new SubcommandData("select", "select")
+                new SubcommandData("select", "select"),
+                new SubcommandData("test", "test").addOption(OptionType.STRING, "emote", "emote")
         );
     }
 
@@ -37,6 +39,8 @@ public class TestCommand extends SlashCommand {
                     .addOption("option 2", "value 2")
                     .build();
             event.reply("SelectMenu").addActionRow(menu).queue();
+        } else {
+            // System.out.println(event.getOption("emote").getAsString());
         }
     }
 

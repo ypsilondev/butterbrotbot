@@ -4,7 +4,10 @@ import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.Component;
 import tech.ypsilon.bbbot.discord.SlashCommandManager;
+
+import java.util.Objects;
 
 /**
  * Interface to easier handle slash commands

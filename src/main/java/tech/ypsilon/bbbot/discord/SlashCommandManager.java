@@ -53,7 +53,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new CensorSlashCommand(),
                 new StoreSlashCommand(),
                 new ListSlashCommand(),
-                new RankSystemSlashCommand()
+                new RankSystemSlashCommand(),
+                new StudiengangSlashCommand()
         );
     }
 
