@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 public class StudiengangSlashCommand extends SlashCommand {
 
-    private static final String MESSAGE = "Herzlich willkommen auf dem Zweities-Server fürs <:KIT:759041596460236822> . " +
+    private static final String MESSAGE = "Herzlich willkommen auf dem " + DiscordController.getHomeGuild().getName() + "-Server fürs <:KIT:759041596460236822> . " +
             "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
             "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
 
@@ -45,7 +45,9 @@ public class StudiengangSlashCommand extends SlashCommand {
     private static MongoCollection<Document> collection = null;
     private static MongoCollection<Document> collectionCategories = null;
 
-    /** Prometheus-counter for statistics */
+    /**
+     * Prometheus-counter for statistics
+     */
     private final Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
 
 
@@ -54,7 +56,7 @@ public class StudiengangSlashCommand extends SlashCommand {
         return new CommandData("studiengang", "Fügt einen neuen Studiengang hinzu (admin only)").addSubcommands(
                 new SubcommandData("add", "Fügt einen Studiengang hinzu").addOptions(
                         new OptionData(OptionType.INTEGER, "category-id", "Kategorie", true),
-                        new OptionData(OptionType.STRING, "emote", "emote", true),
+                        new OptionData(OptionType.STRING, "emote", "Emote", true),
                         new OptionData(OptionType.ROLE, "role", "Rolle", true),
                         new OptionData(OptionType.STRING, "name", "Name", true)
                 ),
