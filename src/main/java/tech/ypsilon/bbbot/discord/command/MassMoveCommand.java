@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import tech.ypsilon.bbbot.util.DiscordUtil;
+import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -38,6 +40,10 @@ public class MassMoveCommand extends SlashCommand {
 
     @Override
     public void execute(SlashCommandEvent event) {
+        if (!DiscordUtil.isAdmin(event.getMember())) {
+            event.reply("").addEmbeds(EmbedUtil.createNoPermEmbed().build()).queue();
+        }
+
         if (event.getSubcommandName() == null) {
             event.reply("Invalid usage, please try again!").queue();
             return;
@@ -80,8 +86,8 @@ public class MassMoveCommand extends SlashCommand {
 
         try {
             // wait for completion
-            for (CompletableFuture<?> future : futures) future.join();
-        } catch (CancellationException | CompletionException exception) {
+            for (CompletableFuture<?> future : futures) future.get();
+        } catch (CancellationException | CompletionException | ExecutionException | InterruptedException exception) {
             throw new CommandFailedException("Konnte nicht alle Mitglieder bewegen!");
         }
 
@@ -156,17 +162,17 @@ public class MassMoveCommand extends SlashCommand {
         if (guild == null) throw new CommandFailedException();
 
         for (Member member : from.getMembers()) {
-            counter ++;
+            counter++;
             if (counter >= limit) {
                 counter = 0;
                 currentChannel = voiceChannelIterator.next();
             }
 
             scheduler.add(
-                guild.moveVoiceMember(
-                        member,
-                        currentChannel
-                ).submit()
+                    guild.moveVoiceMember(
+                            member,
+                            currentChannel
+                    ).submit()
             );
         }
     }
@@ -188,7 +194,7 @@ public class MassMoveCommand extends SlashCommand {
 
         for (Member member : members) {
             scheduler.add(
-                guild.moveVoiceMember(member, to).submit()
+                    guild.moveVoiceMember(member, to).submit()
             );
         }
 
