@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+@Deprecated
 public class ListCommand implements GuildExecuteHandler {
     @Override
     public String[] getAlias() {
