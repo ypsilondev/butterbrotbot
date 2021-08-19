@@ -10,6 +10,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class EditDirectoryCommand extends FullStackedExecutor {
     @Override
     public String[] getAlias() {

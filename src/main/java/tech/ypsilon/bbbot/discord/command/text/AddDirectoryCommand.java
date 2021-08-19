@@ -10,6 +10,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class AddDirectoryCommand extends LegacyCommand implements PrivateExecuteHandler {
     @Override
     public String[] getAlias() {

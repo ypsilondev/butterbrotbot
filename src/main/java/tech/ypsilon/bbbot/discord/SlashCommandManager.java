@@ -72,7 +72,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new RankSystemSlashCommand(),
                 new StudiengangSlashCommand(),
                 new HelpSlashCommand(),
-                new VerifySlashCommand()
+                new VerifySlashCommand(),
+                new DirectorySlashCommand()
         );
     }
 
@@ -120,7 +121,7 @@ public class SlashCommandManager extends ListenerAdapter {
                 commandMap.get(event.getName()).execute(event);
             } catch (NullPointerException | CommandFailedException exception) {
                 if (event.isAcknowledged()) {
-                    event.getHook().sendMessage(exception.getMessage()).queue();
+                    event.getHook().sendMessage(exception.getMessage().length() == 0 ? exception.getClass().getSimpleName() : exception.getMessage()).queue();
                 } else {
                     event.reply(exception.getMessage()).queue();
                 }
@@ -191,7 +192,7 @@ public class SlashCommandManager extends ListenerAdapter {
     }
 
     public static SlashCommandManager initialize(JDA jda) {
-        if(instance != null) {
+        if (instance != null) {
             throw new IllegalStateException("SlashCommandManager has already been initialized!");
         }
         instance = new SlashCommandManager(jda);
