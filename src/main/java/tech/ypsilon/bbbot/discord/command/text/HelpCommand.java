@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import tech.ypsilon.bbbot.discord.TextCommandManager;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
+@Deprecated
 public class HelpCommand extends FullStackedExecutor {
     @Override
     public String[] getAlias() {
