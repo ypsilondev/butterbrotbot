@@ -71,7 +71,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new ListSlashCommand(),
                 new RankSystemSlashCommand(),
                 new StudiengangSlashCommand(),
-                new HelpSlashCommand()
+                new HelpSlashCommand(),
+                new VerifySlashCommand()
         );
     }
 
