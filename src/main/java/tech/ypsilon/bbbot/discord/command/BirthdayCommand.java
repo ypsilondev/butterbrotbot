@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
@@ -37,6 +38,14 @@ public class BirthdayCommand extends SlashCommand {
                 new SubcommandData("notify", "Sende die heutige Benachrichtigung erneut"),
                 new SubcommandData("notify-here", "Wechsle den Geburtstag-Kanal")
         );
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "Der Geburtstagsbefehl:\n" +
+                "/birthday set <TT.MM.YYYY> setzt deinen Geburtstag\n" +
+                "/birthday get <User> zeigt dir den Geburtstag eines Nutzers an\n" +
+                "/birthday remove löscht deinen Geburtstag\n";
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Init {
         new AudioManager();
 
         DiscordController.getJDA().awaitReady();
-        new SlashCommandManager(DiscordController.getJDA());
+        SlashCommandManager.initialize(DiscordController.getJDA());
 
         LOGGER.info("Passed post-init state");
     }

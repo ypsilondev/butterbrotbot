@@ -7,21 +7,32 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.discord.listener.CensorWatcherListener;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.Objects;
 
+/**
+ * Command to censor a member's messages
+ *
+ * @implNote ported by Shirkanesi
+ */
 public class CensorSlashCommand extends SlashCommand {
 
     @Override
     public CommandData commandData() {
         return new CommandData("censor", "Bitte versuchen Sie es erneut.")
                 .addOptions(
-                        new OptionData(OptionType.USER, "user", "Benutzer, der zensiert werden soll"),
-                        new OptionData(OptionType.INTEGER, "messages", "Anzahl der zu löschenden Nachrichten")
+                        new OptionData(OptionType.USER, "user", "Benutzer, der zensiert werden soll", true),
+                        new OptionData(OptionType.INTEGER, "messages", "Anzahl der zu löschenden Nachrichten", true)
                 );
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "/censor <member> <number> löscht die letzte Nachricht von <member> und die nächsten <number> vielen.";
     }
 
     @Override

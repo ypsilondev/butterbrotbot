@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.Nullable;
 import org.jsoup.HttpStatusException;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -20,6 +21,11 @@ public class DudenSlashCommand extends SlashCommand {
         return new CommandData("duden", "Wörter im Online-Duden nachschlagen: 'kit duden [Wort]'").addOptions(
                 new OptionData(OptionType.STRING, "wort", "Das nachzuschlagende Wort", true)
         );
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "/duden <wort> sucht das Wort im Duden";
     }
 
     @Override

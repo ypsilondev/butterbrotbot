@@ -15,6 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Manager to handle all the {@link SlashCommand}s send to the bot
+ *
+ * @author DeveloperTK | Shirkanesi
+ * @version 1.0
+ * @since 1.4.0
+ */
 public class SlashCommandManager extends ListenerAdapter {
 
     /**
@@ -27,15 +34,23 @@ public class SlashCommandManager extends ListenerAdapter {
     public static final String BUTTON_PREFIX = "button";
     public static final String SELECT_MENU_PREFIX = "select";
 
+    private static SlashCommandManager instance;
+
     private final Map<String, SlashCommand> commandMap;
 
     /**
      * Creates a new {@link SlashCommandManager} and registers all {@link SlashCommand}s
+     *
      * @param jda the {@link JDA} to register the commands on
      */
     public SlashCommandManager(JDA jda) {
         commandMap = new HashMap<>();
         jda.addEventListener(this);
+        try {
+            jda.awaitReady();
+        } catch (InterruptedException e) {
+            ButterBrot.LOGGER.warn("Could not await jda to get ready...");
+        }
         // Register all slash-commands
         registerCommands(jda,
                 new ButterbrotCommand(),
@@ -55,7 +70,8 @@ public class SlashCommandManager extends ListenerAdapter {
                 new StoreSlashCommand(),
                 new ListSlashCommand(),
                 new RankSystemSlashCommand(),
-                new StudiengangSlashCommand()
+                new StudiengangSlashCommand(),
+                new HelpSlashCommand()
         );
     }
 
@@ -157,6 +173,7 @@ public class SlashCommandManager extends ListenerAdapter {
 
     /**
      * Adds the commands to a guild, when new guild is joined.
+     *
      * @param event the event
      */
     @Override
@@ -166,5 +183,24 @@ public class SlashCommandManager extends ListenerAdapter {
                 event.getGuild().upsertCommand(command.commandData()).queue();
             }
         }
+    }
+
+    public Map<String, SlashCommand> getCommandMap() {
+        return commandMap;
+    }
+
+    public static SlashCommandManager initialize(JDA jda) {
+        if(instance != null) {
+            throw new IllegalStateException("SlashCommandManager has already been initialized!");
+        }
+        instance = new SlashCommandManager(jda);
+        return instance;
+    }
+
+    public static SlashCommandManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("SlashCommandManager has not been initialized yet...");
+        }
+        return instance;
     }
 }

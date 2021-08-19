@@ -10,6 +10,9 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.Objects;
 
+/**
+ * Command to reload data of the bot
+ */
 public class ReloadSlashCommand extends SlashCommand {
     @Override
     public CommandData commandData() {

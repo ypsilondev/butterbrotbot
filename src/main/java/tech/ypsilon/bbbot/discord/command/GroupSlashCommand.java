@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -28,6 +29,14 @@ public class GroupSlashCommand extends SlashCommand {
                         new SubcommandData("leave", "Lässt dich die Lerngruppe verlassen"),
                         new SubcommandData("list", "Listet alle Mitglieder der Lerngruppe auf")
                 );
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "/group create <name> erstellt einen neue Lerngruppe mit dem Namen <name>\n" +
+                "/group add <member> fügt den Benutzer <member> der eigenen Lerngruppe hinzu\n" +
+                "/group leave entfernt dich aus deiner Lerngruppe\n" +
+                "/group list listet alle Mitglieder deiner Lerngruppe auf";
     }
 
     @Override

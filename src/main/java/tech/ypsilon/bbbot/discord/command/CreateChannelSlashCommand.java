@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.*;
@@ -25,12 +26,18 @@ public class CreateChannelSlashCommand extends SlashCommand {
     public CommandData commandData() {
         return new CommandData("create-channel", "Erstellt einen neuen temporären Sprachkanal")
                 .addSubcommands(
-                        new SubcommandData("game", "Test"),
+                        new SubcommandData("game", "Startet einen Dialog zum erstellen eines neuen Sprachkanals für ein bestimmtes Spiel"),
                         new SubcommandData("custom", "Lässt dich den Kanal frei konfigurieren.").addOptions(
                                 new OptionData(OptionType.STRING, "name", "Name des Kanals", true),
                                 new OptionData(OptionType.INTEGER, "limit", "Anzahl der Benutzer (-1 für kein Limit)", true)
                         )
                 );
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "/create-channel game startet einen Dialog zum erstellen eines neuen temporären Sprachkanals für ein bestimmtes Spiel.\n" +
+                "/create-channel custom <name> <limit> erstellt einen temporären Sprachkanal mit dem Namen <name> und dem Nutzerlimit <limit>";
     }
 
     @Override

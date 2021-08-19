@@ -5,14 +5,15 @@ import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.Component;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.discord.SlashCommandManager;
 
 import java.util.Objects;
 
 /**
- * Interface to easier handle slash commands
+ * Abstraction-layer to easier handle slash commands
  *
- * @author Christian Schliz (code@foxat.de)
+ * @author Christian Schliz (code@foxat.de) | Shirkanesi
  */
 public abstract class SlashCommand {
 
@@ -48,6 +49,19 @@ public abstract class SlashCommand {
     }
 
     public void handleSelectionMenu(SelectionMenuEvent event, String data) {
+    }
+
+    public final String getName() {
+        return this.commandData().getName();
+    }
+
+    /**
+     * Returns a string to be displayed in the help-command
+     * @return the help-string
+     */
+    @Nullable
+    public String getHelpDescription() {
+        return null;
     }
 
     public final synchronized String createButtonId(String data) {

@@ -17,6 +17,7 @@ import tech.ypsilon.bbbot.util.EmbedUtil;
 import java.util.*;
 import java.util.concurrent.*;
 
+
 public class MassMoveCommand extends SlashCommand {
 
     @Override

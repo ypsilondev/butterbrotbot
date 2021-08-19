@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.awt.*;
@@ -19,6 +20,11 @@ public class ButterbrotCommand extends SlashCommand {
     @Override
     public CommandData commandData() {
         return new CommandData("butterbrot", "Informationen über den Butterbrot-Bot");
+    }
+
+    @Override
+    public @Nullable String getHelpDescription() {
+        return "/butterbrot gibt einige interessante Informationen zu Butterbrot";
     }
 
     @Override
