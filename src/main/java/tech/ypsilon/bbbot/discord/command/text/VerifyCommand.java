@@ -32,6 +32,7 @@ import java.util.Properties;
  * @author Christian Schliz
  * @version 1.0
  */
+@Deprecated
 public class VerifyCommand extends FullStackedExecutor {
 
     // The colors used here are default discord role
