@@ -14,7 +14,7 @@ public class AudioUtil {
     public static AudioItem getItemBlocking(String url) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         final AudioItem[] item = new AudioItem[1];
-        AudioManager.getInstance().getPLAYER_MANAGER().loadItem(url, new AudioLoadResultHandler() {
+        AudioManager.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 item[0] = audioTrack;

@@ -11,14 +11,18 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.discord.command.StudiengangCommand;
+import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
 
 import java.util.Objects;
 
-
+/**
+ * @deprecated The Role-System is handled by the {@link tech.ypsilon.bbbot.discord.command.StudiengangSlashCommand}
+ * This class only exists for reference and should no longer be used.
+ */
+@Deprecated
 public class RoleListener extends ListenerAdapter {
 
-    private Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
+    // private Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
 
     /*
     public enum Roles {
@@ -136,7 +140,7 @@ public class RoleListener extends ListenerAdapter {
 
     @Override
     public void onButtonClick(@NotNull ButtonClickEvent event) {
-        if (!Objects.requireNonNull(Objects.requireNonNull(event.getButton()).getId()).startsWith("studiengang-"))
+        /*if (!Objects.requireNonNull(Objects.requireNonNull(event.getButton()).getId()).startsWith("studiengang-"))
             return;
 
         MongoCollection<Document> collection = MongoController.getInstance().getCollection("Studiengaenge");
@@ -155,7 +159,7 @@ public class RoleListener extends ListenerAdapter {
 
             // increase stats :)
             counter.labels(event.getButton().getLabel()).inc();
-        }
+        }*/
     }
 
 }
