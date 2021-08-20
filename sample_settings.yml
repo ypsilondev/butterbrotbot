@@ -10,12 +10,15 @@ discord:
     - kitbot
     - bb
     - kit
-  token: "token"
+  token: "token_String"
   guild: guildid
   roles:
-    admin: roleid
-    student: roleid
+    admin: roleid_Long
+    student: roleid_Long
   toolsurl: "https://raw.githubusercontent.com/ypsilondev/butterbrotbot/master/tools.txt"
+  aliases: "https://php.shirkanesi.com/alias.txt"
+  studiengaenge:
+    channel: channelID_Long
 mail:
   smtp:
     address: noreply@example.com

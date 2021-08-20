@@ -12,5 +12,8 @@ Contribute by creating a pull request.
 * [SLF4J](https://mvnrepository.com/artifact/org.slf4j)
 * [JUnit](https://junit.org/junit5/)
 * [YAML](https://yaml.org/)
+* [Prometheus](https://prometheus.io/)
+* [JDuden](https://github.com/Gregyyy/JDuden)
+* [Jakarta Mail](https://eclipse-ee4j.github.io/mail/)
 
     *And all inherited libraries*
