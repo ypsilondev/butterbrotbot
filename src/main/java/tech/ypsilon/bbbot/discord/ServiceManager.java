@@ -32,7 +32,7 @@ public class ServiceManager {
 
     private void registerDBServices(JDA jda){
         // Register services which require the Mongo-DB to be present
-        // this.registerService(new BirthdayNotifierService(jda));
+        this.registerService(new BirthdayNotifierService(jda));
     }
 
     public void initialize() {
