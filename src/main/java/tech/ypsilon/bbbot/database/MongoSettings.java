@@ -13,7 +13,8 @@ public class MongoSettings {
      * Values that can be stored in the settings
      */
     public enum TYPE {
-        BirthdayChannel
+        BirthdayChannel,
+        StudyStartMessage
     }
 
     /**
