@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -25,6 +26,8 @@ import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JahrgangSlashCommand extends SlashCommand {
 
@@ -190,19 +193,31 @@ public class JahrgangSlashCommand extends SlashCommand {
 
     @Override
     public void handleSelectionMenu(SelectionMenuEvent event, String data) {
+        event.deferReply(true).queue();
         MongoCollection<Document> collection = getCollection();
-        Document doc = collection.find(new Document("name", event.getSelectedOptions().get(0).getLabel())).first();
-        assert doc != null;
-        Role role = event.getGuild().getRoleById(doc.getLong("roleId"));
 
-        assert role != null;
-        if (event.getMember().getRoles().contains(role)) {
-            event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
-            event.reply("Rolle " + role.getAsMention() + " entfernt!").setEphemeral(true).queue();
-        } else {
-            event.getGuild().addRoleToMember(event.getMember(), role).queue();
-            event.reply("Rolle " + role.getAsMention() + " hinzugefügt!").setEphemeral(true).queue();
+        EmbedBuilder builder = EmbedUtil.createSuccessEmbed();
+
+        String name = event.getSelectedOptions().get(0).getLabel();
+        List<Long> memberRoles = event.getMember().getRoles().stream().map(Role::getIdLong).collect(Collectors.toList());
+        for (Document document : collection.find()) {
+            Long roleId = document.getLong("roleId");
+            if (document.getString("name").equalsIgnoreCase(name)) {
+                if (!memberRoles.contains(roleId)) {
+                    Role role = event.getGuild().getRoleById(roleId);
+                    builder.addField("", "Rolle " + role.getAsMention()+" hinzugefügt!", false);
+                    event.getGuild().addRoleToMember(event.getMember(), role).queue();
+                }
+            } else {
+                if (memberRoles.contains(roleId)) {
+                    Role role = event.getGuild().getRoleById(roleId);
+                    builder.addField("","Rolle " + role.getAsMention()+ " entfernt!", false);
+                    event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
+                }
+            }
         }
+
+        event.getHook().editOriginalEmbeds(builder.build()).queue();
     }
 
     private static MongoCollection<Document> getCollection() {
