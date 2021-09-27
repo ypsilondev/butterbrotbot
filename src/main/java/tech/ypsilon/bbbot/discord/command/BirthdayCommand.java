@@ -97,6 +97,8 @@ public class BirthdayCommand extends SlashCommand {
     protected void get(SlashCommandEvent event) {
         if (event.getOption("member") == null) throw new CommandFailedException("Bitte versuche es erneut");
 
+        event.deferReply(true).queue();
+
         Member target = Objects.requireNonNull(event.getOption("member")).getAsMember();
 
         if (target == null) throw new CommandFailedException("Dieser Benutzer konnte nicht gefunden werden!");
@@ -107,12 +109,11 @@ public class BirthdayCommand extends SlashCommand {
             if (!birthdayDate.equals(new Date(0))) {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
 
-                event.reply(new MessageBuilder().setEmbeds(
-                        EmbedUtil.createSuccessEmbed()
-                                .addField(target.getAsMention(), formatter.format(birthdayDate), true).build()
-                ).build()).queue();
+                event.getHook().editOriginalEmbeds(EmbedUtil.createSuccessEmbed()
+                        .addField(target.getAsMention(), formatter.format(birthdayDate), true).build()
+                ).queue();
             } else {
-                throw new CommandFailedException(target.getAsMention() + " hat keinen Geburtstag angegeben");
+                event.getHook().editOriginalEmbeds(EmbedUtil.createErrorEmbed().addField(target.getAsMention(), " hat keinen Geburtstag angegeben", true).build()).queue();
             }
         } catch (NullPointerException e1) {
             throw new CommandFailedException("Es gab einen Fehler, während das Geburtsdatum "
