@@ -85,7 +85,7 @@ public class BirthdayCommand extends SlashCommand {
             try {
                 Date birthday = parseDate(optionDate);
                 BirthdayCodec.newBirthday(event.getUser().getIdLong(), birthday);
-                event.reply("Der Geburtstag wurde erfolgreich gespeichert!").queue();
+                event.reply("Der Geburtstag wurde erfolgreich gespeichert!").setEphemeral(true).queue();
             } catch (NullPointerException e1) {
                 throw new CommandFailedException("Beim Hinzufügen des Geburtstags zur Datenbank ist leider ein Fehler aufgetreten. Bitte versuche es später erneut oder wende dich an einen Administrator.");
             }
