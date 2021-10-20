@@ -71,6 +71,7 @@ public class TextCommandManager extends ListenerAdapter {
         registerEventListener(new CensorWatcherListener());
         registerEventListener(new RankSystemListener());
         registerEventListener(new InviteListener());
+        registerEventListener(new BadWordListener());
     }
 
     /**
