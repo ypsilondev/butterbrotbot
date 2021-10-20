@@ -19,6 +19,7 @@ discord:
   aliases: "https://php.shirkanesi.com/alias.txt"
   studiengaenge:
     channel: channelID_Long
+  logchannel: channelID_Long
 mail:
   smtp:
     address: noreply@example.com

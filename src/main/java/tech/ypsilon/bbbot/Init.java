@@ -11,6 +11,7 @@ import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
 import tech.ypsilon.bbbot.discord.command.text.VerifyCommand;
 import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.stats.StatsManager;
+import tech.ypsilon.bbbot.util.LogUtil;
 import tech.ypsilon.bbbot.voice.AudioManager;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
@@ -38,6 +39,8 @@ public class Init {
 
         DiscordController.getJDA().awaitReady();
         SlashCommandManager.initialize(DiscordController.getJDA());
+
+        LogUtil.init();
 
         LOGGER.info("Passed post-init state");
     }
