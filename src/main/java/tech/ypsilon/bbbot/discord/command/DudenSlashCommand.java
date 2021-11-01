@@ -35,7 +35,7 @@ public class DudenSlashCommand extends SlashCommand {
 
     @Override
     public void execute(SlashCommandEvent event) {
-        event.deferReply(true).queue();
+        event.deferReply(false).queue();
         String input = Objects.requireNonNull(event.getOption("wort")).getAsString();
 
 
@@ -67,7 +67,7 @@ public class DudenSlashCommand extends SlashCommand {
 
             StringBuilder meaning = new StringBuilder();
             if (word.getWord().equals("Butterbrot")) {
-                meaning.append("\n- ein Stück Software");
+                meaning.append("\n- ein Stück Weichware");
             } else {
                 for (String m : word.getMeanings()) {
                     meaning.append("\n- ").append(m);
