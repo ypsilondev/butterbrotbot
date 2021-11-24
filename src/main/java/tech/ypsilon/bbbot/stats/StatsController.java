@@ -6,13 +6,14 @@ import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.HTTPServer;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.GenericController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class StatsController extends GenericController {
+public class StatsController extends GenericController implements Initializable {
 
     private static final int PORT = 9090;
 
@@ -24,14 +25,19 @@ public class StatsController extends GenericController {
 
     public StatsController(ButterBrot parent) {
         super(parent);
-
         instance = this;
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new StatsPoll(), 1, 30, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void init() {
+        Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(new StatsPoll(), 1, 30, TimeUnit.MINUTES);
 
         try {
-            HTTPServer server = new HTTPServer(new InetSocketAddress(PORT), CollectorRegistry.defaultRegistry, false);
-        } catch (IOException e) {
-            e.printStackTrace();
+            HTTPServer server = new HTTPServer(new InetSocketAddress(PORT),
+                    CollectorRegistry.defaultRegistry, false);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 

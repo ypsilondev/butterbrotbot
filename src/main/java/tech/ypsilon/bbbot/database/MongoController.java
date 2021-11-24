@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import lombok.Getter;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -19,28 +20,33 @@ import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
-import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.Collections;
 
-public class MongoController extends GenericController {
+public class MongoController extends GenericController implements Initializable {
 
     private static MongoController instance;
 
-    private final MongoClient CLIENT;
-    private final MongoDatabase DATABASE;
+    private MongoClient CLIENT;
+    private MongoDatabase DATABASE;
+
+    private @Getter boolean disabled = false;
 
     /**
      * Initializes the MongoController.
-     * Fetches all the necessary settings from the {@link SettingsController}
+     * Fetches all the necessary settings from the {@link tech.ypsilon.bbbot.config.ButterbrotConfig}
      * and registers the Codecs inside the codecs package
      */
     public MongoController(ButterBrot parent) {
         super(parent);
         instance = this;
+    }
 
+    @Override
+    public void init() {
         MongoCredential credential = null;
-        MongoSubconfig config = parent.getConfig().getMongo();
+        MongoSubconfig config = getParent().getConfig().getMongo();
 
         if (config.getUsername() != null) {
             System.out.println("not null");
@@ -74,6 +80,10 @@ public class MongoController extends GenericController {
 
         CLIENT = MongoClients.create(settings);
         this.DATABASE = CLIENT.getDatabase(BotInfo.NAME);
+    }
+
+    public void disable() {
+        this.disabled = true;
     }
 
     /**

@@ -1,5 +1,6 @@
 package tech.ypsilon.bbbot.discord;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -7,17 +8,18 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.GenericController;
-import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class DiscordController extends GenericController {
+public class DiscordController extends GenericController implements Initializable {
 
     private static DiscordController instance;
 
-    private final JDA jda;
+    private @Getter JDA jda;
+    private @Getter Guild home;
 
     /**
      * Registering the JDA with the needed GatewayIntents.
@@ -25,23 +27,35 @@ public class DiscordController extends GenericController {
      */
     public DiscordController(ButterBrot parent) throws LoginException {
         super(parent);
-
         instance = this;
-        Collection<GatewayIntent> gatewayIntents = Arrays.asList(GatewayIntent.GUILD_VOICE_STATES,
-                GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES,
+    }
+
+    @Override
+    public void init() {
+        Collection<GatewayIntent> gatewayIntents = Arrays.asList(
+                GatewayIntent.GUILD_VOICE_STATES,
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                GatewayIntent.DIRECT_MESSAGES,
                 GatewayIntent.GUILD_PRESENCES
         );
 
-        jda = JDABuilder.createDefault(parent.getConfig().getDiscord().getDiscordBotToken(), gatewayIntents)
-                .disableCache(CacheFlag.EMOTE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
-                .build();
+        try {
+            jda = JDABuilder.createDefault(getParent().getConfig().getDiscord().getDiscordBotToken(), gatewayIntents)
+                    .disableCache(CacheFlag.EMOTE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
+                    .build();
+            home = jda.getGuildById(getParent().getConfig().getDiscord().getHomeGuildId());
+        } catch (LoginException exception) {
+            throw new ExceptionInInitializerError(exception);
+        }
     }
 
     /**
      * Get the Main JDA instance for executing future tasks
      * @return the JDA instance from the BOT
      */
-    public static JDA getJDA() {
+    @Deprecated(forRemoval = true)
+    public static JDA getJDAStatic() {
         return instance.jda;
     }
 
@@ -49,7 +63,8 @@ public class DiscordController extends GenericController {
      * Get the home Guild object
      * @return home Guild object
      */
-    public static Guild getHomeGuild() {
-        return getJDA().getGuildById((long) SettingsController.getValue("discord.guild"));
+    @Deprecated(forRemoval = true)
+    public static Guild getHomeGuildStatic() {
+        return getJDAStatic().getGuildById(ButterBrot.getConfigStatic().getDiscord().getHomeGuildId());
     }
 }

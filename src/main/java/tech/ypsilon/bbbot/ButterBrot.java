@@ -13,14 +13,10 @@ import tech.ypsilon.bbbot.config.ButterbrotConfig;
 import tech.ypsilon.bbbot.config.DefaultConfigFactory;
 import tech.ypsilon.bbbot.console.ConsoleController;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.discord.ServiceController;
-import tech.ypsilon.bbbot.discord.SlashCommandManager;
-import tech.ypsilon.bbbot.discord.TextCommandManager;
+import tech.ypsilon.bbbot.discord.*;
 import tech.ypsilon.bbbot.discord.command.text.CreateInviteCommand;
 import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
 import tech.ypsilon.bbbot.discord.command.text.VerifyCommand;
-import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.stats.StatsController;
 import tech.ypsilon.bbbot.util.LogUtil;
 import tech.ypsilon.bbbot.voice.AudioController;
@@ -47,9 +43,10 @@ public class ButterBrot {
 
     private static final int MISCONFIGURATION_EXIT_CODE = 78;
 
-    private static boolean MISSING_CONFIGURATION;
     public static boolean DEBUG_MODE;
-    private static File SETTINGS_FILE;
+
+    private static boolean MISSING_CONFIGURATION;
+    private static @Deprecated(forRemoval = true) ButterbrotConfig STATIC_CONFIG;
 
     private final @Getter ButterbrotConfig config;
 
@@ -58,68 +55,70 @@ public class ButterBrot {
     private final @Getter @Nullable MongoController mongoController;
     private final @Getter TextCommandManager textCommandManager;
     private final @Getter AudioController audioController;
-    private final @Getter SlashCommandManager slashCommandManager;
+    private final @Getter ListenerController listenerController;
+    private final @Getter SlashCommandController slashCommandController;
     private final @Getter ConsoleController consoleController;
     private final @Getter ServiceController serviceController;
 
     public ButterBrot(ButterbrotConfig config) throws Exception {
         this.config = config;
 
-        preInit();
-        LOGGER.info("Starting pre-init state");
-        new SettingsController(ButterBrot.SETTINGS_FILE);
+        this.discordController = new DiscordController(this);
         this.statsController = new StatsController(this);
+        this.mongoController = new MongoController(this);
+        this.textCommandManager = new TextCommandManager(this);
+        this.audioController = new AudioController(this);
+        this.listenerController = new ListenerController(this);
+        this.slashCommandController = new SlashCommandController(this);
+        this.consoleController = new ConsoleController(this);
+        this.serviceController = new ServiceController(this);
+
+        LOGGER.info("Starting pre-init state");
+        preInit();
         LOGGER.info("Passed pre-init state");
 
         addShutdownHook();
 
-        init();
         LOGGER.info("Starting init state");
-        this.discordController = new DiscordController(this);
+        init();
         LOGGER.info("Passed init state");
 
-
-        postInit();
         LOGGER.info("Starting post-init state");
-        this.textCommandManager = new TextCommandManager(this);
-        this.textCommandManager.registerFunctions();
-        this.audioController = new AudioController(this);
-
-        DiscordController.getJDA().awaitReady();
-        this.slashCommandManager = SlashCommandManager.initialize(DiscordController.getJDA(), this);
-
-        LogUtil.init();
-
+        postInit();
         LOGGER.info("Passed post-init state");
 
-
-        if(!ButterBrot.DEBUG_MODE) {
-            this.mongoController = new MongoController(this);
-            TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
-            TextCommandManager.getInstance().registerFunction(new CreateInviteCommand());
-            TextCommandManager.getInstance().registerFunction(new VerifyCommand());
-        } else {
-            this.mongoController = null;
-        }
-
-
-        this.consoleController = new ConsoleController(this);
-        // Register the Notifiers.
-        this.serviceController = new ServiceController(this);
-        this.serviceController.initialize();
         LOGGER.info("Startup complete");
     }
 
     private void preInit() {
-        // TODO: do everything before initializing JDA
+        statsController.safeInit();
+
     }
 
-    private void init() {
-        // TODO: initialize JDA
+    private void init() throws InterruptedException {
+        discordController.safeInit();
+        textCommandManager.safeInit();
+        audioController.safeInit();
+        slashCommandController.safeInit();
+        listenerController.safeInit();
+        discordController.getJda().awaitReady();
     }
 
     private void postInit() {
-        // TODO: console and services
+        LogUtil.init();
+
+        if (mongoController == null) throw new IllegalStateException("MongoController is null!");
+        if(!ButterBrot.DEBUG_MODE) {
+            mongoController.safeInit();
+            TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
+            TextCommandManager.getInstance().registerFunction(new CreateInviteCommand());
+            TextCommandManager.getInstance().registerFunction(new VerifyCommand());
+        } else {
+            mongoController.disable();
+        }
+
+        consoleController.safeInit();
+        serviceController.safeInit();
     }
 
     private void addShutdownHook() {
@@ -130,11 +129,19 @@ public class ButterBrot {
     public static void stopBot(boolean systemExit) {
         if (shutdown) return;
 
-        DiscordController.getJDA().shutdown();
+        DiscordController.getJDAStatic().shutdown();
         shutdown = true;
 
         LOGGER.info("Good Bye! :c");
         if (systemExit) System.exit(0);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static ButterbrotConfig getConfigStatic() {
+        LOGGER.error("\u001b[33m", new RuntimeException("### WARNING: DEPRECATED STATIC ACCESS "
+                + "TO ButterBrot#getConfigStatic()"));
+        LOGGER.warn("###\u001b[0m");
+        return STATIC_CONFIG;
     }
 
     /**
@@ -160,14 +167,19 @@ public class ButterBrot {
 
         try {
             butterbrotConfig = loadConfiguration(
-                    new File(dataDirectory, "settings.yml"),
+                    new File(dataDirectory, "config.yml"),
                     ButterbrotConfig.class,
                     new YAMLFactory()
             );
+            STATIC_CONFIG = butterbrotConfig; // TODO: remove this
         } catch (ReflectiveOperationException exception) {
             LOGGER.error("Reflective Error while initializing configuration", exception);
             System.exit(MISCONFIGURATION_EXIT_CODE);
             return;
+        }
+
+        if (MISSING_CONFIGURATION) {
+            System.exit(MISCONFIGURATION_EXIT_CODE);
         }
 
         new ButterBrot(butterbrotConfig);
@@ -185,12 +197,17 @@ public class ButterBrot {
             }
         }
 
-        SETTINGS_FILE = new File(data, "settings.yml");
+        File settingsFile = new File(data, "settings.yml");
+
+        if (settingsFile.exists() && !new File(data, "butterbrot.yml").exists()) {
+            new RuntimeException("WARNING: Please migrate from settings.yml to butterbrot.yml !!").printStackTrace();
+        }
+
         return data;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends DefaultConfigFactory> T loadConfiguration(File configFile, Class<T> configClass, JsonFactory factory)
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
+    private static <T extends DefaultConfigFactory> T loadConfiguration(File configFile, Class<T> configClass, JsonFactory factory)
             throws IOException, ReflectiveOperationException {
 
         ObjectMapper objectMapper = new ObjectMapper(factory);
@@ -218,8 +235,8 @@ public class ButterBrot {
         T defaultConfig = (T) configClass.getDeclaredMethod("createDefault").invoke(null);
 
         if (defaultConfig.equals(config)) {
-            LOGGER.warn("Config file {} is still the default config " +
-                    "and might need to be configured!", configFile.getName());
+            LOGGER.warn("\u001b[33mConfig file {} is still the default config " +
+                    "and might need to be configured!\u001b[0m", configFile.getName());
         }
 
         return config;

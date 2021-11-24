@@ -154,7 +154,7 @@ public class StudiengangCommand extends LegacyCommand {
                 }
                 break;
             case "update":
-                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
+                TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDAStatic().getTextChannelById(channelId));
 
                 e.getChannel().sendMessage(EmbedUtil.createInfoEmbed()
                         .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert. " +

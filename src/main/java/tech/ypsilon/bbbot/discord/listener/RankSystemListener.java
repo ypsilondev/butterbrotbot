@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
@@ -19,10 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class RankSystemListener extends ListenerAdapter {
+public class RankSystemListener extends ButterbrotListener {
 
     //Local cache for speed
     private final HashMap<Long, Long> lastMessage = new HashMap<>();
+
+    public RankSystemListener(ButterBrot parent) {
+        super(parent);
+    }
 
     /**
      * Get the corresponding Collection
@@ -146,7 +151,7 @@ public class RankSystemListener extends ListenerAdapter {
         }
 
         public User getUser() {
-            return DiscordController.getJDA().getUserById(this.userId);
+            return DiscordController.getJDAStatic().getUserById(this.userId);
         }
 
         public int getPoints() {

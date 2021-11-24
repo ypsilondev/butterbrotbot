@@ -8,20 +8,23 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.BotInfo;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.discord.command.text.CreateChannelCommand;
-import tech.ypsilon.bbbot.settings.SettingsController;
 
-import java.util.List;
 import java.util.Objects;
 
-public class DefaultListener extends ListenerAdapter {
+public class DefaultListener extends ButterbrotListener {
+
+    public DefaultListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         try {
-            String prefix = ((List<String>) SettingsController.getValue("discord.prefix")).get(0);
+            String prefix = ButterBrot.getConfigStatic().getDiscord().getPrefixList().get(0);
             event.getJDA().getPresence().setActivity(Activity.playing(prefix + " | v" + BotInfo.VERSION));
         }catch (Exception e){
             event.getJDA().getPresence().setActivity(Activity.playing("v" + BotInfo.VERSION));
@@ -49,8 +52,8 @@ public class DefaultListener extends ListenerAdapter {
                     e.printStackTrace();
                 }
 
-                if(Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getMembers().size() == 0){
-                    Objects.requireNonNull(DiscordController.getJDA().getVoiceChannelById(channelId)).getGuild().delete().queue();
+                if(Objects.requireNonNull(DiscordController.getJDAStatic().getVoiceChannelById(channelId)).getMembers().size() == 0){
+                    Objects.requireNonNull(DiscordController.getJDAStatic().getVoiceChannelById(channelId)).getGuild().delete().queue();
                 }
             }).start();
         }

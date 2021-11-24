@@ -9,10 +9,11 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.config.DiscordRoles;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
 import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
@@ -84,10 +85,10 @@ public class VerifyCommand extends FullStackedExecutor {
 
     public VerifyCommand() {
         mailSessionProperties = new Properties();
-        mailSessionProperties.put("mail.smtp.host", SettingsController.getValue("mail.smtp.host"));
-        mailSessionProperties.put("mail.smtp.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.host", ButterBrot.getConfigStatic().getMail().getSmtp().getHost());
+        mailSessionProperties.put("mail.smtp.port", ButterBrot.getConfigStatic().getMail().getSmtp().getPort());
         mailSessionProperties.put("mail.smtp.auth", "true");
-        mailSessionProperties.put("mail.smtp.socketFactory.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.socketFactory.port", ButterBrot.getConfigStatic().getMail().getSmtp().getPort());
         mailSessionProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
     }
 
@@ -109,10 +110,10 @@ public class VerifyCommand extends FullStackedExecutor {
                 document.setVerified(true);
                 VerificationCodec.save(document);
 
-                Role student = event.getJDA()
-                        .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+                Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+                                .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
                 assert student != null;
-                DiscordController.getHomeGuild().addRoleToMember(mentionedMember.getIdLong(), student).queue();
+                DiscordController.getHomeGuildStatic().addRoleToMember(mentionedMember.getIdLong(), student).queue();
 
                 event.getChannel().sendMessage(EmbedUtil
                         .colorDescriptionBuild(DISCORD_SUCCESS, "Verified user "
@@ -179,11 +180,11 @@ public class VerifyCommand extends FullStackedExecutor {
                 assert verificationDocument != null;
                 if (args[0].equalsIgnoreCase(verificationDocument.getVerificationCode())) {
                     // check if code is correct and verify the user (+insert into database)
-                    Role student = event.getJDA()
-                            .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+                    Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+                                    .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
 
                     assert student != null;
-                    DiscordController.getHomeGuild().addRoleToMember(event.getAuthor().getIdLong(), student).queue();
+                    DiscordController.getHomeGuildStatic().addRoleToMember(event.getAuthor().getIdLong(), student).queue();
 
                     verificationDocument.setVerified(true);
                     VerificationCodec.save(verificationDocument);
@@ -226,8 +227,8 @@ public class VerifyCommand extends FullStackedExecutor {
         Session session = Session.getInstance(mailSessionProperties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
-                        (String) SettingsController.getValue("mail.smtp.address"),
-                        (String) SettingsController.getValue("mail.smtp.password")
+                        ButterBrot.getConfigStatic().getMail().getSmtp().getAddress(),
+                        ButterBrot.getConfigStatic().getMail().getSmtp().getPassword()
                 );
             }
         });
@@ -235,7 +236,7 @@ public class VerifyCommand extends FullStackedExecutor {
         VerificationDocument document = VerificationCodec.insert(userId, recipient);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
+        message.setFrom(new InternetAddress(ButterBrot.getConfigStatic().getMail().getSmtp().getAddress()));
         message.setRecipients(
                 Message.RecipientType.TO,
                 InternetAddress.parse(recipient + "@student.kit.edu")

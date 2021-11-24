@@ -5,8 +5,6 @@ import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.Calendar;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class GuildNotifierService {

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
-import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -119,7 +118,7 @@ public class BirthdayNotifierService extends GuildNotifierService {
     }
 
     private static TextChannel getChannel(JDA jda) {
-        long guildId = (long) SettingsController.getValue("discord.guild");
+        long guildId = ButterBrot.getConfigStatic().getDiscord().getHomeGuildId();
         long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, guildId));
         return jda.getTextChannelById(channelId);
     }

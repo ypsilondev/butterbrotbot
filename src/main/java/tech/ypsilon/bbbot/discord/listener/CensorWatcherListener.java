@@ -6,12 +6,17 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.HashMap;
 
-public class CensorWatcherListener extends ListenerAdapter {
+public class CensorWatcherListener extends ButterbrotListener {
     public static final HashMap<TextChannel, Message> lastMessages = new HashMap<>();
     public static final HashMap<User, Integer> censoredMember = new HashMap<>();
+
+    public CensorWatcherListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {

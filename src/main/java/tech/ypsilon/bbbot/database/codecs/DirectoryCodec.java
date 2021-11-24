@@ -98,7 +98,7 @@ public class DirectoryCodec implements Codec<DirectoryCodec> {
     }
 
     public User getUser() {
-        return DiscordController.getJDA().getUserById(userId);
+        return DiscordController.getJDAStatic().getUserById(userId);
     }
 
     public boolean isShared() {

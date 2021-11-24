@@ -1,15 +1,14 @@
 package tech.ypsilon.bbbot.discord.listener;
 
 import com.mongodb.client.MongoCollection;
-import io.prometheus.client.Counter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
 
@@ -20,7 +19,11 @@ import java.util.Objects;
  * This class only exists for reference and should no longer be used.
  */
 @Deprecated
-public class RoleListener extends ListenerAdapter {
+public class RoleListener extends ButterbrotListener {
+
+    public RoleListener(ButterBrot parent) {
+        super(parent);
+    }
 
     // private Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
 

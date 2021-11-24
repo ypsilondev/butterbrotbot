@@ -2,14 +2,12 @@ package tech.ypsilon.bbbot.discord.services;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class AliasService extends GuildNotifierService {
 
@@ -19,7 +17,7 @@ public class AliasService extends GuildNotifierService {
     @Override
     protected void onExecute(TextChannel channel) {
         try {
-            URL url = new URL(Objects.requireNonNull(SettingsController.getString("discord.aliases")));
+            URL url = new URL(ButterBrot.getConfigStatic().getDiscord().getAliasesURL());
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
 
             disabled = true;

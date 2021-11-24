@@ -10,10 +10,15 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 
-public class ChannelListener extends ListenerAdapter {
+public class ChannelListener extends ButterbrotListener {
     private final static long CAT_ID = 762052348259467275L;
+
+    public ChannelListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {

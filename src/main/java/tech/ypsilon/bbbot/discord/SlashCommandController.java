@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.GenericListenerController;
 import tech.ypsilon.bbbot.discord.command.*;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,12 @@ import java.util.stream.Collectors;
 /**
  * Manager to handle all the {@link SlashCommand}s send to the bot
  *
- * @author DeveloperTK | Shirkanesi
+ * @author DeveloperTK
+ * @author Shirkanesi
  * @version 1.0
  * @since 1.4.0
  */
-public class SlashCommandManager extends GenericListenerController {
+public class SlashCommandController extends GenericListenerController implements Initializable {
 
     /**
      * This String is used by the {@link SlashCommand#createButtonId(String)} and
@@ -34,49 +36,53 @@ public class SlashCommandManager extends GenericListenerController {
     public static final String BUTTON_PREFIX = "button";
     public static final String SELECT_MENU_PREFIX = "select";
 
-    private static SlashCommandManager instance;
+    private static SlashCommandController instance;
 
     private final Map<String, SlashCommand> commandMap;
 
     /**
-     * Creates a new {@link SlashCommandManager} and registers all {@link SlashCommand}s
-     *
-     * @param jda the {@link JDA} to register the commands on
+     * Creates a new {@link SlashCommandController} and registers all {@link SlashCommand}s
      */
-    public SlashCommandManager(JDA jda, ButterBrot parent) {
+    public SlashCommandController(ButterBrot parent) {
         super(parent);
-
         commandMap = new HashMap<>();
+    }
+
+    @Override
+    public void init() throws Exception {
+        final JDA jda = getParent().getDiscordController().getJda();
         jda.addEventListener(this);
+
         try {
             jda.awaitReady();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             ButterBrot.LOGGER.warn("Could not await jda to get ready...");
         }
+
         // Register all slash-commands
         registerCommands(jda,
-                new ButterbrotCommand(parent),
-                new BirthdayCommand(parent),
-                new GroupSlashCommand(parent),
-                new CreateInviteSlashCommand(parent),
-                new DudenSlashCommand(parent),
-                new ReloadSlashCommand(parent),
-                new ToolsSlashCommand(parent),
-                new BirthdayCommand(parent),
-                // new TestCommand(parent),
-                new MusicCommand(parent),
-                new MassMoveCommand(parent),
-                new CreateChannelSlashCommand(parent),
-                new WriteAfterMeSlashCommand(parent),
-                new CensorSlashCommand(parent),
-                new StoreSlashCommand(parent),
-                new ListSlashCommand(parent),
-                new RankSystemSlashCommand(parent),
-                new StudiengangSlashCommand(parent),
-                new HelpSlashCommand(parent),
-                // new VerifySlashCommand(parent),
-                new DirectorySlashCommand(parent),
-                new JahrgangSlashCommand(parent)
+                new ButterbrotCommand(getParent()),
+                new BirthdayCommand(getParent()),
+                new GroupSlashCommand(getParent()),
+                new CreateInviteSlashCommand(getParent()),
+                new DudenSlashCommand(getParent()),
+                new ReloadSlashCommand(getParent()),
+                new ToolsSlashCommand(getParent()),
+                new BirthdayCommand(getParent()),
+                // new TestCommand(getParent()),
+                new MusicCommand(getParent()),
+                new MassMoveCommand(getParent()),
+                new CreateChannelSlashCommand(getParent()),
+                new WriteAfterMeSlashCommand(getParent()),
+                new CensorSlashCommand(getParent()),
+                new StoreSlashCommand(getParent()),
+                new ListSlashCommand(getParent()),
+                new RankSystemSlashCommand(getParent()),
+                new StudiengangSlashCommand(getParent()),
+                new HelpSlashCommand(getParent()),
+                // new VerifySlashCommand(getParent()),
+                new DirectorySlashCommand(getParent()),
+                new JahrgangSlashCommand(getParent())
         );
     }
 
@@ -194,16 +200,7 @@ public class SlashCommandManager extends GenericListenerController {
         return commandMap;
     }
 
-    public static SlashCommandManager initialize(JDA jda, ButterBrot parent) {
-        // TODO: remove redundant jda argument
-        if (instance != null) {
-            throw new IllegalStateException("SlashCommandManager has already been initialized!");
-        }
-        instance = new SlashCommandManager(jda, parent);
-        return instance;
-    }
-
-    public static SlashCommandManager getInstance() {
+    public static SlashCommandController getInstance() {
         if (instance == null) {
             throw new IllegalStateException("SlashCommandManager has not been initialized yet...");
         }

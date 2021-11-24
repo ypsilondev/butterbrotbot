@@ -5,6 +5,7 @@ import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
 import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
  * Handler for internal commands.
  * Console commands
  */
-public class ConsoleController extends GenericController implements Runnable {
+public class ConsoleController extends GenericController implements Initializable, Runnable {
 
     private static ConsoleController instance;
 
@@ -26,11 +27,13 @@ public class ConsoleController extends GenericController implements Runnable {
     public ConsoleController(ButterBrot parent) {
         super(parent);
         instance = this;
+    }
 
+    @Override
+    public void init() throws Exception {
         addCommand(new StopCommand());
         addCommand(new HelpCommand());
         addCommand(new MigrateBirthdays());
-
         new Thread(this).start();
     }
 

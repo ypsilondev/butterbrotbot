@@ -22,7 +22,6 @@ import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -36,7 +35,7 @@ public class JahrgangSlashCommand extends SlashCommand {
 
     private static long messageID = 1L;
 
-    public static final Long channelId = SettingsController.getLong("discord.studiengaenge.channel");
+    public static final Long channelId = ButterBrot.getConfigStatic().getDiscord().getCourseSelectionConfig().getChannel();
 
     private static MongoCollection<Document> collection = null;
 
@@ -123,7 +122,7 @@ public class JahrgangSlashCommand extends SlashCommand {
 
     public void update(SlashCommandEvent event) {
         assert channelId != null;
-        TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
+        TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDAStatic().getTextChannelById(channelId));
 
         Object messageIdObj = MongoSettings.getValue(MongoSettings.TYPE.StudyStartMessage, event.getGuild().getIdLong());
 

@@ -115,7 +115,7 @@ public class GroupSlashCommand extends SlashCommand {
         EmbedBuilder b = EmbedUtil.createSuccessEmbed();
         b.setDescription("Lerngruppe " + group.getName());
         for (Long userID : group.getUserIDs()) {
-            JDA jda = DiscordController.getJDA();
+            JDA jda = DiscordController.getJDAStatic();
             User userById = jda.getUserById(userID);
             if (userById == null) userById = jda.retrieveUserById(userID).complete();
             b.addField(userById.getName(), "", false);

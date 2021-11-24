@@ -4,15 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.LogUtil;
 
 import java.util.List;
 
 @Slf4j
-public class BadWordListener extends ListenerAdapter {
+public class BadWordListener extends ButterbrotListener {
 
     List<String> badWords = List.of(".*http(s)?:\\/\\/dis[\\S]*\\.gift\\/\\S*.*");
+
+    public BadWordListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {

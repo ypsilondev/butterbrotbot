@@ -3,13 +3,18 @@ package tech.ypsilon.bbbot.discord.listener;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class NewMemberJoinListener extends ListenerAdapter {
+public class NewMemberJoinListener extends ButterbrotListener {
     final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
+    public NewMemberJoinListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {

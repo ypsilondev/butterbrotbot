@@ -9,17 +9,16 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.config.DiscordRoles;
 import tech.ypsilon.bbbot.config.MailSubconfig;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.discord.command.text.VerifyCommand;
-import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
@@ -32,7 +31,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.Properties;
 
 public class VerifySlashCommand extends SlashCommand {
@@ -129,10 +127,11 @@ public class VerifySlashCommand extends SlashCommand {
 
             VerificationCodec.save(document);
 
-            Role student = event.getJDA()
-                    .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+            Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+                    .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
+
             assert student != null;
-            DiscordController.getHomeGuild().addRoleToMember(mentionedMember.getIdLong(), student).queue();
+            DiscordController.getHomeGuildStatic().addRoleToMember(mentionedMember.getIdLong(), student).queue();
 
             event.getHook().editOriginalEmbeds(EmbedUtil
                     .colorDescriptionBuild(DISCORD_SUCCESS, "Verified user "
@@ -198,11 +197,11 @@ public class VerifySlashCommand extends SlashCommand {
                 assert verificationDocument != null;
                 if (codeMapping.getAsString().equalsIgnoreCase(verificationDocument.getVerificationCode())) {
                     // check if code is correct and verify the user (+insert into database)
-                    Role student = event.getJDA()
-                            .getRoleById((long) SettingsController.getValue("discord.roles.student"));
+                    Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+                            .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
 
                     assert student != null;
-                    DiscordController.getHomeGuild().addRoleToMember(event.getUser().getIdLong(), student).queue();
+                    DiscordController.getHomeGuildStatic().addRoleToMember(event.getUser().getIdLong(), student).queue();
 
                     verificationDocument.setVerified(true);
                     VerificationCodec.save(verificationDocument);

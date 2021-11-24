@@ -10,19 +10,25 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.GenericController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.HashMap;
 
-public class AudioController extends GenericController {
+public class AudioController extends GenericController implements Initializable {
 
     private static AudioController instance;
 
-    private final HashMap<Guild, TrackScheduler> trackSchedulers = new HashMap<>();
-    private final AudioPlayerManager playerManager;
+    private final HashMap<Guild, TrackScheduler> trackSchedulers;
+    private AudioPlayerManager playerManager;
 
     public AudioController(ButterBrot parent) {
         super(parent);
         instance = this;
+        trackSchedulers = new HashMap<>();
+    }
+
+    @Override
+    public void init() throws Exception {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
     }

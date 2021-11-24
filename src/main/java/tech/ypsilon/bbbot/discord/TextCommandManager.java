@@ -10,14 +10,14 @@ import tech.ypsilon.bbbot.util.GenericListenerController;
 import tech.ypsilon.bbbot.discord.command.text.*;
 import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.discord.services.AliasService;
-import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.*;
 
-import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
+import static tech.ypsilon.bbbot.discord.DiscordController.getJDAStatic;
 import static tech.ypsilon.bbbot.util.StringUtil.parseString;
 
-public class TextCommandManager extends GenericListenerController {
+public class TextCommandManager extends GenericListenerController implements Initializable {
 
     private static TextCommandManager instance;
 
@@ -33,11 +33,16 @@ public class TextCommandManager extends GenericListenerController {
     public TextCommandManager(ButterBrot parent) {
         super(parent);
         instance = this;
+    }
 
+    @Override
+    public void init() {
         guildCommandCounter = Counter.build()
                 .name("butterbrot_commands_guild").help("The executed commands").labelNames("command").register();
         privateCommandCounter = Counter.build()
                 .name("butterbrot_commands_private").help("The executed commands").labelNames("command").register();
+
+        registerFunctions();
     }
 
     public void registerFunctions() {
@@ -66,14 +71,6 @@ public class TextCommandManager extends GenericListenerController {
         registerFunction(new ReloadCommand());
 
         registerEventListener(this);
-        registerEventListener(new DefaultListener());
-        registerEventListener(new RoleListener());
-        registerEventListener(new ChannelListener());
-        registerEventListener(new NewMemberJoinListener());
-        registerEventListener(new CensorWatcherListener());
-        registerEventListener(new RankSystemListener());
-        registerEventListener(new InviteListener());
-        registerEventListener(new BadWordListener());
     }
 
     /**
@@ -106,7 +103,7 @@ public class TextCommandManager extends GenericListenerController {
      * @param eventListeners an instance from the EventListener
      */
     private void registerEventListener(Object... eventListeners) {
-        getJDA().addEventListener(eventListeners);
+        getJDAStatic().addEventListener(eventListeners);
     }
 
     /**
@@ -222,7 +219,7 @@ public class TextCommandManager extends GenericListenerController {
     @SuppressWarnings("unchecked")
     private static String[] checkPrefix(Message message) {
         String msg = message.getContentDisplay();
-        if (((List<String>) SettingsController.getValue("discord.prefix")).stream().noneMatch(msg::startsWith)) {
+        if (ButterBrot.getConfigStatic().getDiscord().getPrefixList().stream().noneMatch(msg::startsWith)) {
             return null;
         }
 
