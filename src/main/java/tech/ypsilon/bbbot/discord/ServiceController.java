@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord;
 
 import net.dv8tion.jda.api.JDA;
 import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
 import tech.ypsilon.bbbot.discord.services.GuildNotifierService;
@@ -10,12 +11,13 @@ import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceManager {
+public class ServiceController extends GenericController {
 
     private final List<GuildNotifierService> notifierServices;
-    private static ServiceManager instance;
+    private static ServiceController instance;
 
-    public ServiceManager() {
+    public ServiceController(ButterBrot parent) {
+        super(parent);
         instance = this;
         this.notifierServices = new ArrayList<>();
     }
@@ -66,7 +68,7 @@ public class ServiceManager {
         service.startService();
     }
 
-    public static ServiceManager getInstance() {
+    public static ServiceController getInstance() {
         return instance;
     }
 }

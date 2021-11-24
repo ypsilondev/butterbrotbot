@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -24,6 +25,10 @@ import java.util.stream.Collectors;
  * @since 1.4.0
  */
 public class DirectorySlashCommand extends SlashCommand {
+    public DirectorySlashCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public CommandData commandData() {
         List<OptionData> links = new ArrayList<>();

@@ -6,9 +6,9 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericListenerController;
 import tech.ypsilon.bbbot.discord.command.*;
 
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 1.4.0
  */
-public class SlashCommandManager extends ListenerAdapter {
+public class SlashCommandManager extends GenericListenerController {
 
     /**
      * This String is used by the {@link SlashCommand#createButtonId(String)} and
@@ -43,7 +43,9 @@ public class SlashCommandManager extends ListenerAdapter {
      *
      * @param jda the {@link JDA} to register the commands on
      */
-    public SlashCommandManager(JDA jda) {
+    public SlashCommandManager(JDA jda, ButterBrot parent) {
+        super(parent);
+
         commandMap = new HashMap<>();
         jda.addEventListener(this);
         try {
@@ -53,29 +55,28 @@ public class SlashCommandManager extends ListenerAdapter {
         }
         // Register all slash-commands
         registerCommands(jda,
-                new ButterbrotCommand(),
-                new BirthdayCommand(),
-                new GroupSlashCommand(),
-                new CreateInviteSlashCommand(),
-                new DudenSlashCommand(),
-                new ReloadSlashCommand(),
-                new ToolsSlashCommand(),
-                new BirthdayCommand(),
-                // new TestCommand(),
-                new MusicCommand(),
-                new MassMoveCommand(),
-                new CreateChannelSlashCommand(),
-                new WriteAfterMeSlashCommand(),
-                new CensorSlashCommand(),
-                new StoreSlashCommand(),
-                new ListSlashCommand(),
-                new RankSystemSlashCommand(),
-                new StudiengangSlashCommand(),
-                new HelpSlashCommand(),
-                // new VerifySlashCommand(),
-                new DirectorySlashCommand(),
-
-                new JahrgangSlashCommand()
+                new ButterbrotCommand(parent),
+                new BirthdayCommand(parent),
+                new GroupSlashCommand(parent),
+                new CreateInviteSlashCommand(parent),
+                new DudenSlashCommand(parent),
+                new ReloadSlashCommand(parent),
+                new ToolsSlashCommand(parent),
+                new BirthdayCommand(parent),
+                // new TestCommand(parent),
+                new MusicCommand(parent),
+                new MassMoveCommand(parent),
+                new CreateChannelSlashCommand(parent),
+                new WriteAfterMeSlashCommand(parent),
+                new CensorSlashCommand(parent),
+                new StoreSlashCommand(parent),
+                new ListSlashCommand(parent),
+                new RankSystemSlashCommand(parent),
+                new StudiengangSlashCommand(parent),
+                new HelpSlashCommand(parent),
+                // new VerifySlashCommand(parent),
+                new DirectorySlashCommand(parent),
+                new JahrgangSlashCommand(parent)
         );
     }
 
@@ -193,11 +194,12 @@ public class SlashCommandManager extends ListenerAdapter {
         return commandMap;
     }
 
-    public static SlashCommandManager initialize(JDA jda) {
+    public static SlashCommandManager initialize(JDA jda, ButterBrot parent) {
+        // TODO: remove redundant jda argument
         if (instance != null) {
             throw new IllegalStateException("SlashCommandManager has already been initialized!");
         }
-        instance = new SlashCommandManager(jda);
+        instance = new SlashCommandManager(jda, parent);
         return instance;
     }
 

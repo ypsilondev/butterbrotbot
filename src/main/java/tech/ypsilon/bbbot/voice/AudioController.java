@@ -8,23 +8,26 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericController;
 
 import java.util.HashMap;
 
-public class AudioManager {
+public class AudioController extends GenericController {
 
-    private static AudioManager instance;
+    private static AudioController instance;
 
     private final HashMap<Guild, TrackScheduler> trackSchedulers = new HashMap<>();
     private final AudioPlayerManager playerManager;
 
-    public AudioManager() {
+    public AudioController(ButterBrot parent) {
+        super(parent);
         instance = this;
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
-    public static AudioManager getInstance() {
+    public static AudioController getInstance() {
         return instance;
     }
 

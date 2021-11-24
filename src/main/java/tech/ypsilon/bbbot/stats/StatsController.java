@@ -4,27 +4,27 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.HTTPServer;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class StatsManager {
+public class StatsController extends GenericController {
 
     private static final int PORT = 9090;
 
-    private static StatsManager instance;
+    private static StatsController instance;
 
-    public static StatsManager getInstance() {
-        if (instance == null) {
-            instance = new StatsManager();
-        }
+    public static StatsController getInstance() {
         return instance;
     }
 
-    private StatsManager() {
+    public StatsController(ButterBrot parent) {
+        super(parent);
+
         instance = this;
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new StatsPoll(), 1, 30, TimeUnit.MINUTES);
 

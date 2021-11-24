@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class DudenSlashCommand extends SlashCommand {
+    public DudenSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public CommandData commandData() {
         return new CommandData("duden", "Wörter im Online-Duden nachschlagen: 'kit duden [Wort]'").addOptions(

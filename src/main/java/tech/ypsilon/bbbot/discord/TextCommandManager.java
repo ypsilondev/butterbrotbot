@@ -4,8 +4,9 @@ import io.prometheus.client.Counter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericListenerController;
 import tech.ypsilon.bbbot.discord.command.text.*;
 import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.discord.services.AliasService;
@@ -16,7 +17,7 @@ import java.util.*;
 import static tech.ypsilon.bbbot.discord.DiscordController.getJDA;
 import static tech.ypsilon.bbbot.util.StringUtil.parseString;
 
-public class TextCommandManager extends ListenerAdapter {
+public class TextCommandManager extends GenericListenerController {
 
     private static TextCommandManager instance;
 
@@ -29,7 +30,8 @@ public class TextCommandManager extends ListenerAdapter {
      * Registering all the Commands by calling the {@link #registerFunction(DiscordFunction...)}
      * and registering the EventListeners by calling {@link #registerEventListener(Object...)}
      */
-    public TextCommandManager() {
+    public TextCommandManager(ButterBrot parent) {
+        super(parent);
         instance = this;
 
         guildCommandCounter = Counter.build()

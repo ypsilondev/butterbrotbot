@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.interactions.components.Component;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.settings.SettingsController;
@@ -49,6 +50,10 @@ public class StudiengangSlashCommand extends SlashCommand {
      * Prometheus-counter for statistics
      */
     private final Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
+
+    public StudiengangSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
 
     @Override

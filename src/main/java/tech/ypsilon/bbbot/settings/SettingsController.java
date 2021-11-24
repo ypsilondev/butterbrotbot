@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.Map;
 
+@Deprecated
 public class SettingsController {
 
     private static final Yaml YAML = new Yaml();

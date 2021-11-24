@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -25,6 +26,10 @@ public class CreateInviteSlashCommand extends SlashCommand {
     MongoCollection<Document> collection = null;
 
     private static final int MAX_ROLES = 6;
+
+    public CreateInviteSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

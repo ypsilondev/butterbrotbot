@@ -1,5 +1,7 @@
 package tech.ypsilon.bbbot.console;
 
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
 import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
@@ -15,13 +17,14 @@ import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
  * Handler for internal commands.
  * Console commands
  */
-public class ConsoleManager implements Runnable{
+public class ConsoleController extends GenericController implements Runnable {
 
-    private static ConsoleManager instance;
+    private static ConsoleController instance;
 
     private final List<ConsoleCommand> commands = new ArrayList<>();
 
-    public ConsoleManager(){
+    public ConsoleController(ButterBrot parent) {
+        super(parent);
         instance = this;
 
         addCommand(new StopCommand());

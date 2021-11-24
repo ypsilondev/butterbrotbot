@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -13,6 +14,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class StoreSlashCommand extends SlashCommand {
+
+    public StoreSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public CommandData commandData() {
         return new CommandData("store", "Speichert Links").addOptions(

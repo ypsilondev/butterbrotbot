@@ -4,11 +4,17 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 
 import java.util.Objects;
 
 public class WriteAfterMeSlashCommand extends SlashCommand {
+
+    public WriteAfterMeSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public CommandData commandData() {
         return new CommandData("wam", "Lässt den Bot das schreiben, was du ihm sagst")

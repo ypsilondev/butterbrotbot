@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -14,6 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListSlashCommand extends SlashCommand {
+    public ListSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public CommandData commandData() {
         return new CommandData("list", "Liste alle Link-Verknüpfungen oder suche nach bestimmten").addOptions(

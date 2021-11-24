@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import org.jetbrains.annotations.Nullable;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.SlashCommandManager;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -21,6 +22,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class HelpSlashCommand extends SlashCommand {
+
+    public HelpSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

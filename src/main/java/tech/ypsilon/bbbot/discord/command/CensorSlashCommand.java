@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.Nullable;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.listener.CensorWatcherListener;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -20,6 +21,10 @@ import java.util.Objects;
  * @implNote ported by Shirkanesi
  */
 public class CensorSlashCommand extends SlashCommand {
+
+    public CensorSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

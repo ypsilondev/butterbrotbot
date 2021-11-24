@@ -3,7 +3,7 @@ package tech.ypsilon.bbbot.discord.command.text;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import tech.ypsilon.bbbot.discord.ServiceManager;
+import tech.ypsilon.bbbot.discord.ServiceController;
 import tech.ypsilon.bbbot.discord.services.AliasService;
 import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 import tech.ypsilon.bbbot.util.DiscordUtil;
@@ -32,8 +32,8 @@ public class ReloadCommand implements GuildExecuteHandler {
             channel.sendMessage(EmbedUtil.createNoPermEmbed().build()).queue();
             return;
         }
-        ServiceManager.getInstance().findNotifierService(AliasService.class).execute(null);
-        ServiceManager.getInstance().findNotifierService(ToolUpdaterService.class).execute(null);
+        ServiceController.getInstance().findNotifierService(AliasService.class).execute(null);
+        ServiceController.getInstance().findNotifierService(ToolUpdaterService.class).execute(null);
         channel.sendMessage(EmbedUtil.createSuccessEmbed().setDescription("Die Aliase und tools wurden reloaded!").build()).queue();
     }
 }

@@ -7,6 +7,7 @@
     <groupId>tech.ypsilon</groupId>
     <artifactId>butterbrotbot</artifactId>
     <version>1.0.0</version>
+
     <build>
         <plugins>
             <plugin>
@@ -67,7 +68,6 @@
         </plugins>
     </build>
 
-
     <repositories>
         <repository>
             <id>jcenter</id>
@@ -116,6 +116,21 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

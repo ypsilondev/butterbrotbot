@@ -1,11 +1,13 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.Component;
 import org.jetbrains.annotations.Nullable;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.SlashCommandManager;
 
 import java.util.Objects;
@@ -18,6 +20,12 @@ import java.util.Objects;
 public abstract class SlashCommand {
 
     private static long counter;
+
+    private final @Getter ButterBrot parent;
+
+    public SlashCommand(ButterBrot parent) {
+        this.parent = parent;
+    }
 
     /**
      * JDA Command Data information used to register

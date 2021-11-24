@@ -12,7 +12,7 @@ import org.bson.Document;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
-import tech.ypsilon.bbbot.discord.ServiceManager;
+import tech.ypsilon.bbbot.discord.ServiceController;
 import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -80,7 +80,7 @@ public class BirthdayCommand implements GuildExecuteHandler {
                 break;
             case "notify":
                 if (this.isBirthdayAdmin(e.getMember())) {
-                    ServiceManager.getInstance().findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
+                    ServiceController.getInstance().findNotifierService(BirthdayNotifierService.class).execute(e.getChannel());
                 }
                 break;
 

@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.discord.DiscordController;
@@ -38,6 +39,10 @@ public class JahrgangSlashCommand extends SlashCommand {
     public static final Long channelId = SettingsController.getLong("discord.studiengaenge.channel");
 
     private static MongoCollection<Document> collection = null;
+
+    public JahrgangSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

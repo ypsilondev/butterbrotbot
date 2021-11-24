@@ -7,10 +7,15 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.listener.RankSystemListener;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 public class RankSystemSlashCommand extends SlashCommand {
+
+    public RankSystemSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

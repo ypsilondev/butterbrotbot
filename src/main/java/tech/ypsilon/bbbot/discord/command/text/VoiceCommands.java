@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import tech.ypsilon.bbbot.util.EmbedUtil;
-import tech.ypsilon.bbbot.voice.AudioManager;
+import tech.ypsilon.bbbot.voice.AudioController;
 import tech.ypsilon.bbbot.voice.AudioUtil;
 import tech.ypsilon.bbbot.voice.TrackScheduler;
 
@@ -50,7 +50,7 @@ public class VoiceCommands implements CommandBucket {
                             e.getChannel().sendMessage(b.build()).queue();
                             return;
                         }
-                        AudioManager.getInstance().addTrack(e.getGuild(), itemBlocking);
+                        AudioController.getInstance().addTrack(e.getGuild(), itemBlocking);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -85,7 +85,7 @@ public class VoiceCommands implements CommandBucket {
                             e.getChannel().sendMessage(b.build()).queue();
                             return;
                         }
-                        AudioManager.getInstance().addTrack(e.getGuild(), itemBlocking);
+                        AudioController.getInstance().addTrack(e.getGuild(), itemBlocking);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -120,7 +120,7 @@ public class VoiceCommands implements CommandBucket {
                             e.getChannel().sendMessage(b.build()).queue();
                             return;
                         }
-                        AudioManager.getInstance().addTrackPrioritized(e.getGuild(), itemBlocking);
+                        AudioController.getInstance().addTrackPrioritized(e.getGuild(), itemBlocking);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -143,7 +143,7 @@ public class VoiceCommands implements CommandBucket {
                 .setDescription("Pauses the playback")
                 .setExecutor((e, args) -> {
                     if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
-                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(true);
+                        AudioController.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(true);
                         e.getMessage().delete().queue();
                     }
                 }).buildAndAdd(functions);
@@ -152,7 +152,7 @@ public class VoiceCommands implements CommandBucket {
                 .setDescription("Resumes the playback")
                 .setExecutor((e, args) -> {
                     if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
-                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(false);
+                        AudioController.getInstance().getScheduler(e.getGuild()).getPlayer().setPaused(false);
                         e.getMessage().delete().queue();
                     }
                 }).buildAndAdd(functions);
@@ -162,8 +162,8 @@ public class VoiceCommands implements CommandBucket {
                 .setDescription("Let the bot leave the channel")
                 .setExecutor((e, args) -> {
                     if (Objects.equals(Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel(), e.getGuild().getAudioManager().getConnectedChannel())) {
-                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer().stopTrack();
-                        AudioManager.getInstance().getScheduler(e.getGuild()).getQueue().clear();
+                        AudioController.getInstance().getScheduler(e.getGuild()).getPlayer().stopTrack();
+                        AudioController.getInstance().getScheduler(e.getGuild()).getQueue().clear();
                         e.getGuild().getAudioManager().closeAudioConnection();
                     }
                 })
@@ -173,7 +173,7 @@ public class VoiceCommands implements CommandBucket {
         new CommandBuilder("clearQueue")
                 .setDescription("Clear the playback queue")
                 .setExecutor((e, args) -> {
-                    TrackScheduler scheduler = AudioManager.getInstance().getScheduler(e.getGuild());
+                    TrackScheduler scheduler = AudioController.getInstance().getScheduler(e.getGuild());
                     scheduler.getQueue().clear();
                 })
                 .buildAndAdd(functions);
@@ -182,7 +182,7 @@ public class VoiceCommands implements CommandBucket {
         new CommandBuilder("skip")
                 .setDescription("Skip a Track")
                 .setExecutor((e, args) -> {
-                    TrackScheduler scheduler = AudioManager.getInstance().getScheduler(e.getGuild());
+                    TrackScheduler scheduler = AudioController.getInstance().getScheduler(e.getGuild());
                     scheduler.skip(1);
                 }).buildAndAdd(functions);
 
@@ -201,7 +201,7 @@ public class VoiceCommands implements CommandBucket {
                     AudioItem ai = ytsp.loadSearchResult(search.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm));
                     if (ai instanceof BasicAudioPlaylist) {
                         BasicAudioPlaylist pl = (BasicAudioPlaylist) ai;
-                        AudioManager.getInstance().addTrack(e.getGuild(), pl.getTracks().get(0));
+                        AudioController.getInstance().addTrack(e.getGuild(), pl.getTracks().get(0));
                         e.getGuild().getAudioManager().openAudioConnection(Objects.requireNonNull(e.getMember().getVoiceState()).getChannel());
                     } else {
                         e.getChannel().sendMessage(EmbedUtil.createErrorEmbed().addField("YouTube-Suche", "Es konnt leider kein passender Audio-Stream gefunden werden!", true).build()).queue();
@@ -239,7 +239,7 @@ public class VoiceCommands implements CommandBucket {
                     }
 
                     if (duration != null){
-                        AudioManager.getInstance().getScheduler(e.getGuild()).getPlayer()
+                        AudioController.getInstance().getScheduler(e.getGuild()).getPlayer()
                                 .getPlayingTrack().setPosition(duration.getSeconds() * 1000);
                     }
                 }).buildAndAdd(functions);

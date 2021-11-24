@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.config.MailSubconfig;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
 import tech.ypsilon.bbbot.discord.DiscordController;
@@ -81,12 +83,15 @@ public class VerifySlashCommand extends SlashCommand {
 
     private final Properties mailSessionProperties;
 
-    public VerifySlashCommand() {
+    public VerifySlashCommand(ButterBrot parent) {
+        super(parent);
+        MailSubconfig config = parent.getConfig().getMail();
+
         mailSessionProperties = new Properties();
-        mailSessionProperties.put("mail.smtp.host", SettingsController.getValue("mail.smtp.host"));
-        mailSessionProperties.put("mail.smtp.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.host", config.getSmtp().getHost());
+        mailSessionProperties.put("mail.smtp.port", config.getSmtp().getPort());
         mailSessionProperties.put("mail.smtp.auth", "true");
-        mailSessionProperties.put("mail.smtp.socketFactory.port", SettingsController.getValue("mail.smtp.port").toString());
+        mailSessionProperties.put("mail.smtp.socketFactory.port", config.getSmtp().getPort());
         mailSessionProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
     }
 
@@ -239,8 +244,8 @@ public class VerifySlashCommand extends SlashCommand {
         Session session = Session.getInstance(mailSessionProperties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
-                        (String) SettingsController.getValue("mail.smtp.address"),
-                        (String) SettingsController.getValue("mail.smtp.password")
+                        getParent().getConfig().getMail().getSmtp().getAddress(),
+                        getParent().getConfig().getMail().getSmtp().getPassword()
                 );
             }
         });
@@ -248,7 +253,7 @@ public class VerifySlashCommand extends SlashCommand {
         VerificationDocument document = VerificationCodec.insert(userId, recipient);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress((String) SettingsController.getValue("mail.smtp.address")));
+        message.setFrom(new InternetAddress(getParent().getConfig().getMail().getSmtp().getAddress()));
         message.setRecipients(
                 Message.RecipientType.TO,
                 InternetAddress.parse(recipient + "@student.kit.edu")

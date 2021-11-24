@@ -2,7 +2,6 @@ package tech.ypsilon.bbbot.discord.command;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -10,10 +9,11 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 import org.jetbrains.annotations.Nullable;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
-import tech.ypsilon.bbbot.discord.ServiceManager;
+import tech.ypsilon.bbbot.discord.ServiceController;
 import tech.ypsilon.bbbot.discord.services.BirthdayNotifierService;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
@@ -26,6 +26,10 @@ import java.util.Objects;
 public class BirthdayCommand extends SlashCommand {
 
     private static final String DATE_REGEX = "\\d\\d?\\.\\d\\d?\\.\\d\\d\\d\\d";
+
+    public BirthdayCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {
@@ -135,7 +139,7 @@ public class BirthdayCommand extends SlashCommand {
         if (event.getMember() == null) throw new CommandFailedException();
 
         if (DiscordUtil.isAdmin(event.getMember())) {
-            ServiceManager.getInstance().findNotifierService(BirthdayNotifierService.class).execute(event.getTextChannel());
+            ServiceController.getInstance().findNotifierService(BirthdayNotifierService.class).execute(event.getTextChannel());
             event.reply("Geburtstage neu gesendet").setEphemeral(true).queue();
         } else {
             event.reply("").addEmbeds(EmbedUtil.createNoPermEmbed().build()).setEphemeral(true).queue();

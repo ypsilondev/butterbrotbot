@@ -20,6 +20,10 @@ discord:
   studiengaenge:
     channel: channelID_Long
   logchannel: channelID_Long
+commands:
+  bday:
+    notifyNoBirthdays: false
+  bdaychannel: channelID_Long
 mail:
   smtp:
     address: noreply@example.com

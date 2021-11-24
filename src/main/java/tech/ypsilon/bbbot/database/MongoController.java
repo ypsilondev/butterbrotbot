@@ -11,6 +11,9 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.config.MongoSubconfig;
+import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
 import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
@@ -20,7 +23,7 @@ import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.util.Collections;
 
-public class MongoController {
+public class MongoController extends GenericController {
 
     private static MongoController instance;
 
@@ -32,15 +35,19 @@ public class MongoController {
      * Fetches all the necessary settings from the {@link SettingsController}
      * and registers the Codecs inside the codecs package
      */
-    public MongoController() {
+    public MongoController(ButterBrot parent) {
+        super(parent);
         instance = this;
+
         MongoCredential credential = null;
-        if (SettingsController.getValue("mongo.username") != null) {
+        MongoSubconfig config = parent.getConfig().getMongo();
+
+        if (config.getUsername() != null) {
             System.out.println("not null");
-             credential = MongoCredential.createCredential(
-                    ((String) SettingsController.getValue("mongo.username")),
-                    ((String) SettingsController.getValue("mongo.authDatabase")),
-                    ((String) SettingsController.getValue("mongo.password")).toCharArray()
+            credential = MongoCredential.createCredential(
+                    config.getUsername(),
+                    config.getAuthDatabase(),
+                    config.getPassword().toCharArray()
             );
         }
 
@@ -57,8 +64,8 @@ public class MongoController {
         MongoClientSettings.Builder builder = MongoClientSettings.builder()
                 .applyToClusterSettings(b -> b.hosts(Collections.singletonList(
                         new ServerAddress(
-                                ((String) SettingsController.getValue("mongo.host")),
-                                ((int) SettingsController.getValue("mongo.port"))
+                                config.getHost(),
+                                config.getPort()
                         )
                 )))
                 .codecRegistry(codecRegistry);
@@ -119,7 +126,7 @@ public class MongoController {
      * @return the hostname as a String
      */
     public String getHost() {
-        return (String) SettingsController.getValue("mongo.host");
+        return getParent().getConfig().getMongo().getHost();
     }
 
     /**
@@ -127,7 +134,7 @@ public class MongoController {
      * @return the port as a Integer
      */
     public int getPort() {
-        return (int) SettingsController.getValue("mongo.port");
+        return getParent().getConfig().getMongo().getPort();
     }
 
 }
