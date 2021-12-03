@@ -17,17 +17,11 @@ import tech.ypsilon.bbbot.config.DiscordRoles;
 import tech.ypsilon.bbbot.config.MailSubconfig;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.database.structs.VerificationDocument;
-import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.discord.command.text.VerifyCommand;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 import tech.ypsilon.bbbot.util.StudentUtil;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Calendar;
@@ -127,11 +121,11 @@ public class VerifySlashCommand extends SlashCommand {
 
             VerificationCodec.save(document);
 
-            Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+            Role student = event.getJDA().getRoleById(getParent().getConfig()
                     .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
 
             assert student != null;
-            DiscordController.getHomeGuildStatic().addRoleToMember(mentionedMember.getIdLong(), student).queue();
+            getParent().getDiscordController().getHome().addRoleToMember(mentionedMember.getIdLong(), student).queue();
 
             event.getHook().editOriginalEmbeds(EmbedUtil
                     .colorDescriptionBuild(DISCORD_SUCCESS, "Verified user "
@@ -178,7 +172,7 @@ public class VerifySlashCommand extends SlashCommand {
                                 "Die E-Mail konnte nicht gesendet werden, bitte wende dich an ein Teammitglied / "
                                         + "The email couldn't be sent, please contact the server staff")).queue();
                         exception.printStackTrace();
-                        LoggerFactory.getLogger(VerifyCommand.class).error("");
+                        LoggerFactory.getLogger(VerifySlashCommand.class).error("");
                     }
                 }
             } else {
@@ -197,11 +191,11 @@ public class VerifySlashCommand extends SlashCommand {
                 assert verificationDocument != null;
                 if (codeMapping.getAsString().equalsIgnoreCase(verificationDocument.getVerificationCode())) {
                     // check if code is correct and verify the user (+insert into database)
-                    Role student = event.getJDA().getRoleById(ButterBrot.getConfigStatic()
+                    Role student = event.getJDA().getRoleById(getParent().getConfig()
                             .getDiscord().getDiscordRoles().get(DiscordRoles.STUDENT.toString()));
 
                     assert student != null;
-                    DiscordController.getHomeGuildStatic().addRoleToMember(event.getUser().getIdLong(), student).queue();
+                    getParent().getDiscordController().getHome().addRoleToMember(event.getUser().getIdLong(), student).queue();
 
                     verificationDocument.setVerified(true);
                     VerificationCodec.save(verificationDocument);

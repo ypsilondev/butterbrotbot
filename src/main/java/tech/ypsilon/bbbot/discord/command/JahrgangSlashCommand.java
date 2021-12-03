@@ -35,12 +35,15 @@ public class JahrgangSlashCommand extends SlashCommand {
 
     private static long messageID = 1L;
 
-    public static final Long channelId = ButterBrot.getConfigStatic().getDiscord().getCourseSelectionConfig().getChannel();
+    private final TextChannel textChannel;
 
     private static MongoCollection<Document> collection = null;
 
     public JahrgangSlashCommand(ButterBrot parent) {
         super(parent);
+
+        textChannel = Objects.requireNonNull(parent.getDiscordController().getJda()
+                .getTextChannelById(parent.getConfig().getDiscord().getCourseSelectionConfig().getChannel()));
     }
 
     @Override
@@ -121,9 +124,6 @@ public class JahrgangSlashCommand extends SlashCommand {
     }
 
     public void update(SlashCommandEvent event) {
-        assert channelId != null;
-        TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDAStatic().getTextChannelById(channelId));
-
         Object messageIdObj = MongoSettings.getValue(MongoSettings.TYPE.StudyStartMessage, event.getGuild().getIdLong());
 
         if (messageIdObj != null) {

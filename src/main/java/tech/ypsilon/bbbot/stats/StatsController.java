@@ -31,7 +31,7 @@ public class StatsController extends GenericController implements Initializable 
     @Override
     public void init() {
         Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(new StatsPoll(), 1, 30, TimeUnit.MINUTES);
+                .scheduleAtFixedRate(new StatsPoll(getParent()), 1, 30, TimeUnit.MINUTES);
 
         try {
             HTTPServer server = new HTTPServer(new InetSocketAddress(PORT),

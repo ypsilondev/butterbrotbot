@@ -1,11 +1,16 @@
 package tech.ypsilon.bbbot.console.commands;
 
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.console.ConsoleCommand;
 import tech.ypsilon.bbbot.console.ConsoleController;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
 public class HelpCommand extends ConsoleCommand {
+
+    public HelpCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public String[] getAlias() {

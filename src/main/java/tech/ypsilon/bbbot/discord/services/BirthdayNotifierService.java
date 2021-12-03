@@ -4,7 +4,6 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.database.MongoSettings;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,8 +23,8 @@ public class BirthdayNotifierService extends GuildNotifierService {
 
     private static Logger logger = LoggerFactory.getLogger(BirthdayNotifierService.class);
 
-    public BirthdayNotifierService(JDA jda) {
-        super(getChannel(jda));
+    public BirthdayNotifierService(ButterBrot parent) {
+        super(parent, getBirthdayChannel(parent));
     }
 
     @Override
@@ -36,20 +34,20 @@ public class BirthdayNotifierService extends GuildNotifierService {
         logger.info("Starting iteration");
         bdays.keySet().forEach(userId -> {
             logger.info(String.format("Iteration over bday-key-set (%d)", userId));
-            notifyBday(channel, userId, bdays.get(userId));
+            notifyBirthdays(channel, userId, bdays.get(userId));
         });
         logger.info("Iteration ended");
     }
 
-    private void notifyBday(TextChannel channel, long userId, Date bday) {
+    private void notifyBirthdays(TextChannel channel, long userId, Date birthdayDate) {
         List<Member> members = channel.getGuild().retrieveMembersByIds(userId).get();
         if (!members.isEmpty()) {
             logger.info(String.format("Notifiziere einen Geburtstag (%d)", userId));
             String userName = members.get(0).getAsMention();
 
             Date now = new Date(System.currentTimeMillis());
-            SimpleDateFormat formatter = new SimpleDateFormat("YYYY");
-            int age = Integer.parseInt(formatter.format(now)) - Integer.parseInt(formatter.format(bday));
+            SimpleDateFormat formatter = new SimpleDateFormat("YYYY"); // TODO: use lowercase y (uppercase Y is for week year!)
+            int age = Integer.parseInt(formatter.format(now)) - Integer.parseInt(formatter.format(birthdayDate));
 
             WebhookClient client = this.getBirthdayWebhook(channel);
 
@@ -70,19 +68,21 @@ public class BirthdayNotifierService extends GuildNotifierService {
     }
 
     private WebhookClient getBirthdayWebhook(TextChannel channel) {
-        Webhook webhook;
         List<Webhook> channelWebhooks = channel.retrieveWebhooks().complete();
+        Webhook webhook;
+
         if (channelWebhooks.size() > 0) {
             webhook = channelWebhooks.stream().findAny().get();
         } else {
             webhook = channel.createWebhook("BirthdayBot").complete();
         }
+
         if (webhook.getToken() != null) {
-            WebhookClient client = WebhookClient.withId(webhook.getIdLong(), webhook.getToken());
-            return client;
+            return WebhookClient.withId(webhook.getIdLong(), webhook.getToken());
         } else {
             ButterBrot.LOGGER.warn("Webhook could not be created!");
         }
+
         return null;
     }
 
@@ -101,10 +101,10 @@ public class BirthdayNotifierService extends GuildNotifierService {
         return output;
     }
 
-    private boolean hasBirthdayToday(Date bday) {
+    private boolean hasBirthdayToday(Date birthdayDate) {
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM");
-        return formatter.format(now).equals(formatter.format(bday));
+        return formatter.format(now).equals(formatter.format(birthdayDate));
     }
 
     @Override
@@ -117,9 +117,9 @@ public class BirthdayNotifierService extends GuildNotifierService {
         return "Birthday";
     }
 
-    private static TextChannel getChannel(JDA jda) {
-        long guildId = ButterBrot.getConfigStatic().getDiscord().getHomeGuildId();
-        long channelId = ((Long) MongoSettings.getValue(MongoSettings.TYPE.BirthdayChannel, guildId));
-        return jda.getTextChannelById(channelId);
+    private static TextChannel getBirthdayChannel(ButterBrot parent) {
+        return parent.getDiscordController().getJda().getTextChannelById(
+                parent.getConfig().getCommands().getBirthdayChannel()
+        );
     }
 }

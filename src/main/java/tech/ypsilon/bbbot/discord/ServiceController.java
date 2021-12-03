@@ -26,10 +26,10 @@ public class ServiceController extends GenericController implements Initializabl
     @Override
     public void init() throws Exception {
         new Thread(() -> {
-            JDA jda = DiscordController.getJDAStatic();
+            JDA jda = getParent().getDiscordController().getJda();
             try {
                 // JDA might not be set by DiscordController due to async...
-                while ((jda = DiscordController.getJDAStatic()) == null) {
+                while ((jda = getParent().getDiscordController().getJda()) == null) {
                     System.err.println("JDA is null!");
                     // TODO: check if we can remove this (probably not needed anymore)
                     Thread.sleep(100);
@@ -40,23 +40,24 @@ public class ServiceController extends GenericController implements Initializabl
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            this.registerAllServices(jda);
+
+            this.registerAllServices();
         }).start();
     }
 
-    private void registerAllServices(JDA jda){
+    private void registerAllServices() {
         // Register normal services
-        this.registerService(new ToolUpdaterService());
-        this.registerService(new AliasService());
+        this.registerService(new ToolUpdaterService(getParent()));
+        this.registerService(new AliasService(getParent()));
 
-        if(!ButterBrot.DEBUG_MODE){
-            registerDBServices(jda);
+        if (!ButterBrot.DEBUG_MODE) {
+            registerDBServices();
         }
     }
 
-    private void registerDBServices(JDA jda){
+    private void registerDBServices() {
         // Register services which require the Mongo-DB to be present
-        this.registerService(new BirthdayNotifierService(jda));
+        this.registerService(new BirthdayNotifierService(getParent()));
     }
 
     public GuildNotifierService findNotifierService(Class<? extends GuildNotifierService> clazz) {

@@ -1,15 +1,17 @@
 package tech.ypsilon.bbbot.discord;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.listener.*;
 import tech.ypsilon.bbbot.util.GenericListenerController;
 import tech.ypsilon.bbbot.util.Initializable;
 
+@Getter
 public class ListenerController extends GenericListenerController implements Initializable {
 
     private final DefaultListener defaultListener;
-    private final RoleListener roleListener;
+    // private final RoleListener roleListener;
     private final ChannelListener channelListener;
     private final NewMemberJoinListener newMemberJoinListener;
     private final CensorWatcherListener censorWatcherListener;
@@ -21,7 +23,7 @@ public class ListenerController extends GenericListenerController implements Ini
         super(parent);
 
         this.defaultListener = new DefaultListener(parent);
-        this.roleListener = new RoleListener(parent);
+        // this.roleListener = new RoleListener(parent);
         this.channelListener = new ChannelListener(parent);
         this.newMemberJoinListener = new NewMemberJoinListener(parent);
         this.censorWatcherListener = new CensorWatcherListener(parent);
@@ -35,7 +37,7 @@ public class ListenerController extends GenericListenerController implements Ini
         ButterBrot.LOGGER.info("Registering Listeners...");
         registerEventListener(
                 defaultListener,
-                roleListener,
+                // roleListener,
                 channelListener,
                 newMemberJoinListener,
                 censorWatcherListener,

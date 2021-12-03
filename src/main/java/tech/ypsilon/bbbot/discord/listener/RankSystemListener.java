@@ -109,14 +109,15 @@ public class RankSystemListener extends ButterbrotListener {
      * @param user the {@link User}
      * @return the RankInformation
      */
-    public static RankInformation getRankInformation(User user) {
-        return new RankInformation(user.getIdLong());
+    public RankInformation getRankInformation(User user) {
+        return new RankInformation(getParent(), user.getIdLong());
     }
 
     /**
      * Databucket of RankInformation
      */
     public static class RankInformation {
+        private final ButterBrot parent;
 
         private final ObjectId _id;
         private final Long userId;
@@ -125,7 +126,8 @@ public class RankSystemListener extends ButterbrotListener {
         private int bestStreak = 0;
         private Date lastMessage;
 
-        private RankInformation(Long userId) {
+        private RankInformation(ButterBrot parent, Long userId) {
+            this.parent = parent;
             Document document = getCollection().find(Filters.eq("userId", userId)).first();
 
             this.userId = userId;
@@ -151,7 +153,7 @@ public class RankSystemListener extends ButterbrotListener {
         }
 
         public User getUser() {
-            return DiscordController.getJDAStatic().getUserById(this.userId);
+            return parent.getDiscordController().getJda().getUserById(this.userId);
         }
 
         public int getPoints() {

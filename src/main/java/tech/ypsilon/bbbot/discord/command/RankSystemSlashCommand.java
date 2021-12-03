@@ -35,10 +35,12 @@ public class RankSystemSlashCommand extends SlashCommand {
         if(userMapping != null) {
             Member mentionedUser = userMapping.getAsMember();
             assert mentionedUser != null;
-            rank = RankSystemListener.getRankInformation(mentionedUser.getUser());
+            rank = getParent().getListenerController().getRankSystemListener()
+                    .getRankInformation(mentionedUser.getUser());
             b.addField("User", mentionedUser.getUser().getName(), true);
         } else {
-            rank = RankSystemListener.getRankInformation(event.getUser());
+            rank = getParent().getListenerController().getRankSystemListener()
+                    .getRankInformation(event.getUser());
             b.addField("User", event.getUser().getName(), true);
         }
 

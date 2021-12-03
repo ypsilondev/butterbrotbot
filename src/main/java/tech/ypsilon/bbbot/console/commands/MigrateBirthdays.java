@@ -4,6 +4,10 @@ import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.console.ConsoleCommand;
 
 public class MigrateBirthdays extends ConsoleCommand {
+    public MigrateBirthdays(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public String[] getAlias() {
         return new String[]{"migrateBirthdays"};

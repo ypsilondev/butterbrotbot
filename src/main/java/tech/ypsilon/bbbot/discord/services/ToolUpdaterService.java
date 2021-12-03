@@ -16,10 +16,10 @@ public class ToolUpdaterService extends GuildNotifierService {
 
     private static String requestUrl;
 
-    public ToolUpdaterService() {
-        super();
+    public ToolUpdaterService(ButterBrot parent) {
+        super(parent);
         ToolUpdaterService.links = new LinkedHashMap<>();
-        ToolUpdaterService.requestUrl = ButterBrot.getConfigStatic().getDiscord().getToolsURL();
+        ToolUpdaterService.requestUrl = parent.getConfig().getDiscord().getToolsURL();
     }
 
     @Override

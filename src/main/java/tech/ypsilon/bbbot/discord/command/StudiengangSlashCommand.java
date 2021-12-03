@@ -36,11 +36,9 @@ import java.util.Objects;
  */
 public class StudiengangSlashCommand extends SlashCommand {
 
-    private static final String MESSAGE = "Herzlich willkommen auf dem " + DiscordController.getHomeGuildStatic().getName() + "-Server fürs <:KIT:759041596460236822> . " +
+    private static final String MESSAGE = "Herzlich willkommen auf dem allgemeinen Studierenden Server für das <:KIT:759041596460236822> . " +
             "Wähle per Klick auf ein Emoji unter der Nachricht deinen Studiengang um die Informationen des Discord-Servers für dich zu personalisieren :star_struck: .\n\n" +
             "Dein Studiengang fehlt? Schreibe einem Moderator <@&757718320526000138> :100:";
-
-    public static final Long channelId = ButterBrot.getConfigStatic().getDiscord().getCourseSelectionConfig().getChannel();
 
     private static MongoCollection<Document> collection = null;
     private static MongoCollection<Document> collectionCategories = null;
@@ -50,8 +48,13 @@ public class StudiengangSlashCommand extends SlashCommand {
      */
     private final Counter counter = Counter.build().name("butterbrot_role").help("-").labelNames("fach").register();
 
+    private final TextChannel textChannel;
+
     public StudiengangSlashCommand(ButterBrot parent) {
         super(parent);
+
+        textChannel = Objects.requireNonNull(parent.getDiscordController().getJda()
+                .getTextChannelById(parent.getConfig().getDiscord().getCourseSelectionConfig().getChannel()));
     }
 
 
@@ -216,9 +219,6 @@ public class StudiengangSlashCommand extends SlashCommand {
      * @param event the {@link SlashCommandEvent}
      */
     private void update(SlashCommandEvent event) {
-        assert channelId != null;
-        TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDAStatic().getTextChannelById(channelId));
-
         event.getHook().editOriginalEmbeds(EmbedUtil.createInfoEmbed()
                 .addField("Nachricht wird aktualisiert", "Die Nachricht wird jetzt aktualisiert. " +
                                 "Dies kann ein paar Sekunden dauern, da Discord Rate-Limits hat.",

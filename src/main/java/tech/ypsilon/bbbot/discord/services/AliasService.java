@@ -14,10 +14,18 @@ public class AliasService extends GuildNotifierService {
     private static boolean disabled = false;
     private static final Map<String, String> ALIAS = new HashMap<>();
 
+    public AliasService(ButterBrot parent, TextChannel channel) {
+        super(parent, channel);
+    }
+
+    public AliasService(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     protected void onExecute(TextChannel channel) {
         try {
-            URL url = new URL(ButterBrot.getConfigStatic().getDiscord().getAliasesURL());
+            URL url = new URL(getParent().getConfig().getDiscord().getAliasesURL());
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
 
             disabled = true;

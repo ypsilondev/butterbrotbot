@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.ypsilon.bbbot.ButterBrot;
@@ -13,6 +14,7 @@ import tech.ypsilon.bbbot.util.Initializable;
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public class DiscordController extends GenericController implements Initializable {
 
@@ -20,6 +22,7 @@ public class DiscordController extends GenericController implements Initializabl
 
     private @Getter JDA jda;
     private @Getter Guild home;
+    private @Getter TextChannel logChannel;
 
     /**
      * Registering the JDA with the needed GatewayIntents.
@@ -44,7 +47,11 @@ public class DiscordController extends GenericController implements Initializabl
             jda = JDABuilder.createDefault(getParent().getConfig().getDiscord().getDiscordBotToken(), gatewayIntents)
                     .disableCache(CacheFlag.EMOTE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
                     .build();
+
             home = jda.getGuildById(getParent().getConfig().getDiscord().getHomeGuildId());
+
+            logChannel = Objects.requireNonNull(jda
+                    .getTextChannelById(getParent().getConfig().getDiscord().getLogChannelId()));
         } catch (LoginException exception) {
             throw new ExceptionInInitializerError(exception);
         }
@@ -65,6 +72,6 @@ public class DiscordController extends GenericController implements Initializabl
      */
     @Deprecated(forRemoval = true)
     public static Guild getHomeGuildStatic() {
-        return getJDAStatic().getGuildById(ButterBrot.getConfigStatic().getDiscord().getHomeGuildId());
+        throw new RuntimeException("This operation is unsupported!");
     }
 }

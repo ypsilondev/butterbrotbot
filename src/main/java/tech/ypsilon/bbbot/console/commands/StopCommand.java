@@ -7,6 +7,10 @@ import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
 public class StopCommand extends ConsoleCommand {
 
+    public StopCommand(ButterBrot parent) {
+        super(parent);
+    }
+
     @Override
     public String[] getAlias() {
         return new String[]{"stop"};
@@ -20,7 +24,7 @@ public class StopCommand extends ConsoleCommand {
     @Override
     public void onExecute(String[] args) {
         LOGGER.info("Stopping bot...");
-        ButterBrot.stopBot(true);
+        getParent().stopBot(true);
     }
 
 }

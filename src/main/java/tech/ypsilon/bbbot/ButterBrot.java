@@ -13,12 +13,11 @@ import tech.ypsilon.bbbot.config.ButterbrotConfig;
 import tech.ypsilon.bbbot.config.DefaultConfigFactory;
 import tech.ypsilon.bbbot.console.ConsoleController;
 import tech.ypsilon.bbbot.database.MongoController;
-import tech.ypsilon.bbbot.discord.*;
-import tech.ypsilon.bbbot.discord.command.text.CreateInviteCommand;
-import tech.ypsilon.bbbot.discord.command.text.StudiengangCommand;
-import tech.ypsilon.bbbot.discord.command.text.VerifyCommand;
+import tech.ypsilon.bbbot.discord.DiscordController;
+import tech.ypsilon.bbbot.discord.ListenerController;
+import tech.ypsilon.bbbot.discord.ServiceController;
+import tech.ypsilon.bbbot.discord.SlashCommandController;
 import tech.ypsilon.bbbot.stats.StatsController;
-import tech.ypsilon.bbbot.util.LogUtil;
 import tech.ypsilon.bbbot.voice.AudioController;
 
 import java.io.File;
@@ -53,7 +52,7 @@ public class ButterBrot {
     private final @Getter DiscordController discordController;
     private final @Getter StatsController statsController;
     private final @Getter @Nullable MongoController mongoController;
-    private final @Getter TextCommandManager textCommandManager;
+    // private final @Getter TextCommandManager textCommandManager;
     private final @Getter AudioController audioController;
     private final @Getter ListenerController listenerController;
     private final @Getter SlashCommandController slashCommandController;
@@ -66,7 +65,7 @@ public class ButterBrot {
         this.discordController = new DiscordController(this);
         this.statsController = new StatsController(this);
         this.mongoController = new MongoController(this);
-        this.textCommandManager = new TextCommandManager(this);
+        // this.textCommandManager = new TextCommandManager(this);
         this.audioController = new AudioController(this);
         this.listenerController = new ListenerController(this);
         this.slashCommandController = new SlashCommandController(this);
@@ -97,7 +96,7 @@ public class ButterBrot {
 
     private void init() throws InterruptedException {
         discordController.safeInit();
-        textCommandManager.safeInit();
+        // textCommandManager.safeInit();
         audioController.safeInit();
         slashCommandController.safeInit();
         listenerController.safeInit();
@@ -105,14 +104,12 @@ public class ButterBrot {
     }
 
     private void postInit() {
-        LogUtil.init();
-
         if (mongoController == null) throw new IllegalStateException("MongoController is null!");
         if(!ButterBrot.DEBUG_MODE) {
             mongoController.safeInit();
-            TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
-            TextCommandManager.getInstance().registerFunction(new CreateInviteCommand());
-            TextCommandManager.getInstance().registerFunction(new VerifyCommand());
+            // TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
+            // TextCommandManager.getInstance().registerFunction(new CreateInviteCommand());
+            // TextCommandManager.getInstance().registerFunction(new VerifyCommand());
         } else {
             mongoController.disable();
         }
@@ -126,10 +123,10 @@ public class ButterBrot {
     }
 
     static boolean shutdown = false;
-    public static void stopBot(boolean systemExit) {
+    public void stopBot(boolean systemExit) {
         if (shutdown) return;
 
-        DiscordController.getJDAStatic().shutdown();
+        getDiscordController().getJda().shutdown();
         shutdown = true;
 
         LOGGER.info("Good Bye! :c");

@@ -31,9 +31,9 @@ public class ConsoleController extends GenericController implements Initializabl
 
     @Override
     public void init() throws Exception {
-        addCommand(new StopCommand());
-        addCommand(new HelpCommand());
-        addCommand(new MigrateBirthdays());
+        addCommand(new StopCommand(getParent()));
+        addCommand(new HelpCommand(getParent()));
+        addCommand(new MigrateBirthdays(getParent()));
         new Thread(this).start();
     }
 
