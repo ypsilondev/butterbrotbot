@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
-import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.ArrayList;

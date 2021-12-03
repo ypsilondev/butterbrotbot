@@ -12,12 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.SlashCommandController;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 public class HelpSlashCommand extends SlashCommand {
 

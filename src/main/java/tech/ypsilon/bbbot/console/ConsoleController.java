@@ -1,10 +1,10 @@
 package tech.ypsilon.bbbot.console;
 
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
 import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
+import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.ArrayList;

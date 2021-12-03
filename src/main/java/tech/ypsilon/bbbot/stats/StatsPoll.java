@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.discord.DiscordController;
 
 @RequiredArgsConstructor
 public class StatsPoll implements Runnable {

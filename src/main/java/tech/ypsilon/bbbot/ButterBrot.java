@@ -45,14 +45,12 @@ public class ButterBrot {
     public static boolean DEBUG_MODE;
 
     private static boolean MISSING_CONFIGURATION;
-    private static @Deprecated(forRemoval = true) ButterbrotConfig STATIC_CONFIG;
 
     private final @Getter ButterbrotConfig config;
 
     private final @Getter DiscordController discordController;
     private final @Getter StatsController statsController;
     private final @Getter @Nullable MongoController mongoController;
-    // private final @Getter TextCommandManager textCommandManager;
     private final @Getter AudioController audioController;
     private final @Getter ListenerController listenerController;
     private final @Getter SlashCommandController slashCommandController;
@@ -65,7 +63,6 @@ public class ButterBrot {
         this.discordController = new DiscordController(this);
         this.statsController = new StatsController(this);
         this.mongoController = new MongoController(this);
-        // this.textCommandManager = new TextCommandManager(this);
         this.audioController = new AudioController(this);
         this.listenerController = new ListenerController(this);
         this.slashCommandController = new SlashCommandController(this);
@@ -96,7 +93,6 @@ public class ButterBrot {
 
     private void init() throws InterruptedException {
         discordController.safeInit();
-        // textCommandManager.safeInit();
         audioController.safeInit();
         slashCommandController.safeInit();
         listenerController.safeInit();
@@ -107,9 +103,6 @@ public class ButterBrot {
         if (mongoController == null) throw new IllegalStateException("MongoController is null!");
         if(!ButterBrot.DEBUG_MODE) {
             mongoController.safeInit();
-            // TextCommandManager.getInstance().registerFunction(new StudiengangCommand());
-            // TextCommandManager.getInstance().registerFunction(new CreateInviteCommand());
-            // TextCommandManager.getInstance().registerFunction(new VerifyCommand());
         } else {
             mongoController.disable();
         }
@@ -131,14 +124,6 @@ public class ButterBrot {
 
         LOGGER.info("Good Bye! :c");
         if (systemExit) System.exit(0);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static ButterbrotConfig getConfigStatic() {
-        LOGGER.error("\u001b[33m", new RuntimeException("### WARNING: DEPRECATED STATIC ACCESS "
-                + "TO ButterBrot#getConfigStatic()"));
-        LOGGER.warn("###\u001b[0m");
-        return STATIC_CONFIG;
     }
 
     /**
@@ -168,7 +153,6 @@ public class ButterBrot {
                     ButterbrotConfig.class,
                     new YAMLFactory()
             );
-            STATIC_CONFIG = butterbrotConfig; // TODO: remove this
         } catch (ReflectiveOperationException exception) {
             LOGGER.error("Reflective Error while initializing configuration", exception);
             System.exit(MISCONFIGURATION_EXIT_CODE);
