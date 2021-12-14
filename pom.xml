@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
-            <version>0.11.0</version>
+            <version>0.13.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
