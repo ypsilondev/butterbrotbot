@@ -99,7 +99,7 @@
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>discord-webhooks</artifactId>
-            <version>0.1.6</version>
+            <version>0.7.4</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.11.0</version>
+            <version>0.13.0</version>
         </dependency>
     </dependencies>
 
