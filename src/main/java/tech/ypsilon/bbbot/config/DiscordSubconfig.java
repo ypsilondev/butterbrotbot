@@ -37,6 +37,12 @@ public class DiscordSubconfig {
     @JsonProperty("logchannel")
     private Long logChannelId;
 
+    @JsonProperty("studyGroupCategory")
+    private Long studyGroupCategory;
+
+    @JsonProperty("studyJoinChannel")
+    private Long studyJoinChannel;
+
     /* --- */
 
     @Data

@@ -45,6 +45,7 @@ public class SlashCommandController extends GenericListenerController implements
      */
     public SlashCommandController(ButterBrot parent) {
         super(parent);
+        instance = this;
         commandMap = new HashMap<>();
     }
 

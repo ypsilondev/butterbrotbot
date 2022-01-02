@@ -17,6 +17,10 @@ public final class DiscordUtil {
         INSTANCE = this;
     }
 
+    public static void init(ButterBrot parent) {
+        new DiscordUtil(parent);
+    }
+
     public static boolean isAdmin(@Nullable Member member) {
         if (member == null) {
             return false;

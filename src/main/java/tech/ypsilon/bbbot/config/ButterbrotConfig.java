@@ -40,6 +40,8 @@ public class ButterbrotConfig extends DefaultConfigFactory {
                                 .channel(-1L)
                                 .build())
                         .logChannelId(-1L)
+                        .studyGroupCategory(-1L)
+                        .studyJoinChannel(-1L)
                         .build())
                 .commands(CommandsSubconfig.builder()
                         .birthday(CommandsSubconfig.BDaySubconfig.builder()

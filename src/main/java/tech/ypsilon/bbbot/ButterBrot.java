@@ -18,6 +18,7 @@ import tech.ypsilon.bbbot.discord.ListenerController;
 import tech.ypsilon.bbbot.discord.ServiceController;
 import tech.ypsilon.bbbot.discord.SlashCommandController;
 import tech.ypsilon.bbbot.stats.StatsController;
+import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.voice.AudioController;
 
 import java.io.File;
@@ -59,6 +60,7 @@ public class ButterBrot {
 
     public ButterBrot(ButterbrotConfig config) throws Exception {
         this.config = config;
+        DiscordUtil.init(this);
 
         this.discordController = new DiscordController(this);
         this.statsController = new StatsController(this);
@@ -180,8 +182,8 @@ public class ButterBrot {
 
         File settingsFile = new File(data, "settings.yml");
 
-        if (settingsFile.exists() && !new File(data, "butterbrot.yml").exists()) {
-            new RuntimeException("WARNING: Please migrate from settings.yml to butterbrot.yml !!").printStackTrace();
+        if (settingsFile.exists() && !new File(data, "config.yml").exists()) {
+            new RuntimeException("WARNING: Please migrate from settings.yml to config.yml !!").printStackTrace();
         }
 
         return data;

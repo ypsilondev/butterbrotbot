@@ -1,6 +1,7 @@
 package tech.ypsilon.bbbot.discord;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,15 +27,14 @@ public class DiscordController extends GenericController implements Initializabl
 
     /**
      * Registering the JDA with the needed GatewayIntents.
-     * @throws LoginException when the provided token is invalid
      */
-    public DiscordController(ButterBrot parent) throws LoginException {
+    public DiscordController(ButterBrot parent) {
         super(parent);
         instance = this;
     }
 
     @Override
-    public void init() {
+    public void init() throws InterruptedException, LoginException {
         Collection<GatewayIntent> gatewayIntents = Arrays.asList(
                 GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES,
@@ -47,6 +47,8 @@ public class DiscordController extends GenericController implements Initializabl
             jda = JDABuilder.createDefault(getParent().getConfig().getDiscord().getDiscordBotToken(), gatewayIntents)
                     .disableCache(CacheFlag.EMOTE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
                     .build();
+
+            jda.awaitReady();
 
             home = jda.getGuildById(getParent().getConfig().getDiscord().getHomeGuildId());
 
