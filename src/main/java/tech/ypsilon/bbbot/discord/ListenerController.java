@@ -34,6 +34,10 @@ public class ListenerController extends GenericListenerController implements Ini
 
     @Override
     public void init() throws Exception {
+        ButterBrot.LOGGER.info("Initializing Listeners...");
+
+        channelListener.safeInit();
+
         ButterBrot.LOGGER.info("Registering Listeners...");
         registerEventListener(
                 defaultListener,

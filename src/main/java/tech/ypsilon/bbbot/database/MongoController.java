@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.database;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
+import com.mongodb.MongoDriverInformation;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -49,7 +50,7 @@ public class MongoController extends GenericController implements Initializable 
         MongoSubconfig config = getParent().getConfig().getMongo();
 
         if (config.getUsername() != null) {
-            System.out.println("not null");
+            // System.out.println("not null");
             credential = MongoCredential.createCredential(
                     config.getUsername(),
                     config.getAuthDatabase(),

@@ -11,19 +11,23 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
+import tech.ypsilon.bbbot.util.Initializable;
 
-public class ChannelListener extends ButterbrotListener {
+public class ChannelListener extends ButterbrotListener implements Initializable {
 
-    private final Category studyGroupCategory;
-    private final VoiceChannel studyJoinChannel;
+    private Category studyGroupCategory;
+    private VoiceChannel studyJoinChannel;
 
     public ChannelListener(ButterBrot parent) {
         super(parent);
+    }
 
-        this.studyGroupCategory = parent.getDiscordController().getHome()
-                .getCategoryById(parent.getConfig().getDiscord().getStudyGroupCategory());
-        this.studyJoinChannel = parent.getDiscordController().getHome()
-                .getVoiceChannelById(parent.getConfig().getDiscord().getStudyJoinChannel());
+    @Override
+    public void init() throws IllegalStateException {
+        this.studyGroupCategory = getParent().getDiscordController().getHome()
+                .getCategoryById(getParent().getConfig().getDiscord().getStudyGroupCategory());
+        this.studyJoinChannel = getParent().getDiscordController().getHome()
+                .getVoiceChannelById(getParent().getConfig().getDiscord().getStudyJoinChannel());
 
         if (studyGroupCategory == null) throw new IllegalStateException("study-group category cannot be null!");
         if (studyJoinChannel == null) throw new IllegalStateException("study join channel cannot be null!");
