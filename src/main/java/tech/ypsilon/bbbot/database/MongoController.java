@@ -2,7 +2,6 @@ package tech.ypsilon.bbbot.database;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
-import com.mongodb.MongoDriverInformation;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -15,12 +14,8 @@ import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.config.MongoSubconfig;
+import tech.ypsilon.bbbot.database.codecs.*;
 import tech.ypsilon.bbbot.util.GenericController;
-import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
-import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
-import tech.ypsilon.bbbot.database.codecs.LinkCodec;
-import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
-import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
 import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.Collections;
@@ -29,8 +24,8 @@ public class MongoController extends GenericController implements Initializable 
 
     private static MongoController instance;
 
-    private MongoClient CLIENT;
-    private MongoDatabase DATABASE;
+    private MongoClient mongoClient;
+    private MongoDatabase mongoDatabase;
 
     private @Getter boolean disabled = false;
 
@@ -79,8 +74,8 @@ public class MongoController extends GenericController implements Initializable 
         if (credential != null) builder.credential(credential);
         MongoClientSettings settings = builder.build();
 
-        CLIENT = MongoClients.create(settings);
-        this.DATABASE = CLIENT.getDatabase(BotInfo.NAME);
+        mongoClient = MongoClients.create(settings);
+        this.mongoDatabase = mongoClient.getDatabase(config.getButterbrotDatabase());
     }
 
     public void disable() {
@@ -99,17 +94,20 @@ public class MongoController extends GenericController implements Initializable 
      * @return the Client
      */
     public MongoClient getClient() {
-        return CLIENT;
+        return mongoClient;
     }
 
     /**
-     * Returns the database that is used to store all the collections that are necessary for
-     * the bot to function.
-     * Name of the Database is ButterBrot {@link BotInfo#NAME}
+     * Returns the database that is used to store all the
+     * collections that are necessary for the bot to function.
+     *<br/>
+     * Name of the Database <b>WAS</b> ButterBrot {@link BotInfo#NAME}
+     * Now it is as configured in {@link MongoSubconfig}
+     *
      * @return the project database
      */
     public MongoDatabase getDatabase() {
-        return DATABASE;
+        return mongoDatabase;
     }
 
     /**
@@ -120,7 +118,7 @@ public class MongoController extends GenericController implements Initializable 
      * @return a collection with the datatype T
      */
     public <T> MongoCollection<T> getCollection(String name, Class<T> aClass) {
-        return DATABASE.getCollection(name, aClass);
+        return mongoDatabase.getCollection(name, aClass);
     }
 
     /**
@@ -129,7 +127,7 @@ public class MongoController extends GenericController implements Initializable 
      * @return a collection with the name and type Document(BSON)
      */
     public MongoCollection<Document> getCollection(String name) {
-        return DATABASE.getCollection(name, Document.class);
+        return mongoDatabase.getCollection(name, Document.class);
     }
 
     /**
