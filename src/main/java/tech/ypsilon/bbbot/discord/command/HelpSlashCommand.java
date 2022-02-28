@@ -9,18 +9,18 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import org.jetbrains.annotations.Nullable;
-import tech.ypsilon.bbbot.discord.SlashCommandManager;
-import tech.ypsilon.bbbot.util.EmbedUtil;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.discord.SlashCommandController;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class HelpSlashCommand extends SlashCommand {
+
+    public HelpSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {
@@ -31,7 +31,7 @@ public class HelpSlashCommand extends SlashCommand {
     public void execute(SlashCommandEvent event) {
         event.deferReply(true).queue();
 
-        Map<String, SlashCommand> commands = new TreeMap<>(SlashCommandManager.getInstance().getCommandMap());
+        Map<String, SlashCommand> commands = new TreeMap<>(SlashCommandController.getInstance().getCommandMap());
 
         SelectionMenu.Builder builder = SelectionMenu.create(createSelectMenuId("help"))
                 .setPlaceholder("Befehl")
@@ -54,7 +54,7 @@ public class HelpSlashCommand extends SlashCommand {
 
         List<MessageEmbed> embeds = new ArrayList<>();
 
-        Map<String, SlashCommand> commands = SlashCommandManager.getInstance().getCommandMap();
+        Map<String, SlashCommand> commands = SlashCommandController.getInstance().getCommandMap();
         for (SelectOption option : Objects.requireNonNull(event.getSelectedOptions())) {
             SlashCommand command = commands.get(option.getValue());
             if (command.getHelpDescription() == null) {

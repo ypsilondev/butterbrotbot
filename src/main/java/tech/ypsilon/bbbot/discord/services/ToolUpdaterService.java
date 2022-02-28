@@ -2,16 +2,13 @@ package tech.ypsilon.bbbot.discord.services;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import tech.ypsilon.bbbot.ButterBrot;
-import tech.ypsilon.bbbot.settings.SettingsController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class ToolUpdaterService extends GuildNotifierService {
 
@@ -19,10 +16,10 @@ public class ToolUpdaterService extends GuildNotifierService {
 
     private static String requestUrl;
 
-    public ToolUpdaterService() {
-        super();
+    public ToolUpdaterService(ButterBrot parent) {
+        super(parent);
         ToolUpdaterService.links = new LinkedHashMap<>();
-        ToolUpdaterService.requestUrl = SettingsController.getString("discord.toolsurl");
+        ToolUpdaterService.requestUrl = parent.getConfig().getDiscord().getToolsURL();
     }
 
     @Override

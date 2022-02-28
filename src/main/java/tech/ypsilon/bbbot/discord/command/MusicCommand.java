@@ -16,7 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import tech.ypsilon.bbbot.voice.AudioManager;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.voice.AudioController;
 import tech.ypsilon.bbbot.voice.TrackScheduler;
 
 import java.time.Duration;
@@ -28,7 +29,9 @@ public class MusicCommand extends SlashCommand {
     private final YoutubeSearchProvider ytsp;
     private final YoutubeAudioSourceManager yasm;
 
-    public MusicCommand() {
+    public MusicCommand(ButterBrot parent) {
+        super(parent);
+
         ytsp = new YoutubeSearchProvider();
         yasm = new YoutubeAudioSourceManager();
     }
@@ -116,8 +119,8 @@ public class MusicCommand extends SlashCommand {
     }
 
     protected void leave(SlashCommandEvent event) {
-        AudioManager.getInstance().getScheduler(event.getGuild()).getPlayer().stopTrack();
-        AudioManager.getInstance().getScheduler(event.getGuild()).getQueue().clear();
+        AudioController.getInstance().getScheduler(event.getGuild()).getPlayer().stopTrack();
+        AudioController.getInstance().getScheduler(event.getGuild()).getQueue().clear();
         Objects.requireNonNull(event.getGuild()).getAudioManager().closeAudioConnection();
         event.reply("Aktuellen Kanal verlassen").queue();
     }
@@ -129,10 +132,10 @@ public class MusicCommand extends SlashCommand {
         // join the new channel
         Objects.requireNonNull(event.getGuild()).getAudioManager().openAudioConnection(channel);
 
-        AudioManager.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
+        AudioController.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                AudioManager.getInstance().addTrack(event.getGuild(), audioTrack);
+                AudioController.getInstance().addTrack(event.getGuild(), audioTrack);
                 event.reply("Neues Lied zur Warteschlange hinzugefügt: "
                         + audioTrack.getInfo().title + "**").queue();
             }
@@ -141,7 +144,7 @@ public class MusicCommand extends SlashCommand {
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 AudioTrack track = Objects.requireNonNullElseGet(audioPlaylist.getSelectedTrack(), () ->
                         audioPlaylist.getTracks().get(0));
-                AudioManager.getInstance().addTrack(event.getGuild(), track);
+                AudioController.getInstance().addTrack(event.getGuild(), track);
                 event.reply("Neues Lied zur Warteschlange hinzugefügt: **"
                         + track.getInfo().title + "**").queue();
             }
@@ -165,7 +168,7 @@ public class MusicCommand extends SlashCommand {
         // join the new channel
         Objects.requireNonNull(event.getGuild()).getAudioManager().openAudioConnection(channel);
 
-        AudioManager.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
+        AudioController.getInstance().getPlayerManager().loadItem(url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 throw new CommandFailedException("Dieser Link ist nicht abspielbar");
@@ -173,7 +176,7 @@ public class MusicCommand extends SlashCommand {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                AudioManager.getInstance().addTrack(event.getGuild(), audioPlaylist);
+                AudioController.getInstance().addTrack(event.getGuild(), audioPlaylist);
                 event.reply("Neues Playlist zur Warteschlange hinzugefügt: **"
                         + audioPlaylist.getName() + "**").queue();
             }
@@ -197,7 +200,7 @@ public class MusicCommand extends SlashCommand {
         AudioItem ai = ytsp.loadSearchResult(query.strip(), audioTrackInfo -> new YoutubeAudioTrack(audioTrackInfo, yasm));
         if (ai instanceof BasicAudioPlaylist) {
             BasicAudioPlaylist playlist = (BasicAudioPlaylist) ai;
-            AudioManager.getInstance().addTrack(event.getGuild(), playlist.getTracks().get(0));
+            AudioController.getInstance().addTrack(event.getGuild(), playlist.getTracks().get(0));
             Objects.requireNonNull(event.getGuild()).getAudioManager().openAudioConnection(channel);
             event.reply("Neues Lied zur Warteschlange hinzugefügt: **"
                     + playlist.getTracks().get(0).getInfo().title + "**").queue();
@@ -207,12 +210,12 @@ public class MusicCommand extends SlashCommand {
     }
 
     protected void pause(SlashCommandEvent event) {
-        AudioManager.getInstance().getScheduler(event.getGuild()).getPlayer().setPaused(true);
+        AudioController.getInstance().getScheduler(event.getGuild()).getPlayer().setPaused(true);
         event.reply("Wiedergabe pausiert").queue();
     }
 
     protected void resume(SlashCommandEvent event) {
-        AudioManager.getInstance().getScheduler(event.getGuild()).getPlayer().setPaused(false);
+        AudioController.getInstance().getScheduler(event.getGuild()).getPlayer().setPaused(false);
         event.reply("Wiedergabe fortgesetzt").queue();
     }
 
@@ -233,7 +236,7 @@ public class MusicCommand extends SlashCommand {
         }
 
         if (duration != null) {
-            AudioManager.getInstance().getScheduler(event.getGuild()).getPlayer()
+            AudioController.getInstance().getScheduler(event.getGuild()).getPlayer()
                     .getPlayingTrack().setPosition(duration.getSeconds() * 1000);
         } else {
             throw new CommandFailedException("Falsches Zeitformat. Bitte verwende: `mm:ss`, `hh:mm:ss` oder `ss`");
@@ -243,13 +246,13 @@ public class MusicCommand extends SlashCommand {
     }
 
     protected void skip(SlashCommandEvent event) {
-        TrackScheduler scheduler = AudioManager.getInstance().getScheduler(event.getGuild());
+        TrackScheduler scheduler = AudioController.getInstance().getScheduler(event.getGuild());
         scheduler.skip(1);
         event.reply("Aktuelles Lied übersprungen").queue();
     }
 
     protected void clearQueue(SlashCommandEvent event) {
-        AudioManager.getInstance().getScheduler(event.getGuild()).getQueue().clear();
+        AudioController.getInstance().getScheduler(event.getGuild()).getQueue().clear();
         event.reply("Warteschlange gelöscht").queue();
     }
 

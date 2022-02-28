@@ -1,14 +1,13 @@
 package tech.ypsilon.bbbot.discord.command;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.components.Component;
 import org.jetbrains.annotations.Nullable;
-import tech.ypsilon.bbbot.discord.SlashCommandManager;
-
-import java.util.Objects;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.discord.SlashCommandController;
 
 /**
  * Abstraction-layer to easier handle slash commands
@@ -18,6 +17,12 @@ import java.util.Objects;
 public abstract class SlashCommand {
 
     private static long counter;
+
+    private final @Getter ButterBrot parent;
+
+    public SlashCommand(ButterBrot parent) {
+        this.parent = parent;
+    }
 
     /**
      * JDA Command Data information used to register
@@ -65,15 +70,15 @@ public abstract class SlashCommand {
     }
 
     public final synchronized String createButtonId(String data) {
-        return SlashCommandManager.BUTTON_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
-                + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
-                + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
+        return SlashCommandController.BUTTON_PREFIX + SlashCommandController.INTERACTION_ID_DELIMITER
+                + commandData().getName() + SlashCommandController.INTERACTION_ID_DELIMITER + data
+                + SlashCommandController.INTERACTION_ID_DELIMITER + (++counter);
     }
 
     public final synchronized String createSelectMenuId(String data) {
-        return SlashCommandManager.SELECT_MENU_PREFIX + SlashCommandManager.INTERACTION_ID_DELIMITER
-                + commandData().getName() + SlashCommandManager.INTERACTION_ID_DELIMITER + data
-                + SlashCommandManager.INTERACTION_ID_DELIMITER + (++counter);
+        return SlashCommandController.SELECT_MENU_PREFIX + SlashCommandController.INTERACTION_ID_DELIMITER
+                + commandData().getName() + SlashCommandController.INTERACTION_ID_DELIMITER + data
+                + SlashCommandController.INTERACTION_ID_DELIMITER + (++counter);
     }
 
 }

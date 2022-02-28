@@ -8,11 +8,16 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 
 import java.util.List;
 
-public class InviteListener extends ListenerAdapter {
+public class InviteListener extends ButterbrotListener {
+
+    public InviteListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {

@@ -2,6 +2,7 @@ package tech.ypsilon.bbbot.discord.command;
 
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import tech.ypsilon.bbbot.ButterBrot;
 
 /**
  * A Proxy to provide the possibility of aliasing one slash-command by another name.
@@ -15,7 +16,8 @@ public class SlashCommandAlias extends SlashCommand {
     private final SlashCommand subject;
     private final String commandAlias;
 
-    public SlashCommandAlias(SlashCommand subject, String commandAlias) {
+    public SlashCommandAlias(ButterBrot parent, SlashCommand subject, String commandAlias) {
+        super(parent);
         this.subject = subject;
         this.commandAlias = commandAlias;
     }

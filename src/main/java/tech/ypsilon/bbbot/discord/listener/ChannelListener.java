@@ -8,12 +8,30 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
+import tech.ypsilon.bbbot.util.Initializable;
 
-public class ChannelListener extends ListenerAdapter {
-    private final static long CAT_ID = 762052348259467275L;
+public class ChannelListener extends ButterbrotListener implements Initializable {
+
+    private Category studyGroupCategory;
+    private VoiceChannel studyJoinChannel;
+
+    public ChannelListener(ButterBrot parent) {
+        super(parent);
+    }
+
+    @Override
+    public void init() throws IllegalStateException {
+        this.studyGroupCategory = getParent().getDiscordController().getHome()
+                .getCategoryById(getParent().getConfig().getDiscord().getStudyGroupCategory());
+        this.studyJoinChannel = getParent().getDiscordController().getHome()
+                .getVoiceChannelById(getParent().getConfig().getDiscord().getStudyJoinChannel());
+
+        if (studyGroupCategory == null) throw new IllegalStateException("study-group category cannot be null!");
+        if (studyJoinChannel == null) throw new IllegalStateException("study join channel cannot be null!");
+    }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -43,21 +61,21 @@ public class ChannelListener extends ListenerAdapter {
     }
 
     private void updateUser(VoiceChannel channelJoined, VoiceChannel channelLeft, Guild guild, Member member) {
-        if (channelJoined.getIdLong() == 762050439859929149L) {
+        if (channelJoined.getIdLong() == studyJoinChannel.getIdLong()) {
             StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
             if (group == null) {
                 guild.kickVoiceMember(member).queue();
                 return;
             }
 
-            for (VoiceChannel voiceChannel : guild.getCategoryById(CAT_ID).getVoiceChannels()) {
+            for (VoiceChannel voiceChannel : studyGroupCategory.getVoiceChannels()) {
                 if (voiceChannel.getName().equals(group.getName())) {
                     guild.moveVoiceMember(member, voiceChannel).queue();
                     return;
                 }
             }
 
-            guild.getCategoryById(CAT_ID).createVoiceChannel(group.getName())
+            studyGroupCategory.createVoiceChannel(group.getName())
                     .queue(voiceChannel -> {
                         guild.moveVoiceMember(member, voiceChannel).queue();
                         voiceChannel.getManager().setUserLimit(1).queue();
@@ -68,7 +86,7 @@ public class ChannelListener extends ListenerAdapter {
     private void updateChannels(VoiceChannel channelLeft, Member member) {
         Category parent = channelLeft.getParent();
         if (parent == null) return;
-        if (parent.getIdLong() != CAT_ID) return;
+        if (parent.getIdLong() != studyGroupCategory.getIdLong()) return;
         StudyGroupCodec group = StudyGroupCodec.retrieveStudyGroup(member.getUser());
         if (channelLeft.getName().equals(group.getName()) && channelLeft.getMembers().size() == 0) {
             channelLeft.delete().queue();

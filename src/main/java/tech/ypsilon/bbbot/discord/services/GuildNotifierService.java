@@ -1,23 +1,25 @@
 package tech.ypsilon.bbbot.discord.services;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tech.ypsilon.bbbot.ButterBrot;
 
 import java.util.Calendar;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class GuildNotifierService {
 
+    private final @Getter ButterBrot parent;
     private final TextChannel channel;
 
-    public GuildNotifierService(TextChannel channel) {
+    public GuildNotifierService(ButterBrot parent, TextChannel channel) {
+        this.parent = parent;
         this.channel = channel;
     }
 
-    public GuildNotifierService() {
+    public GuildNotifierService(ButterBrot parent) {
+        this.parent = parent;
         this.channel = null;
     }
 

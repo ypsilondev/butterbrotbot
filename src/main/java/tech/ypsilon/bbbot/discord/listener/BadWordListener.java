@@ -2,17 +2,20 @@ package tech.ypsilon.bbbot.discord.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.util.DiscordUtil;
-import tech.ypsilon.bbbot.util.LogUtil;
 
 import java.util.List;
 
 @Slf4j
-public class BadWordListener extends ListenerAdapter {
+public class BadWordListener extends ButterbrotListener {
 
     List<String> badWords = List.of(".*http(s)?:\\/\\/dis[\\S]*\\.gift\\/\\S*.*");
+
+    public BadWordListener(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -21,10 +24,15 @@ public class BadWordListener extends ListenerAdapter {
             String messageString = event.getMessage().getContentStripped();
 
             if (badWords.stream().anyMatch(messageString::matches)) {
-                LogUtil.log(String.format("%s#%s was maybe spamming. (Message: %s)",
+                String logMessage = String.format("%s#%s was maybe spamming. (Message: %s)",
                         event.getAuthor().getName(),
                         event.getAuthor().getDiscriminator(),
-                        messageString));
+                        messageString
+                );
+
+                getParent().getDiscordController().getLogChannel().sendMessage(logMessage).queue();
+                log.warn(logMessage);
+
                 event.getMessage().delete().queue();
             }
         }

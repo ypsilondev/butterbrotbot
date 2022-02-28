@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.discord.services.ToolUpdaterService;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -12,6 +13,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ToolsSlashCommand extends SlashCommand {
+
+    public ToolsSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {

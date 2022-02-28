@@ -2,45 +2,59 @@ package tech.ypsilon.bbbot.database;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
+import com.mongodb.MongoDriverInformation;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import lombok.Getter;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ypsilon.bbbot.BotInfo;
+import tech.ypsilon.bbbot.ButterBrot;
+import tech.ypsilon.bbbot.config.MongoSubconfig;
+import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.database.codecs.BirthdayCodec;
 import tech.ypsilon.bbbot.database.codecs.DirectoryCodec;
 import tech.ypsilon.bbbot.database.codecs.LinkCodec;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
 import tech.ypsilon.bbbot.database.codecs.VerificationCodec;
-import tech.ypsilon.bbbot.settings.SettingsController;
+import tech.ypsilon.bbbot.util.Initializable;
 
 import java.util.Collections;
 
-public class MongoController {
+public class MongoController extends GenericController implements Initializable {
 
     private static MongoController instance;
 
-    private final MongoClient CLIENT;
-    private final MongoDatabase DATABASE;
+    private MongoClient CLIENT;
+    private MongoDatabase DATABASE;
+
+    private @Getter boolean disabled = false;
 
     /**
      * Initializes the MongoController.
-     * Fetches all the necessary settings from the {@link SettingsController}
+     * Fetches all the necessary settings from the {@link tech.ypsilon.bbbot.config.ButterbrotConfig}
      * and registers the Codecs inside the codecs package
      */
-    public MongoController() {
+    public MongoController(ButterBrot parent) {
+        super(parent);
         instance = this;
+    }
+
+    @Override
+    public void init() {
         MongoCredential credential = null;
-        if (SettingsController.getValue("mongo.username") != null) {
-            System.out.println("not null");
-             credential = MongoCredential.createCredential(
-                    ((String) SettingsController.getValue("mongo.username")),
-                    ((String) SettingsController.getValue("mongo.authDatabase")),
-                    ((String) SettingsController.getValue("mongo.password")).toCharArray()
+        MongoSubconfig config = getParent().getConfig().getMongo();
+
+        if (config.getUsername() != null) {
+            // System.out.println("not null");
+            credential = MongoCredential.createCredential(
+                    config.getUsername(),
+                    config.getAuthDatabase(),
+                    config.getPassword().toCharArray()
             );
         }
 
@@ -57,8 +71,8 @@ public class MongoController {
         MongoClientSettings.Builder builder = MongoClientSettings.builder()
                 .applyToClusterSettings(b -> b.hosts(Collections.singletonList(
                         new ServerAddress(
-                                ((String) SettingsController.getValue("mongo.host")),
-                                ((int) SettingsController.getValue("mongo.port"))
+                                config.getHost(),
+                                config.getPort()
                         )
                 )))
                 .codecRegistry(codecRegistry);
@@ -67,6 +81,10 @@ public class MongoController {
 
         CLIENT = MongoClients.create(settings);
         this.DATABASE = CLIENT.getDatabase(BotInfo.NAME);
+    }
+
+    public void disable() {
+        this.disabled = true;
     }
 
     /**
@@ -119,7 +137,7 @@ public class MongoController {
      * @return the hostname as a String
      */
     public String getHost() {
-        return (String) SettingsController.getValue("mongo.host");
+        return getParent().getConfig().getMongo().getHost();
     }
 
     /**
@@ -127,7 +145,7 @@ public class MongoController {
      * @return the port as a Integer
      */
     public int getPort() {
-        return (int) SettingsController.getValue("mongo.port");
+        return getParent().getConfig().getMongo().getPort();
     }
 
 }

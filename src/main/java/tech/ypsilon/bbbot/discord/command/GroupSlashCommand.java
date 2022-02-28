@@ -8,8 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.Nullable;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.codecs.StudyGroupCodec;
-import tech.ypsilon.bbbot.discord.DiscordController;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
 import java.util.ArrayList;
@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class GroupSlashCommand extends SlashCommand {
+
+    public GroupSlashCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public CommandData commandData() {
@@ -110,7 +114,7 @@ public class GroupSlashCommand extends SlashCommand {
         EmbedBuilder b = EmbedUtil.createSuccessEmbed();
         b.setDescription("Lerngruppe " + group.getName());
         for (Long userID : group.getUserIDs()) {
-            JDA jda = DiscordController.getJDA();
+            JDA jda = getParent().getDiscordController().getJda();
             User userById = jda.getUserById(userID);
             if (userById == null) userById = jda.retrieveUserById(userID).complete();
             b.addField(userById.getName(), "", false);

@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.discord.DiscordController;
 
@@ -19,10 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class RankSystemListener extends ListenerAdapter {
+public class RankSystemListener extends ButterbrotListener {
 
     //Local cache for speed
     private final HashMap<Long, Long> lastMessage = new HashMap<>();
+
+    public RankSystemListener(ButterBrot parent) {
+        super(parent);
+    }
 
     /**
      * Get the corresponding Collection
@@ -104,14 +109,15 @@ public class RankSystemListener extends ListenerAdapter {
      * @param user the {@link User}
      * @return the RankInformation
      */
-    public static RankInformation getRankInformation(User user) {
-        return new RankInformation(user.getIdLong());
+    public RankInformation getRankInformation(User user) {
+        return new RankInformation(getParent(), user.getIdLong());
     }
 
     /**
      * Databucket of RankInformation
      */
     public static class RankInformation {
+        private final ButterBrot parent;
 
         private final ObjectId _id;
         private final Long userId;
@@ -120,7 +126,8 @@ public class RankSystemListener extends ListenerAdapter {
         private int bestStreak = 0;
         private Date lastMessage;
 
-        private RankInformation(Long userId) {
+        private RankInformation(ButterBrot parent, Long userId) {
+            this.parent = parent;
             Document document = getCollection().find(Filters.eq("userId", userId)).first();
 
             this.userId = userId;
@@ -146,7 +153,7 @@ public class RankSystemListener extends ListenerAdapter {
         }
 
         public User getUser() {
-            return DiscordController.getJDA().getUserById(this.userId);
+            return parent.getDiscordController().getJda().getUserById(this.userId);
         }
 
         public int getPoints() {

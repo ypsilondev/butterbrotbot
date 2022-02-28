@@ -18,10 +18,10 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.database.MongoController;
 import tech.ypsilon.bbbot.database.MongoSettings;
 import tech.ypsilon.bbbot.discord.DiscordController;
-import tech.ypsilon.bbbot.settings.SettingsController;
 import tech.ypsilon.bbbot.util.DiscordUtil;
 import tech.ypsilon.bbbot.util.EmbedUtil;
 
@@ -35,9 +35,16 @@ public class JahrgangSlashCommand extends SlashCommand {
 
     private static long messageID = 1L;
 
-    public static final Long channelId = SettingsController.getLong("discord.studiengaenge.channel");
+    private final TextChannel textChannel;
 
     private static MongoCollection<Document> collection = null;
+
+    public JahrgangSlashCommand(ButterBrot parent) {
+        super(parent);
+
+        textChannel = Objects.requireNonNull(parent.getDiscordController().getJda()
+                .getTextChannelById(parent.getConfig().getDiscord().getCourseSelectionConfig().getChannel()));
+    }
 
     @Override
     public CommandData commandData() {
@@ -117,9 +124,6 @@ public class JahrgangSlashCommand extends SlashCommand {
     }
 
     public void update(SlashCommandEvent event) {
-        assert channelId != null;
-        TextChannel textChannel = Objects.requireNonNull(DiscordController.getJDA().getTextChannelById(channelId));
-
         Object messageIdObj = MongoSettings.getValue(MongoSettings.TYPE.StudyStartMessage, event.getGuild().getIdLong());
 
         if (messageIdObj != null) {

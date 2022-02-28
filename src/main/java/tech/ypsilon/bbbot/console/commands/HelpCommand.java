@@ -1,11 +1,16 @@
 package tech.ypsilon.bbbot.console.commands;
 
+import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.console.ConsoleCommand;
-import tech.ypsilon.bbbot.console.ConsoleManager;
+import tech.ypsilon.bbbot.console.ConsoleController;
 
 import static tech.ypsilon.bbbot.ButterBrot.LOGGER;
 
 public class HelpCommand extends ConsoleCommand {
+
+    public HelpCommand(ButterBrot parent) {
+        super(parent);
+    }
 
     @Override
     public String[] getAlias() {
@@ -20,7 +25,7 @@ public class HelpCommand extends ConsoleCommand {
     @Override
     public void onExecute(String[] args) {
         LOGGER.info("List of all commands: ");
-        for(ConsoleCommand command : ConsoleManager.getCommands()){
+        for(ConsoleCommand command : ConsoleController.getCommands()){
             LOGGER.info(command.getAlias()[0] + " - " + command.getDescription());
         }
     }
