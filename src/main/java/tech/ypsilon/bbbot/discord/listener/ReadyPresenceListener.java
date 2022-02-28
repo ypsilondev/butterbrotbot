@@ -6,19 +6,18 @@ import org.jetbrains.annotations.NotNull;
 import tech.ypsilon.bbbot.BotInfo;
 import tech.ypsilon.bbbot.ButterBrot;
 
-public class DefaultListener extends ButterbrotListener {
+public class ReadyPresenceListener extends ButterbrotListener {
 
-    public DefaultListener(ButterBrot parent) {
+    public ReadyPresenceListener(ButterBrot parent) {
         super(parent);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         try {
-            String prefix = getParent().getConfig().getDiscord().getPrefixList().get(0);
+            String prefix = BotInfo.PRESENCE_PREFIX;
             event.getJDA().getPresence().setActivity(Activity.playing(prefix + " | v" + BotInfo.VERSION));
-        }catch (Exception e){
+        } catch (Exception exception){
             event.getJDA().getPresence().setActivity(Activity.playing("v" + BotInfo.VERSION));
         }
     }

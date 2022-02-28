@@ -9,7 +9,7 @@ public class EmbedUtil {
 
     public static EmbedBuilder createDefaultEmbed() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Color.decode("#1a4064"));
+        embedBuilder.setColor(DiscordRoleColors.BLUE.getSecondary());
         embedBuilder.setFooter("Elite-Nachricht",
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo_KIT.svg/2000px-Logo_KIT.svg.png");
         return embedBuilder;
@@ -18,7 +18,7 @@ public class EmbedUtil {
     public static EmbedBuilder createErrorEmbed() {
         EmbedBuilder embedBuilder = createDefaultEmbed();
         embedBuilder.setTitle("Fehler");
-        embedBuilder.setColor(Color.decode("#FF7770"));
+        embedBuilder.setColor(DiscordRoleColors.RED.getPrimary());
         return embedBuilder;
     }
 
@@ -30,7 +30,7 @@ public class EmbedUtil {
     public static EmbedBuilder createSuccessEmbed() {
         EmbedBuilder embedBuilder = createDefaultEmbed();
         embedBuilder.setTitle("Erfolg");
-        embedBuilder.setColor(Color.decode("#97DBA2"));
+        embedBuilder.setColor(DiscordRoleColors.GREEN.getPrimary());
         return embedBuilder;
     }
 
@@ -38,12 +38,12 @@ public class EmbedUtil {
         if (!hasMatches) {
             EmbedBuilder embedBuilder = createDefaultEmbed();
             embedBuilder.setTitle("Keine Ergebnisse");
-            embedBuilder.setColor(Color.decode("#FF7770"));
+            embedBuilder.setColor(DiscordRoleColors.ORANGE.getPrimary());
             return embedBuilder;
         } else {
             EmbedBuilder embedBuilder = createDefaultEmbed();
             embedBuilder.setTitle("Ergebnisliste");
-            embedBuilder.setColor(Color.decode("#97DBA2"));
+            embedBuilder.setColor(DiscordRoleColors.GREEN.getPrimary());
             return embedBuilder;
         }
     }
@@ -51,14 +51,14 @@ public class EmbedUtil {
     public static EmbedBuilder createDirectoryEmbed() {
         EmbedBuilder embedBuilder = createDefaultEmbed();
         embedBuilder.setTitle("Dein Directory");
-        embedBuilder.setColor(Color.decode("#6470FA"));
+        embedBuilder.setColor(DiscordRoleColors.BLUE.getPrimary());
         return embedBuilder;
     }
 
     public static EmbedBuilder createInfoEmbed() {
         EmbedBuilder embedBuilder = createDefaultEmbed();
         embedBuilder.setTitle("Info");
-        embedBuilder.setColor(Color.decode("#41e3fc"));
+        embedBuilder.setColor(DiscordRoleColors.TEAL.getPrimary());
         return embedBuilder;
     }
 

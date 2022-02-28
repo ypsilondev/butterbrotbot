@@ -19,8 +19,6 @@ import java.util.Objects;
 
 public class DiscordController extends GenericController implements Initializable {
 
-    private static DiscordController instance;
-
     private @Getter JDA jda;
     private @Getter Guild home;
     private @Getter TextChannel logChannel;
@@ -30,7 +28,6 @@ public class DiscordController extends GenericController implements Initializabl
      */
     public DiscordController(ButterBrot parent) {
         super(parent);
-        instance = this;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class DiscordController extends GenericController implements Initializabl
      */
     @Deprecated(forRemoval = true)
     public static JDA getJDAStatic() {
-        return instance.jda;
+        throw new RuntimeException("This operation is unsupported!");
     }
 
     /**

@@ -13,4 +13,5 @@ public class MongoSubconfig {
     private String username;
     private String authDatabase;
     private String password;
+    private String butterbrotDatabase;
 }

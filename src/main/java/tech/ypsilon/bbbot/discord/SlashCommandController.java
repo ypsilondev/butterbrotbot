@@ -83,7 +83,8 @@ public class SlashCommandController extends GenericListenerController implements
                 new HelpSlashCommand(getParent()),
                 // new VerifySlashCommand(getParent()),
                 new DirectorySlashCommand(getParent()),
-                new JahrgangSlashCommand(getParent())
+                new JahrgangSlashCommand(getParent()),
+                new ProfileCommand(getParent())
         );
     }
 
@@ -173,9 +174,9 @@ public class SlashCommandController extends GenericListenerController implements
                 commandMap.get(split[1]).handleButtonInteraction(event, split[2]);
             } catch (NullPointerException | CommandFailedException exception) {
                 if (event.isAcknowledged()) {
-                    event.getHook().sendMessage(exception.getMessage()).queue();
+                    event.getHook().sendMessage(exception.getMessage()).setEphemeral(true).queue();
                 } else {
-                    event.reply(exception.getMessage()).queue();
+                    event.reply(exception.getMessage()).setEphemeral(true).queue();
                 }
             }
         } else {
