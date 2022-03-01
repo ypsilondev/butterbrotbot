@@ -3,6 +3,7 @@ package tech.ypsilon.bbbot.console;
 import tech.ypsilon.bbbot.ButterBrot;
 import tech.ypsilon.bbbot.console.commands.HelpCommand;
 import tech.ypsilon.bbbot.console.commands.MigrateBirthdays;
+import tech.ypsilon.bbbot.console.commands.SendProfileMessageCommand;
 import tech.ypsilon.bbbot.console.commands.StopCommand;
 import tech.ypsilon.bbbot.util.GenericController;
 import tech.ypsilon.bbbot.util.Initializable;
@@ -34,6 +35,7 @@ public class ConsoleController extends GenericController implements Initializabl
         addCommand(new StopCommand(getParent()));
         addCommand(new HelpCommand(getParent()));
         addCommand(new MigrateBirthdays(getParent()));
+        addCommand(new SendProfileMessageCommand(getParent()));
         new Thread(this).start();
     }
 
@@ -56,7 +58,7 @@ public class ConsoleController extends GenericController implements Initializabl
 
             boolean found = false;
             for(ConsoleCommand command : commands){
-                if(Arrays.stream(command.getAlias()).anyMatch(s1 -> s1.equalsIgnoreCase(s))){
+                if(Arrays.stream(command.getAlias()).anyMatch(s1 -> s1.equalsIgnoreCase(s.split(" ")[0]))){
                     command.onExecute(s.replaceFirst(s.split(" ")[0], "").split(" "));
                     found = true;
                     break;

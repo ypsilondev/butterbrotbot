@@ -10,9 +10,9 @@ import tech.ypsilon.bbbot.util.Initializable;
 @Getter
 public class ListenerController extends GenericListenerController implements Initializable {
 
-    private final DefaultListener defaultListener;
+    private final ReadyPresenceListener readyPresenceListener;
     // private final RoleListener roleListener;
-    private final ChannelListener channelListener;
+    private final StudyGroupVoiceListener channelListener;
     private final NewMemberJoinListener newMemberJoinListener;
     private final CensorWatcherListener censorWatcherListener;
     private final RankSystemListener rankSystemListener;
@@ -22,9 +22,9 @@ public class ListenerController extends GenericListenerController implements Ini
     public ListenerController(ButterBrot parent) {
         super(parent);
 
-        this.defaultListener = new DefaultListener(parent);
+        this.readyPresenceListener = new ReadyPresenceListener(parent);
         // this.roleListener = new RoleListener(parent);
-        this.channelListener = new ChannelListener(parent);
+        this.channelListener = new StudyGroupVoiceListener(parent);
         this.newMemberJoinListener = new NewMemberJoinListener(parent);
         this.censorWatcherListener = new CensorWatcherListener(parent);
         this.rankSystemListener = new RankSystemListener(parent);
@@ -40,7 +40,7 @@ public class ListenerController extends GenericListenerController implements Ini
 
         ButterBrot.LOGGER.info("Registering Listeners...");
         registerEventListener(
-                defaultListener,
+                readyPresenceListener,
                 // roleListener,
                 channelListener,
                 newMemberJoinListener,

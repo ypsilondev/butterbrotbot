@@ -17,6 +17,7 @@ public class ButterbrotConfig extends DefaultConfigFactory {
     private DiscordSubconfig discord;
     private CommandsSubconfig commands;
     private MailSubconfig mail;
+    private ProfileSubconfig profile;
 
     @SuppressWarnings("unused")
     public static DefaultConfigFactory createDefault() {
@@ -27,6 +28,7 @@ public class ButterbrotConfig extends DefaultConfigFactory {
                         .username("username")
                         .authDatabase("authDatabase")
                         .password("password")
+                        .butterbrotDatabase("ButterBrot")
                         .build())
                 .discord(DiscordSubconfig.builder()
                         .prefixList(List.of("kitbot", "bb", "kit"))
@@ -60,6 +62,17 @@ public class ButterbrotConfig extends DefaultConfigFactory {
                                         .trust("smtp.example.com")
                                         .build())
                                 .build())
+                        .build())
+                .profile(ProfileSubconfig.builder()
+                        .courseCategories(Map.of("category1", ProfileSubconfig.CourseCategorySubconfig.builder()
+                                        .name("Category 1")
+                                        .unicodeEmoji("\uD83D\uDDFF")
+                                        .courses(Map.of("course1", ProfileSubconfig.NameEmojiRole.builder()
+                                                        .name("Course 1")
+                                                        .unicodeEmoji("\uD83D\uDDFF")
+                                                        .discordRoleId(-1)
+                                                .build()))
+                                .build()))
                         .build())
                 .build();
     }
