@@ -63,7 +63,7 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
-                <version>3.2.0</version>
+                <version>3.2.2</version>
             </plugin>
         </plugins>
     </build>
