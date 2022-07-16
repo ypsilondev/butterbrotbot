@@ -15,7 +15,7 @@ https://www.codecogs.com/latex/eqneditor.php (Online LaTeX-Formel-Editor)
 https://www.deepl.com/translator (Wie Google Übersetzer aber viel besser)
 
 Programmierung
-https://codetester.ialistannen.de/ (Kooperative Software-Tests für das Programmieren-Modul)
+https://codetester.ialistannen.de/ (Kooperative Software-Tests für das Programmieren-Modul [entsprechende Regeln des Moduls beachten!])
 https://www.toptal.com/developers/gitignore (Vorlagen für .gitignore-Dateien)
 https://www.jetbrains.com/idea/ (die beste™️ Entwicklungsumgebung für Java, Vollversion gibt's für Studis auch kostenlos)
 https://www.jetbrains.com/help/idea/code-with-me.html (Plugin für IntelliJ für gleichzeitiges Arbeiten an denselben Dateien)
