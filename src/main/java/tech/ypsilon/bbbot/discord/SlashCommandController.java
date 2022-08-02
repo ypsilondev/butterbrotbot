@@ -79,11 +79,9 @@ public class SlashCommandController extends GenericListenerController implements
                 new StoreSlashCommand(getParent()),
                 new ListSlashCommand(getParent()),
                 new RankSystemSlashCommand(getParent()),
-                new StudiengangSlashCommand(getParent()),
                 new HelpSlashCommand(getParent()),
                 // new VerifySlashCommand(getParent()),
                 new DirectorySlashCommand(getParent()),
-                new JahrgangSlashCommand(getParent()),
                 new ProfileCommand(getParent())
         );
     }
